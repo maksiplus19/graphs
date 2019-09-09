@@ -8,8 +8,12 @@ class Graph:
         with open(file_name, mode='r') as file:
             # построчное чтение файла
             for line in file:
+                # убираем комментарии
+                line = line.split('%', maxsplit=2)[0]
                 # разделяем строку на номера вершин
                 vertices = line.split(' ')
+                if len(vertices) == 0:
+                    continue
                 # сохраняем первую и создаем для нее список
                 v = int(vertices[0])
                 self.adjacency_list[v] = []
