@@ -12,6 +12,7 @@
 `window.py`     | основной файл окна
 `design.py`     | файл с разметкой окна
 `convert bat`   | запускает команду для преобразования `design.ui` в `design.py`
+`qgraphview.py` | класс для отображения графа
 
 ## QGraphView
 
