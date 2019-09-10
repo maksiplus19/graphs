@@ -6,313 +6,287 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>870</width>
-    <height>625</height>
+    <width>994</width>
+    <height>689</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QTextEdit" name="textInput">
-    <property name="geometry">
-     <rect>
-      <x>530</x>
-      <y>90</y>
-      <width>201</width>
-      <height>71</height>
-     </rect>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::ClickFocus</enum>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="cancelButton">
-    <property name="geometry">
-     <rect>
-      <x>530</x>
-      <y>460</y>
-      <width>201</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>← Отменить</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="nextButton">
-    <property name="geometry">
-     <rect>
-      <x>530</x>
-      <y>490</y>
-      <width>201</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>→ Дальше</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton">
-    <property name="geometry">
-     <rect>
-      <x>530</x>
-      <y>520</y>
-      <width>201</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>✖ Закрыть</string>
-    </property>
-   </widget>
-   <widget class="QTableView" name="tableView">
-    <property name="geometry">
-     <rect>
-      <x>5</x>
-      <y>11</y>
-      <width>501</width>
-      <height>531</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QTableWidget" name="matrixWidget">
-    <property name="geometry">
-     <rect>
-      <x>530</x>
-      <y>220</y>
-      <width>311</width>
-      <height>201</height>
-     </rect>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>16777204</width>
-      <height>16777215</height>
-     </size>
-    </property>
-    <property name="sizeIncrement">
-     <size>
-      <width>0</width>
-      <height>0</height>
-     </size>
-    </property>
-    <property name="baseSize">
-     <size>
-      <width>7</width>
-      <height>14</height>
-     </size>
-    </property>
-    <property name="dragEnabled">
-     <bool>false</bool>
-    </property>
-    <property name="dragDropMode">
-     <enum>QAbstractItemView::NoDragDrop</enum>
-    </property>
-    <property name="alternatingRowColors">
-     <bool>true</bool>
-    </property>
-    <property name="selectionMode">
-     <enum>QAbstractItemView::ExtendedSelection</enum>
-    </property>
-    <property name="iconSize">
-     <size>
-      <width>1</width>
-      <height>0</height>
-     </size>
-    </property>
-    <property name="textElideMode">
-     <enum>Qt::ElideLeft</enum>
-    </property>
-    <property name="showGrid">
-     <bool>true</bool>
-    </property>
-    <property name="gridStyle">
-     <enum>Qt::SolidLine</enum>
-    </property>
-    <property name="sortingEnabled">
-     <bool>false</bool>
-    </property>
-    <property name="rowCount">
-     <number>7</number>
-    </property>
-    <property name="columnCount">
-     <number>7</number>
-    </property>
-    <attribute name="horizontalHeaderCascadingSectionResizes">
-     <bool>false</bool>
-    </attribute>
-    <attribute name="horizontalHeaderDefaultSectionSize">
-     <number>42</number>
-    </attribute>
-    <attribute name="horizontalHeaderMinimumSectionSize">
-     <number>39</number>
-    </attribute>
-    <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
-     <bool>false</bool>
-    </attribute>
-    <attribute name="horizontalHeaderStretchLastSection">
-     <bool>false</bool>
-    </attribute>
-    <attribute name="verticalHeaderCascadingSectionResizes">
-     <bool>false</bool>
-    </attribute>
-    <attribute name="verticalHeaderDefaultSectionSize">
-     <number>25</number>
-    </attribute>
-    <attribute name="verticalHeaderMinimumSectionSize">
-     <number>26</number>
-    </attribute>
-    <attribute name="verticalHeaderShowSortIndicator" stdset="0">
-     <bool>false</bool>
-    </attribute>
-    <attribute name="verticalHeaderStretchLastSection">
-     <bool>false</bool>
-    </attribute>
-    <row>
-     <property name="text">
-      <string>0</string>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string>1</string>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string>2</string>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string>3</string>
-     </property>
-    </row>
-    <row/>
-    <row/>
-    <row/>
-    <column>
-     <property name="text">
-      <string>0</string>
-     </property>
-     <property name="font">
-      <font>
-       <weight>50</weight>
-       <bold>false</bold>
-      </font>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>1</string>
-     </property>
-     <property name="font">
-      <font>
-       <weight>50</weight>
-       <bold>false</bold>
-      </font>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>2</string>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>3</string>
-     </property>
-    </column>
-    <column/>
-    <column/>
-    <column/>
-    <item row="0" column="0">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-    </item>
-    <item row="1" column="0">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-    </item>
-   </widget>
-   <widget class="QSpinBox" name="spinBox">
-    <property name="geometry">
-     <rect>
-      <x>690</x>
-      <y>190</y>
-      <width>42</width>
-      <height>22</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>530</x>
-      <y>190</y>
-      <width>171</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Размерность матрицы</string>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="directBox">
-    <property name="geometry">
-     <rect>
-      <x>530</x>
-      <y>10</y>
-      <width>201</width>
-      <height>22</height>
-     </rect>
-    </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
     <item>
-     <property name="text">
-      <string>Направленный</string>
-     </property>
+     <widget class="QTableView" name="tableView">
+      <property name="minimumSize">
+       <size>
+        <width>600</width>
+        <height>300</height>
+       </size>
+      </property>
+     </widget>
     </item>
     <item>
-     <property name="text">
-      <string>Ненаправленный</string>
-     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QComboBox" name="comboBox">
+        <item>
+         <property name="text">
+          <string>Нагруженный</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Ненагруженный</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="directBox">
+        <item>
+         <property name="text">
+          <string>Направленный</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Ненаправленный</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QTextEdit" name="textInput">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>100</height>
+         </size>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::ClickFocus</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Размерность матрицы</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="spinBox">
+          <property name="maximumSize">
+           <size>
+            <width>70</width>
+            <height>16777215</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QTableWidget" name="matrixWidget">
+        <property name="minimumSize">
+         <size>
+          <width>300</width>
+          <height>300</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="sizeIncrement">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="baseSize">
+         <size>
+          <width>7</width>
+          <height>14</height>
+         </size>
+        </property>
+        <property name="dragEnabled">
+         <bool>false</bool>
+        </property>
+        <property name="dragDropMode">
+         <enum>QAbstractItemView::NoDragDrop</enum>
+        </property>
+        <property name="alternatingRowColors">
+         <bool>true</bool>
+        </property>
+        <property name="selectionMode">
+         <enum>QAbstractItemView::ExtendedSelection</enum>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>1</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="textElideMode">
+         <enum>Qt::ElideLeft</enum>
+        </property>
+        <property name="showGrid">
+         <bool>true</bool>
+        </property>
+        <property name="gridStyle">
+         <enum>Qt::SolidLine</enum>
+        </property>
+        <property name="sortingEnabled">
+         <bool>false</bool>
+        </property>
+        <property name="rowCount">
+         <number>7</number>
+        </property>
+        <property name="columnCount">
+         <number>7</number>
+        </property>
+        <attribute name="horizontalHeaderCascadingSectionResizes">
+         <bool>false</bool>
+        </attribute>
+        <attribute name="horizontalHeaderDefaultSectionSize">
+         <number>42</number>
+        </attribute>
+        <attribute name="horizontalHeaderMinimumSectionSize">
+         <number>39</number>
+        </attribute>
+        <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+         <bool>false</bool>
+        </attribute>
+        <attribute name="horizontalHeaderStretchLastSection">
+         <bool>false</bool>
+        </attribute>
+        <attribute name="verticalHeaderCascadingSectionResizes">
+         <bool>false</bool>
+        </attribute>
+        <attribute name="verticalHeaderDefaultSectionSize">
+         <number>25</number>
+        </attribute>
+        <attribute name="verticalHeaderMinimumSectionSize">
+         <number>26</number>
+        </attribute>
+        <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+         <bool>false</bool>
+        </attribute>
+        <attribute name="verticalHeaderStretchLastSection">
+         <bool>false</bool>
+        </attribute>
+        <row>
+         <property name="text">
+          <string>0</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>1</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>2</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>3</string>
+         </property>
+        </row>
+        <row/>
+        <row/>
+        <row/>
+        <column>
+         <property name="text">
+          <string>0</string>
+         </property>
+         <property name="font">
+          <font>
+           <weight>50</weight>
+           <bold>false</bold>
+          </font>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>1</string>
+         </property>
+         <property name="font">
+          <font>
+           <weight>50</weight>
+           <bold>false</bold>
+          </font>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>2</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>3</string>
+         </property>
+        </column>
+        <column/>
+        <column/>
+        <column/>
+        <item row="0" column="0">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+        </item>
+        <item row="1" column="0">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="nextButton">
+        <property name="text">
+         <string>→ Дальше</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="cancelButton">
+        <property name="text">
+         <string>← Отменить</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton">
+        <property name="text">
+         <string>✖ Закрыть</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
-   </widget>
-   <widget class="QComboBox" name="comboBox">
-    <property name="geometry">
-     <rect>
-      <x>530</x>
-      <y>50</y>
-      <width>201</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <item>
-     <property name="text">
-      <string>Нагруженный</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>Ненагруженный</string>
-     </property>
-    </item>
-   </widget>
+   </layout>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -328,7 +302,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>870</width>
+     <width>994</width>
      <height>21</height>
     </rect>
    </property>
@@ -389,5 +363,22 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>630</x>
+     <y>563</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>434</x>
+     <y>312</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
