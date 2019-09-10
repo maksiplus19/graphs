@@ -6,43 +6,22 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>994</width>
-    <height>689</height>
+    <width>887</width>
+    <height>562</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QHBoxLayout" name="horizontalLayout_2">
+   <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="1,0">
     <item>
-     <widget class="QTableView" name="tableView">
-      <property name="minimumSize">
-       <size>
-        <width>600</width>
-        <height>300</height>
-       </size>
-      </property>
-     </widget>
+     <widget class="QGraphView" name="graphView"/>
     </item>
     <item>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QComboBox" name="comboBox">
-        <item>
-         <property name="text">
-          <string>Нагруженный</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Ненагруженный</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-      <item>
-       <widget class="QComboBox" name="directBox">
+       <widget class="QComboBox" name="cmbDirect">
         <item>
          <property name="text">
           <string>Направленный</string>
@@ -56,50 +35,58 @@
        </widget>
       </item>
       <item>
-       <widget class="QTextEdit" name="textInput">
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>100</height>
-         </size>
-        </property>
+       <widget class="QComboBox" name="cmbWeight">
+        <item>
+         <property name="text">
+          <string>Нагруженный</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Ненагруженный</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QTextEdit" name="textEdit">
         <property name="focusPolicy">
          <enum>Qt::ClickFocus</enum>
         </property>
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
         <item>
-         <widget class="QLabel" name="label">
+         <widget class="QLabel" name="lblMatrSize">
           <property name="text">
            <string>Размерность матрицы</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="spinBox">
-          <property name="maximumSize">
+         <spacer name="horizontalSpacer_4">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
            <size>
-            <width>70</width>
-            <height>16777215</height>
+            <width>40</width>
+            <height>20</height>
            </size>
           </property>
-         </widget>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="spbMatrSize"/>
         </item>
        </layout>
       </item>
       <item>
-       <widget class="QTableWidget" name="matrixWidget">
-        <property name="minimumSize">
-         <size>
-          <width>300</width>
-          <height>300</height>
-         </size>
-        </property>
+       <widget class="QTableWidget" name="tableWidgetMatr">
         <property name="maximumSize">
          <size>
-          <width>16777215</width>
+          <width>16777204</width>
           <height>16777215</height>
          </size>
         </property>
@@ -264,25 +251,52 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="nextButton">
-        <property name="text">
-         <string>→ Дальше</string>
-        </property>
-       </widget>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnCancel">
+          <property name="text">
+           <string>← Отменить</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
-       <widget class="QPushButton" name="cancelButton">
-        <property name="text">
-         <string>← Отменить</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButton">
-        <property name="text">
-         <string>✖ Закрыть</string>
-        </property>
-       </widget>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnNext">
+          <property name="text">
+           <string>→ Дальше</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </item>
@@ -302,83 +316,68 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>994</width>
+     <width>887</width>
      <height>21</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menu">
+   <widget class="QMenu" name="menuFile">
     <property name="title">
      <string>Файл</string>
     </property>
-    <addaction name="agencyMatrix"/>
-    <addaction name="incidenceMatrix"/>
-    <addaction name="ribsList"/>
-    <addaction name="action"/>
+    <addaction name="actionOpen"/>
+    <addaction name="actionSave"/>
+    <addaction name="actionExit"/>
    </widget>
-   <widget class="QMenu" name="programAbout">
+   <widget class="QMenu" name="menuInfo">
     <property name="title">
-     <string>О программе</string>
+     <string>?</string>
     </property>
+    <addaction name="actionProgram"/>
+    <addaction name="actionAuthor"/>
    </widget>
-   <widget class="QMenu" name="authorAbout">
-    <property name="title">
-     <string>Об Авторе</string>
-    </property>
-   </widget>
-   <widget class="QMenu" name="menu_2">
+   <widget class="QMenu" name="menuTasks">
     <property name="title">
      <string>Задачи</string>
     </property>
    </widget>
-   <addaction name="menu_2"/>
-   <addaction name="menu"/>
-   <addaction name="programAbout"/>
-   <addaction name="authorAbout"/>
+   <addaction name="menuFile"/>
+   <addaction name="menuTasks"/>
+   <addaction name="menuInfo"/>
   </widget>
-  <action name="agencyMatrix">
-   <property name="text">
-    <string>Матрица смежности</string>
-   </property>
-  </action>
-  <action name="incidenceMatrix">
-   <property name="text">
-    <string>Матрица инцидентности</string>
-   </property>
-  </action>
-  <action name="ribsList">
-   <property name="text">
-    <string>Список</string>
-   </property>
-  </action>
-  <action name="vertexList">
-   <property name="text">
-    <string>Список вершин</string>
-   </property>
-  </action>
-  <action name="action">
+  <action name="actionSave">
    <property name="text">
     <string>Сохранить</string>
    </property>
   </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Выход</string>
+   </property>
+  </action>
+  <action name="actionProgram">
+   <property name="text">
+    <string>О программе</string>
+   </property>
+  </action>
+  <action name="actionAuthor">
+   <property name="text">
+    <string>Об авторе</string>
+   </property>
+  </action>
+  <action name="actionOpen">
+   <property name="text">
+    <string>Открыть</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QGraphView</class>
+   <extends>QGraphicsView</extends>
+   <header>qgraphview.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
- <connections>
-  <connection>
-   <sender>pushButton</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>close()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>630</x>
-     <y>563</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>434</x>
-     <y>312</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>
