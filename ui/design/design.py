@@ -9,6 +9,8 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+from ui.sourse.qgraphview import QGraphView
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -211,4 +213,4 @@ class Ui_MainWindow(object):
         self.actionProgram.setText(_translate("MainWindow", "О программе"))
         self.actionAuthor.setText(_translate("MainWindow", "Об авторе"))
         self.actionOpen.setText(_translate("MainWindow", "Открыть"))
-from qgraphview import QGraphView
+
