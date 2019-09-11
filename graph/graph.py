@@ -26,7 +26,11 @@ class Graph:
                 if len(vertices) == 1:
                     self.adjacency_matrix.append([])
                 # сохраняем первую вершину и преобразуем вершины с весами в числа
-                vertices = [int(v) for v in vertices]
+                try:
+                    vertices = [int(v) for v in vertices]
+                except ValueError:
+                    self.adjacency_matrix = []
+                    return
                 v = vertices[0]
                 # self.adjacency_matrix.append([])
                 if v > max_vertex_num:
@@ -56,8 +60,8 @@ class Graph:
             if len(self.adjacency_matrix[i]) - 1 < max_vertex_num:
                 self.adjacency_matrix[i].extend([math.inf] * (max_vertex_num - len(self.adjacency_matrix[i]) + 1))
 
-        for line in self.adjacency_matrix:
-            print(line)
+        # for line in self.adjacency_matrix:
+        #     print(line)
 
     def load_from_adjacency_matrix(self, file_name: str):
         # сбрасываем старую матрицу
