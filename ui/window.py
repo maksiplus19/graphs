@@ -1,22 +1,44 @@
 import sys
 
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QApplication, QFileDialog, QMessageBox
 
-from graph.graph import Graph
-from ui.design.design import Ui_MainWindow
+from graphs.graph.graph import Graph
+from graphs.ui.design.design import Ui_MainWindow
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.__graph = Graph()
-        self.__graph.load_from_adjacency_list('C:\\Users\\maksi\\PycharmProjects\\graphs\\test.txt')
-        self.draw_graph()
+        self.graph = Graph()
+        self.load_graph()
+        self.graphView.set_graph(self.graph)
 
-    def draw_graph(self):
-        self.graphView.drawGraph(self.__graph)
+        # коннектим обработку нажатия кнопок меню
+        self.actionOpen.triggered.connect(self.load_graph)
+        self.actionSave.triggered.connect(self.save_graph)
+
+    def load_graph(self):
+        # получаем имя файла
+        file_name = QFileDialog.getOpenFileName(self, 'Выбирите файл', 'C:\\Users\\admin\\PycharmProjects\\graphs',
+                                             'Graph Files (*.gal *.gam *.gim *gar)')[0]
+        # вытаскиваем формат
+        file_type = file_name.split('.')[-1]
+        # в зависимости от типа выбираем метод загрузки
+        if file_type == 'gal':
+            self.graph.load_from_adjacency_list(file_name)
+        elif file_type == 'gam':
+            self.graph.load_from_adjacency_matrix(file_name)
+        elif file_name == 'gim':
+            self.graph.load_from_incidence_matrix(file_name)
+        elif file_name == 'gar':
+            self.graph.load_from_arc_list(file_name)
+        else:
+            QMessageBox.warning(self, 'Ошибка', 'Неизвестный формат файла')
+
+    def save_graph(self):
+        print('save')
 
 
 if __name__ == '__main__':
