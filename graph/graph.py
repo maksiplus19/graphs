@@ -74,5 +74,11 @@ class Graph:
                 # преобразуем строки в числа и сразу добавляем в матрицу
                 self.adjacency_matrix.append([int(w) for w in weights])
 
+    def load_from_incidence_matrix(self, filr_name: str):
+        pass
+
+    def load_from_arc_list(self, file_name: str):
+        pass
+
     def add_vertex(self):
         pass
