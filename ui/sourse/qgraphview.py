@@ -3,7 +3,7 @@ import math
 from PyQt5.QtGui import QMouseEvent, QPen, QBrush, QColor
 from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene
 from random import randint
-from graph.graph import Graph
+from graphs.graph.graph import Graph
 
 
 class QGraphView(QGraphicsView):
@@ -18,7 +18,7 @@ class QGraphView(QGraphicsView):
     def set_graph(self, graph: Graph):
         self.graph = graph
         # рисуем вершины
-        for i in range(len(self.graph.vertexes)):
+        for i in range(len(self.graph.adjacency_matrix)):
             # addEllipse(qreal x, qreal y, qreal w, qreal h, const QPen &pen = QPen(), const QBrush &brush = QBrush())
             self.scene.addEllipse(randint(0, 100), randint(0, 100), 10, 10, self.pen, self.brush)
         print(graph)
