@@ -15,7 +15,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
         self.graph = Graph()
-        self.load_graph()
+        # self.load_graph()
         self.graphView.set_graph(self.graph)
 
         # коннектим обработку нажатия кнопок меню
