@@ -19,7 +19,8 @@ class Graph:
         self.vertexes = {}
         # vertexes_coordinates = dict(name, Vertex)
         self.vertexes_coordinates = {}
-        self.history = []
+        self.__history = []
+        self.__history_num = 0
 
     def add_edge(self, v_from: str, v_to: str, weight: int = 1):
         if self.vertexes.get(v_from) is not None and self.vertexes.get(v_to) is not None:
@@ -51,7 +52,25 @@ class Graph:
         self.vertexes_coordinates.clear()
 
     def undo(self):
-        pass
+        if self.__history_num == 0:
+            return
+
+        act_list = self.__history[self.__history_num]
+
+        if self.ADD_EDGE == act_list[0]:
+            self.del_edge(act_list[1], act_list[2], act_list[3])
+        elif self.ADD_VERTEX == act_list[0]:
+            self.del_vertex(act_list[1])
+        elif self.DEL_EDGE == act_list[0]:
+            self.add_edge(act_list[1], act_list[2], act_list[3])
+        elif self.DEL_VERTEX == act_list[0]:
+            # [action_code, vertex_name, x, y, copy(vertex_row), copy(related_vertex)]
+            self.vertexes_coordinates[act_list[1]] = Vertex(act_list[1], act_list[2], act_list[3])
+            self.vertexes[act_list[1]] = copy(act_list[4])
+            for v_name, w_list in act_list[5].items():
+                self.vertexes[v_name][act_list[1]] = copy(w_list)
+
+        self.__history_num -= 1
 
     def next(self):
         pass
@@ -77,22 +96,30 @@ class Graph:
             координаты вершины (x, y), а также словарь от каких вершин шли ребра к удаляемой (related_vertex:
             dict = {name, list}, где name это имя вершины от которой идут ребра, а list список весов этих ребер
         """
-        if action_code == self.ADD_VERTEX:
-            if vertex_name is None:
+        # если был возврат, то нужно удалить последующие действия
+        while len(self.__history) > self.__history_num:
+            self.__history.pop()
+
+        if self.ADD_VERTEX == action_code:
+            if vertex_name is None or x is None or y is None:
                 raise Exception('ADD_VERTEX error. Some of arguments are None')
-            self.history.append([action_code])
-        elif action_code == self.ADD_EDGE:
+            self.__history.append([action_code, x, y])
+
+        elif self.ADD_EDGE == action_code:
             if vertex_name is None or following_vertex_name is None or weight is None:
                 raise Exception('ADD_EDGE error. Some of arguments are None')
-            self.history.append([action_code, vertex_name, following_vertex_name, weight])
-        elif action_code == self.DEL_EDGE:
+            self.__history.append([action_code, vertex_name, following_vertex_name, weight])
+
+        elif self.DEL_EDGE == action_code:
             if vertex_name is None or following_vertex_name is None or weight is None:
                 raise Exception('DEL_EDGE error. Some of arguments are None')
-            self.history.append([action_code, vertex_name, following_vertex_name, weight])
-        elif action_code == self.DEL_VERTEX:
+            self.__history.append([action_code, vertex_name, following_vertex_name, weight])
+
+        elif self.DEL_VERTEX == action_code:
             if vertex_name is None or x is None or y is None or vertex_row is None or related_vertex is None:
                 raise Exception('DEL_VERTEX error. Some of arguments are None')
-            self.history.append([action_code, vertex_name, x, y, copy(vertex_row), copy(related_vertex)])
+            self.__history.append([action_code, vertex_name, x, y, copy(vertex_row), copy(related_vertex)])
 
-        if len(self.history) > self.HISTORY_REC_NUM:
-            self.history.pop(0)
+        self.__history_num += 1
+        if len(self.__history) > self.HISTORY_REC_NUM:
+            self.__history.pop(0)
