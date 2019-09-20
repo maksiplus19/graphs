@@ -3,7 +3,7 @@ from PyQt5.QtGui import QMouseEvent, QPen, QBrush, QColor, QResizeEvent, QFont
 from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsItemGroup, QGraphicsEllipseItem, \
     QGraphicsSimpleTextItem
 from graph.graph import Graph
-from ui.sourse.graphicvertex import GraphicVertex
+from ui.sourse.graphicsvertex import GraphicsVertex
 
 
 class QGraphView(QGraphicsView):
@@ -17,8 +17,6 @@ class QGraphView(QGraphicsView):
 
         self.pen = QPen(QBrush(QColor(68, 191, 46)), 3)
         self.brush = QBrush(QColor(91, 255, 62))
-
-        self.current_item = QGraphicsItemGroup()
 
     def set_graph(self, graph: Graph):
         self.graph = graph
@@ -44,7 +42,6 @@ class QGraphView(QGraphicsView):
             # создаем элипс для вершины
             ellipse = QGraphicsEllipseItem(v.x - (self.vertex_radius / 2), v.y - (self.vertex_radius / 2),
                                            self.vertex_radius, self.vertex_radius)
-
             ellipse.setPen(self.pen)
             ellipse.setBrush(self.brush)
 
@@ -53,15 +50,14 @@ class QGraphView(QGraphicsView):
             font = QFont()
             font.setPixelSize(self.vertex_radius / 2)
             text.setFont(font)
-
             # настраиваем расположение текста
             if int(v.name) < 10:
                 text.setPos(v.x - self.vertex_radius / 6, v.y - self.vertex_radius / 3)
             else:
                 text.setPos(v.x - self.vertex_radius / 4, v.y - self.vertex_radius / 3)
 
-            vertex = GraphicVertex(v)
             # объединяем и добавляем на сцену
+            vertex = GraphicsVertex(v)
             vertex.addToGroup(ellipse)
             vertex.addToGroup(text)
 

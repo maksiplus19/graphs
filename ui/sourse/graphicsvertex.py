@@ -5,7 +5,7 @@ from PyQt5.QtGui import QMouseEvent
 from graph.vertex import Vertex
 
 
-class GraphicVertex(QGraphicsItemGroup):
+class GraphicsVertex(QGraphicsItemGroup):
     def __init__(self, v: Vertex):
         super().__init__()
         self.v = v
