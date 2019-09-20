@@ -13,18 +13,22 @@ class Graph:
     """Класс графа"""
     def __init__(self):
         # Граф хранится в виде словаря.
-        # Каждой вершине соответсвуеет словарь вершин,
+        # Каждой вершине соответствует словарь вершин,
         # до которых есть дуги и список их весов
         # vertexes = dict(name, dict(name, list))
         self.vertexes = {}
         # vertexes_coordinates = dict(name, Vertex)
         self.vertexes_coordinates = {}
         self.history = []
+        self.oriented = True
 
     def add_edge(self, v_from: str, v_to: str, weight: int = 1):
         if self.vertexes.get(v_from) is not None and self.vertexes.get(v_to) is not None:
+            if self.vertexes[v_from].get(v_to) is None:
+                self.vertexes[v_from][v_to] = []
             self.vertexes[v_from][v_to].append(weight)
             self.vertexes[v_from][v_to].sort()
+            print(self.vertexes)
         else:
             raise Exception('No vertex for adding edge')
 
