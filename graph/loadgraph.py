@@ -1,5 +1,7 @@
 import json
 from graph.graph import Graph
+from graph.vertex import Vertex
+
 
 class LoadGraph:
     """Статический класс для загрузки графа"""
@@ -7,7 +9,14 @@ class LoadGraph:
     @staticmethod
     def load(graph: Graph, file_name: str):
         with open(file_name, "r") as file:
-            graph.vertexes = json.load(file)
+            graph.clear()
+            text = file.read()
+            vertexes, v_coordinates = text.split('|', maxsplit=2)
+            graph.vertexes = json.loads(vertexes)
+            v_coordinates = json.loads(v_coordinates)
+            for v in v_coordinates:
+                graph.vertexes_coordinates[v['name']] = Vertex(v['name'], v['x'], v['y'])
+            graph.set_vertexes_counter(len(v_coordinates))
 
     @staticmethod
     def load_from_adjacency_list(graph: Graph, file_name: str):
