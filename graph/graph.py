@@ -11,6 +11,7 @@ class Graph:
     MOVE_VERTEX = 5
     HISTORY_REC_NUM = 10
     """Класс графа"""
+
     def __init__(self):
         # Граф хранится в виде словаря.
         # Каждой вершине соответсвуеет словарь вершин,
@@ -19,7 +20,8 @@ class Graph:
         self.vertexes = {}
         # vertexes_coordinates = dict(name, Vertex)
         self.vertexes_coordinates = {}
-        self.oriented = True
+        self.oriented = False
+        self.__vertex_counter = 0
         self.__history = []
         self.__history_num = 0
 
@@ -126,3 +128,10 @@ class Graph:
         self.__history_num += 1
         if len(self.__history) > self.HISTORY_REC_NUM:
             self.__history.pop(0)
+
+    def get_new_vertex_name(self) -> str:
+        self.__vertex_counter += 1
+        return str(self.__vertex_counter - 1)
+
+    def set_vertexes_counter(self, value: int):
+        self.__vertex_counter = value
