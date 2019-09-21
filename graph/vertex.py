@@ -4,6 +4,3 @@ class Vertex:
         self.y = y
         self.x = x
         self.name = name
-
-    def to_dict(self):
-        return self.__dict__
