@@ -1,7 +1,9 @@
 from PyQt5.QtCore import QPointF
-from PyQt5.QtGui import QMouseEvent, QTransform
+from PyQt5.QtGui import QMouseEvent, QTransform, QPainter
 from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene
 from graph.graph import Graph
+from graph.loadgraph import LoadGraph
+from graph.savegraph import SaveGraph
 from ui.sourse.graphicsvertex import GraphicsVertex
 
 
@@ -16,6 +18,8 @@ class QGraphView(QGraphicsView):
         self.startPos = None
         self.endPos = None
         self.edge_from = None
+
+        self.setRenderHint(QPainter.Antialiasing)
 
     def set_graph(self, graph: Graph):
         self.graph = graph
@@ -32,8 +36,6 @@ class QGraphView(QGraphicsView):
             # добавляем вершину в граф
             self.graph.add_vertex(name, pos.x(), pos.y())
             self.drawGraph()
-        if event.button() == 2:
-            print(self.scene.itemAt(self.mapToScene(event.pos()), QTransform()).group().group())
 
     # def mousePressEvent(self, event: QMouseEvent):
     #     if event.button() == 2:
@@ -46,7 +48,7 @@ class QGraphView(QGraphicsView):
     #         item = self.scene.itemAt(self.mapToScene(event.pos()), QTransform())
     #         if item:
     #             self.scene.itemAt(self.mapToScene(event.pos()), QTransform()).group().mousePressEvent(event)
-    #
+
     # def mouseMoveEvent(self, event: QMouseEvent):
     #     self.drawGraph()
     #     if self.rightButtonPressed:
