@@ -23,6 +23,7 @@ class SaveGraph:
                                  str(graph.vertexes_coordinates[key].y) + ')|'
             vertexes = vertexes[:-1]
             vertexes += '}'
+            file.write(vertexes)
 
     @staticmethod
     def save_as_incidence_matrix(graph: Graph, file_name: str):
@@ -54,6 +55,9 @@ class SaveGraph:
                     for weight in to_list:
                         count += 1
                         ribs += f'{count} ({weight}, {v_from}, {v_to}, {oriented})|'
+            if ribs[len(ribs)-1] != '{':
+                ribs = ribs[:-1]
+            ribs += '}'
             file.write(ribs)
 
     @staticmethod

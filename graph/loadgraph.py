@@ -1,4 +1,6 @@
 import json
+import random
+
 from graph.graph import Graph
 from graph.vertex import Vertex
 
@@ -85,9 +87,56 @@ class LoadGraph:
         # далее надо сохранить информацию из матрицы в словарь
 
     @staticmethod
-    def load_from_incidence_matrix(graph: Graph, filr_name: str):
+    def load_from_incidence_matrix(graph: Graph, file_name: str):
         pass
 
     @staticmethod
+    def load_from_ribs_list(graph: Graph, file_name: str):
+        graph.clear()
+        with open(file_name, mode='r') as file:
+            for line in file:
+                name = ''
+                params = []
+                for index in line:
+                    if index == '{':
+                        value = ''
+                    if index.isdigit():
+                        value += index
+                    if index == '(':
+                        name = value
+                        value = ''
+                    if index == ',':
+                        params.append(value)
+                        value = ''
+                    if index == ')':
+                        params.append(value)
+                        print(params, name)
+                        value = ''
+                        graph.add_vertex(params[1], random.randint(0, 100), random.randint(0, 100))
+                        graph.add_vertex(params[2], random.randint(0, 100), random.randint(0, 100))
+                        graph.add_edge(params[1], params[2], int(params[0]))
+                        graph.add_edge(params[2], params[1], int(params[0]))
+                        graph.oriented = bool(int(params[3]))
+                        params = []
+
+    @staticmethod
     def load_from_arc_list(graph: Graph, file_name: str):
-        pass
+        graph.clear()
+        with open(file_name, mode='r') as file:
+            for line in file:
+                name = ''
+                x = ''
+                for index in line:
+                    if index == '{':
+                        value = ''
+                    if index.isdigit() or index == '.' or index == '-':
+                        value += index
+                    if index == ',':
+                        x = value
+                        value = ''
+                    if index == '(':
+                        name = value
+                        value = ''
+                    if index == ')':
+                        graph.add_vertex(name, float(x), float(value))
+                        value = ''
