@@ -1,5 +1,8 @@
 import json
 
+from PyQt5.QtGui import QPainter, QImage, QColor
+from PyQt5.QtWidgets import QGraphicsScene
+
 from graph.graph import Graph
 import numpy as np
 
@@ -71,3 +74,13 @@ class SaveGraph:
                     for weight in to_list:
                         adj_matrix[int(v_from)][int(v_to)] += weight
             file.write(str(adj_matrix))
+
+    @staticmethod
+    def save_as_image(file_name: str, scene: QGraphicsScene):
+        image = QImage(scene.width() + 0*scene.width(), scene.height() + 0*scene.height(),
+                       QImage.Format_ARGB32_Premultiplied)
+        image.fill(QColor(255, 255, 255).toRgb())
+        painter = QPainter(image)
+        scene.render(painter)
+        painter.end()
+        image.save(file_name)
