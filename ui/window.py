@@ -4,7 +4,6 @@ from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QFileDialog, QMessageBox
 
 from graph.graph import Graph
-from graph.vertex import Vertex
 from graph.loadgraph import LoadGraph
 from graph.savegraph import SaveGraph
 from ui.design.design import Ui_MainWindow
@@ -62,7 +61,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                                 'Матрица инцидентности (*.gim)\n'
                                                 'Список дуг (*.gar)\n'
                                                 'Список вершин (*.gal)\n'
-                                                'JSON файлы (*.json)')[0]
+                                                'JSON файлы (*.json)\n'
+                                                'Изображение (*.png)')[0]
         if not file_name:
             return
         # вытаскиваем формат
@@ -79,6 +79,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             SaveGraph.save_as_ribs_list(self.graph, file_name)
         elif file_type == 'json':
             SaveGraph.save(self.graph, file_name)
+        elif file_type == 'png':
+            SaveGraph.save_as_image(file_name, self.graphView.scene)
         else:
             QMessageBox.warning(self, 'Ошибка', f'Неизвестный формат файла "{file_type}"')
 
