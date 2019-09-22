@@ -7,18 +7,37 @@ from graph.vertex import Vertex
 
 class LoadGraph:
     """Статический класс для загрузки графа"""
+    @staticmethod
+    def __split_file(file_name: str) -> (str, str):
+        with open(file_name, "r") as file:
+            # проходим по файлу построчно и отделяем коментарии, а затем склеиваем обратно
+            text = ''.join([line.split('%')[0] for line in file])
+        if '||' in text:
+            # если есть координаты
+            return text.split('||', maxsplit=1)
+        else:
+            # если координат нет
+            return text, None
 
     @staticmethod
     def load(graph: Graph, file_name: str):
-        with open(file_name, "r") as file:
-            graph.clear()
-            text = file.read()
-            vertexes, v_coordinates = text.split('|', maxsplit=2)
-            graph.vertexes = json.loads(vertexes)
+        graph.clear()
+        # получаем данные из файла
+        vertexes, v_coordinates = LoadGraph.__split_file(file_name)
+
+        # десериализуем вершены-ребра
+        graph.vertexes = json.loads(vertexes)
+        # устанавливаем счетчик вершин
+        graph.set_vertexes_counter(len(graph.vertexes))
+        # загружем данные о координатах или генерируем, если их нет
+        if v_coordinates is not None:
             v_coordinates = json.loads(v_coordinates)
-            for v in v_coordinates:
-                graph.vertexes_coordinates[v['name']] = Vertex(v['name'], v['x'], v['y'])
-            graph.set_vertexes_counter(len(v_coordinates))
+            for d in v_coordinates:
+                graph.vertexes_coordinates[d['name']] = Vertex(d['name'], d['x'], d['y'])
+        else:
+            for v in graph.vertexes:
+                graph.vertexes_coordinates[v] = Vertex(v, random.randint(0, 100), random.randint(0, 100))
+
 
     @staticmethod
     def load_from_adjacency_list(graph: Graph, file_name: str):
@@ -118,6 +137,7 @@ class LoadGraph:
                         graph.add_edge(params[2], params[1], int(params[0]))
                         graph.oriented = bool(int(params[3]))
                         params = []
+        graph.set_vertexes_counter(len(graph.vertexes))
 
     @staticmethod
     def load_from_arc_list(graph: Graph, file_name: str):
