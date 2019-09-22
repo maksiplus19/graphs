@@ -55,6 +55,7 @@ class Graph:
     def clear(self):
         self.vertexes.clear()
         self.vertexes_coordinates.clear()
+        self.__vertex_counter = 0
 
     def undo(self):
         if self.__history_num == 0:
