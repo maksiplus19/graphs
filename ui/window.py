@@ -29,9 +29,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         file_name = QFileDialog.getOpenFileName(self, 'Выбирите файл', 'C:\\Users\\admin\\PycharmProjects\\graphs',
                                                 'JSON файлы (*.json)\n'
                                                 'Матрица смежности  (*.gam)\n'
-                                                'Список смежности (*.gal)\n'
                                                 'Матрица инцидентности (*.gim)\n'
                                                 'Список дуг (*.gar)\n'
+                                                'Список вершин (*.gal)\n'
                                                 'Все файлы (*)')[0]
         if not file_name:
             return
@@ -40,13 +40,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # LoadGraph.load(self.graph, file_name)
         # в зависимости от типа выбираем метод загрузки
         if file_type == 'gal':
-            LoadGraph.load_from_adjacency_list(self.graph, file_name)
+            LoadGraph.load_from_arc_list(self.graph, file_name)
         elif file_type == 'gam':
             LoadGraph.load_from_adjacency_matrix(self.graph, file_name)
         elif file_type == 'gim':
             LoadGraph.load_from_incidence_matrix(self.graph, file_name)
         elif file_type == 'gar':
-            LoadGraph.load_from_arc_list(self.graph, file_name)
+            LoadGraph.load_from_ribs_list(self.graph, file_name)
         elif file_type == 'json':
             print('here')
             LoadGraph.load(self.graph, file_name)
@@ -59,9 +59,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # получаем имя файла
         file_name = QFileDialog.getSaveFileName(self, 'Выбирите файл', 'C:\\Users\\admin\\PycharmProjects\\graphs',
                                                 'Матрица смежности  (*.gam)\n'
-                                                'Список смежности (*.gal)\n'
                                                 'Матрица инцидентности (*.gim)\n'
                                                 'Список дуг (*.gar)\n'
+                                                'Список вершин (*.gal)\n'
                                                 'JSON файлы (*.json)')[0]
         if not file_name:
             return
@@ -69,8 +69,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         file_type = file_name.split('.')[-1]
         # LoadGraph.load(self.graph, file_name)
         # в зависимости от типа выбираем метод сохранения
-        # if file_type == 'gal':
-        #     SaveGraph.save_as_adjacency_list(self.graph, file_name)
+        if file_type == 'gal':
+            SaveGraph.save_as_vertexes_list(self.graph, file_name)
         if file_type == 'gam':
             SaveGraph.save_as_adjacency_matrix(self.graph, file_name)
         elif file_type == 'gim':
