@@ -1,9 +1,7 @@
 from PyQt5.QtCore import QPointF
-from PyQt5.QtGui import QMouseEvent, QTransform, QPainter
+from PyQt5.QtGui import QMouseEvent, QPainter
 from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene
 from graph.graph import Graph
-from graph.loadgraph import LoadGraph
-from graph.savegraph import SaveGraph
 from ui.sourse.graphicsvertex import GraphicsVertex
 
 
