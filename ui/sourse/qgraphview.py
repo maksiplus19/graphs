@@ -3,7 +3,7 @@ from PyQt5.QtGui import QMouseEvent, QPainter
 from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene
 from graph.graph import Graph
 from ui.sourse.graphicsvertex import GraphicsVertex
-
+from graph.savegraph import  SaveGraph
 
 class QGraphView(QGraphicsView):
     def __init__(self, centralwidget):
@@ -21,10 +21,10 @@ class QGraphView(QGraphicsView):
 
     def set_graph(self, graph: Graph):
         self.graph = graph
-        print(graph)
 
     def mouseDoubleClickEvent(self, event: QMouseEvent):
         print('double click')
+        SaveGraph.save_as_incidence_matrix(self.graph.vertexes, "as.txt")
         # только левая кнопка мыши
         if event.button() == 1:
             # получаем имя вершины
@@ -34,6 +34,9 @@ class QGraphView(QGraphicsView):
             # добавляем вершину в граф
             self.graph.add_vertex(name, pos.x(), pos.y())
             self.drawGraph()
+        if event.button() == 2:
+            self.graph.add_edge('0', '1')
+            self.graph.add_edge('0', '2')
 
     # def mousePressEvent(self, event: QMouseEvent):
     #     if event.button() == 2:
