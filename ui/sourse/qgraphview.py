@@ -21,7 +21,6 @@ class QGraphView(QGraphicsView):
 
     def set_graph(self, graph: Graph):
         self.graph = graph
-        print(graph)
 
     def mouseDoubleClickEvent(self, event: QMouseEvent):
         print('double click')
