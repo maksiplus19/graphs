@@ -29,9 +29,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                                 'JSON файлы (*.json)\n'
                                                 'Матрица смежности  (*.gam)\n'
                                                 'Матрица инцидентности (*.gim)\n'
-                                                'Список дуг (*.gar)\n'
-                                                'Список вершин (*.gal)\n'
-                                                'Все файлы (*)')[0]
+                                                'Список дуг (*.gal)\n'
+                                                'Список вершин (*.gvl)\n'
+                                                'Все файлы (*.*)')[0]
         if not file_name:
             return
         # вытаскиваем формат
@@ -47,7 +47,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         elif file_type == 'gar':
             LoadGraph.load_from_ribs_list(self.graph, file_name)
         elif file_type == 'json':
-            print('here')
             LoadGraph.load(self.graph, file_name)
         else:
             QMessageBox.warning(self, 'Ошибка', 'Неизвестный формат файла')
@@ -59,8 +58,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         file_name = QFileDialog.getSaveFileName(self, 'Выбирите файл', 'C:\\Users\\admin\\PycharmProjects\\graphs',
                                                 'Матрица смежности  (*.gam)\n'
                                                 'Матрица инцидентности (*.gim)\n'
-                                                'Список дуг (*.gar)\n'
-                                                'Список вершин (*.gal)\n'
+                                                'Список дуг (*.gal)\n'
+                                                'Список вершин (*.gvl)\n'
                                                 'JSON файлы (*.json)\n'
                                                 'Изображение (*.png)')[0]
         if not file_name:
@@ -69,13 +68,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         file_type = file_name.split('.')[-1]
         # LoadGraph.load(self.graph, file_name)
         # в зависимости от типа выбираем метод сохранения
-        if file_type == 'gal':
+        if file_type == 'gvl':
             SaveGraph.save_as_vertexes_list(self.graph, file_name)
         if file_type == 'gam':
             SaveGraph.save_as_adjacency_matrix(self.graph, file_name)
         elif file_type == 'gim':
             SaveGraph.save_as_incidence_matrix(self.graph, file_name)
-        elif file_type == 'gar':
+        elif file_type == 'gal':
             SaveGraph.save_as_ribs_list(self.graph, file_name)
         elif file_type == 'json':
             SaveGraph.save(self.graph, file_name)
@@ -85,10 +84,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             QMessageBox.warning(self, 'Ошибка', f'Неизвестный формат файла "{file_type}"')
 
     def undo(self):
-        self.graph.undo()
+        if self.graph.undo():
+            self.graphView.drawGraph()
 
-    def next(self):
-        self.graph.next()
+    def redo(self):
+        if self.graph.redo():
+            self.graphView.drawGraph()
 
 
 if __name__ == '__main__':

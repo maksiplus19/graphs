@@ -9,6 +9,7 @@ class Graph:
     DEL_VERTEX = 3
     DEL_EDGE = 4
     MOVE_VERTEX = 5
+    GRAPH_CLEAR = 6
     HISTORY_REC_NUM = 10
     """Класс графа"""
 
@@ -23,29 +24,58 @@ class Graph:
         self.oriented = False
         self.__vertex_counter = 0
         self.__history = []
-        self.__history_num = 0
+        self.__history_counter = 0
 
-    def add_edge(self, v_from: str, v_to: str, weight: int = 1):
+    def add_edge(self, v_from: str, v_to: str, weight: int = 1, save: bool = True):
         if self.vertexes.get(v_from) is not None and self.vertexes.get(v_to) is not None:
+            if save:
+                # данное условие необходимо для того, что не было повторного сохранения при откате
+                # или повторении действия, т.к. оно уже сохранено
+                self.save_action(self.ADD_EDGE, vertex_name=v_from, following_vertex_name=v_to, weight=weight)
+
+            # если еще список ребер еще не создан, то создаем его
             if self.vertexes[v_from].get(v_to) is None:
                 self.vertexes[v_from][v_to] = []
+            # добавляем ребро
             self.vertexes[v_from][v_to].append(weight)
+            # сортируем, чтобы ребро с меньшим весом было первым
             self.vertexes[v_from][v_to].sort()
         else:
             raise Exception('No vertex for adding edge')
 
-    def add_vertex(self, name: str, x: int, y: int):
+    def add_vertex(self, name: str, x: int, y: int, save: bool = True):
         if self.vertexes_coordinates.get(name) is None:
+            if save:
+                # данное условие необходимо для того, что не было повторного сохранения при откате
+                # или повторении действия, т.к. оно уже сохранено
+                self.save_action(self.ADD_VERTEX, vertex_name=name, x=x, y=y)
+
             self.vertexes_coordinates[name] = Vertex(name, x, y)
             self.vertexes[name] = {}
 
-    def del_edge(self, v_from: str, v_to: str, weight: int):
+    def del_edge(self, v_from: str, v_to: str, weight: int, save: bool = True):
         if self.vertexes.get(v_from) is not None and self.vertexes.get(v_to) is not None:
+            if save:
+                # данное условие необходимо для того, что не было повторного сохранения при откате
+                # или повторении действия, т.к. оно уже сохранено
+                self.save_action(self.DEL_EDGE, vertex_name=v_from, following_vertex_name=v_to, weight=weight)
+
             arr = self.vertexes[v_from][v_to]
             arr.pop(arr.index(weight))
 
-    def del_vertex(self, name: str):
+    def del_vertex(self, name: str, save: bool = True):
         if self.vertexes_coordinates.get(name):
+            if save:
+                # данное условие необходимо для того, что не было повторного сохранения при откате
+                # или повторении действия, т.к. оно уже сохранено
+                v = self.vertexes_coordinates[name]
+                related_vertex = {}
+                # сохраняем все ребра, которые идут в удаляемую вершину
+                for v_from, adjacency_dict in self.vertexes.items():
+                    if adjacency_dict.get(name) is not None:
+                        related_vertex[v_from] = adjacency_dict[name]
+                self.save_action(self.DEL_VERTEX, vertex_name=name, x=v.x, y=v.y, vertex_row=self.vertexes[name])
+
             self.vertexes_coordinates.pop(name)
             self.vertexes.pop(name)
             for item in self.vertexes.values():
@@ -56,30 +86,61 @@ class Graph:
         self.vertexes.clear()
         self.vertexes_coordinates.clear()
         self.__vertex_counter = 0
+        self.__history.clear()
+        self.__history_counter = 0
 
     def undo(self):
-        if self.__history_num == 0:
-            return
+        # если нечего отменять выходим
+        if self.__history_counter == 0:
+            return False
 
-        act_list = self.__history[self.__history_num]
+        # достаем данные из истории
+        act_list = self.__history[self.__history_counter - 1]
 
+        # выполняем действие обратное выполненому
         if self.ADD_EDGE == act_list[0]:
-            self.del_edge(act_list[1], act_list[2], act_list[3])
+            self.del_edge(act_list[1], act_list[2], act_list[3], False)
         elif self.ADD_VERTEX == act_list[0]:
-            self.del_vertex(act_list[1])
+            self.del_vertex(act_list[1], False)
+            self.set_vertexes_counter(int(self.get_new_vertex_name())-1)
         elif self.DEL_EDGE == act_list[0]:
-            self.add_edge(act_list[1], act_list[2], act_list[3])
+            self.add_edge(act_list[1], act_list[2], act_list[3], False)
         elif self.DEL_VERTEX == act_list[0]:
-            # [action_code, vertex_name, x, y, copy(vertex_row), copy(related_vertex)]
             self.vertexes_coordinates[act_list[1]] = Vertex(act_list[1], act_list[2], act_list[3])
             self.vertexes[act_list[1]] = copy(act_list[4])
             for v_name, w_list in act_list[5].items():
                 self.vertexes[v_name][act_list[1]] = copy(w_list)
 
-        self.__history_num -= 1
+        # сдвигаем счетчик действия/состояния на пердыдущее
+        self.__history_counter -= 1
+        return True
 
-    def next(self):
-        pass
+    def redo(self):
+        # если не было откатов, то нечего повторять
+        if len(self.__history) == self.__history_counter:
+            return False
+        # если счетчик событий больше, чтем есть событий - ошибка
+        elif len(self.__history) < self.__history_counter:
+            raise Exception(f'Length of history array less than history counter\n'
+                            f'len = {len(self.__history)}\n'
+                            f'history_num = {self.__history_counter}')
+
+        # сохраняем данные события
+        act_list = self.__history[self.__history_counter]
+
+        # просто повторение действий
+        if self.ADD_EDGE == act_list[0]:
+            self.add_edge(act_list[1], act_list[2], act_list[3], False)
+        elif self.ADD_VERTEX == act_list[0]:
+            self.add_vertex(act_list[1], act_list[2], act_list[3], False)
+            self.set_vertexes_counter(int(self.get_new_vertex_name()) + 1)
+        elif self.DEL_EDGE == act_list[0]:
+            self.del_edge(act_list[1], act_list[2], act_list[3], False)
+        elif self.DEL_VERTEX == act_list[0]:
+            self.del_vertex(act_list[1], False)
+
+        self.__history_counter += 1
+        return True
 
     def save_action(self, action_code: int, vertex_name: str = None, following_vertex_name: str = None,
                     weight: int = None, x: int = None, y: int = None, vertex_row: dict = None,
@@ -103,30 +164,36 @@ class Graph:
             dict = {name, list}, где name это имя вершины от которой идут ребра, а list список весов этих ребер
         """
         # если был возврат, то нужно удалить последующие действия
-        while len(self.__history) > self.__history_num:
+        while len(self.__history) > self.__history_counter:
             self.__history.pop()
 
+        # добавление вершины
         if self.ADD_VERTEX == action_code:
             if vertex_name is None or x is None or y is None:
                 raise Exception('ADD_VERTEX error. Some of arguments are None')
-            self.__history.append([action_code, x, y])
+            self.__history.append([action_code, vertex_name, x, y])
 
+        # добавление ребра
         elif self.ADD_EDGE == action_code:
             if vertex_name is None or following_vertex_name is None or weight is None:
                 raise Exception('ADD_EDGE error. Some of arguments are None')
             self.__history.append([action_code, vertex_name, following_vertex_name, weight])
 
+        # удаление ребра
         elif self.DEL_EDGE == action_code:
             if vertex_name is None or following_vertex_name is None or weight is None:
                 raise Exception('DEL_EDGE error. Some of arguments are None')
             self.__history.append([action_code, vertex_name, following_vertex_name, weight])
 
+        # удаление вершины
         elif self.DEL_VERTEX == action_code:
             if vertex_name is None or x is None or y is None or vertex_row is None or related_vertex is None:
                 raise Exception('DEL_VERTEX error. Some of arguments are None')
             self.__history.append([action_code, vertex_name, x, y, copy(vertex_row), copy(related_vertex)])
 
-        self.__history_num += 1
+        # после добавления действия счетчик устанавливается на последнее действие
+        self.__history_counter = len(self.__history)
+        # удаляем самое старое действие, если их больше установленного
         if len(self.__history) > self.HISTORY_REC_NUM:
             self.__history.pop(0)
 

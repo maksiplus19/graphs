@@ -14,7 +14,7 @@ class SaveGraph:
         with open(file_name, "w") as file:
             json.dump(graph.vertexes, file)
             v_c = json.dumps([v.to_dict() for v in graph.vertexes_coordinates.values()])
-            file.write(f'|{v_c}')
+            file.write(f'||{v_c}')
 
 
     @staticmethod
