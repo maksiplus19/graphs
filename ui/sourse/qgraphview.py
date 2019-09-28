@@ -94,8 +94,6 @@ class QGraphView(QGraphicsView):
                 for edge in to_list:
                     if not self.graph.oriented:
                         self.scene.addLine(v_from.x, v_from.y, v_to.x, v_to.y)
-                    else:
-                        self.scene.addLine(v_from.x, v_from.y, v_to.x, v_to.y)
 
         # рисуем вершины
         for v in self.graph.vertexes_coordinates.values():

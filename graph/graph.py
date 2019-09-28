@@ -1,7 +1,5 @@
 from copy import copy
 
-from PyQt5.QtCore import QObject, pyqtSignal
-
 from graph.vertex import Vertex
 
 
@@ -15,10 +13,6 @@ class Graph:
     HISTORY_REC_NUM = 10
     """Класс графа"""
 
-    class Signals(QObject):
-        # сигнал, который будет отправляться при изменении графа
-        update = pyqtSignal()
-
     def __init__(self):
         # Граф хранится в виде словаря.
         # Каждой вершине соответсвуеет словарь вершин,
@@ -28,36 +22,29 @@ class Graph:
         # vertexes_coordinates = dict(name, Vertex)
         self.vertexes_coordinates = {}
         self.oriented = False
+        self.__vertex_counter = 0
         self.__history = []
         self.__history_counter = 0
-        self.signals = self.Signals()
 
     def add_edge(self, v_from: str, v_to: str, weight: int = 1, save: bool = True):
-        if v_from in self.vertexes and v_to in self.vertexes:
+        if self.vertexes.get(v_from) is not None and self.vertexes.get(v_to) is not None:
             if save:
                 # данное условие необходимо для того, что не было повторного сохранения при откате
                 # или повторении действия, т.к. оно уже сохранено
                 self.save_action(self.ADD_EDGE, vertex_name=v_from, following_vertex_name=v_to, weight=weight)
 
             # если еще список ребер еще не создан, то создаем его
-            if v_to not in self.vertexes[v_from]:
+            if self.vertexes[v_from].get(v_to) is None:
                 self.vertexes[v_from][v_to] = []
             # добавляем ребро
             self.vertexes[v_from][v_to].append(weight)
             # сортируем, чтобы ребро с меньшим весом было первым
             self.vertexes[v_from][v_to].sort()
-            if not self.oriented:
-                # self.add_edge(v_to, v_from, weight)
-                if v_from not in self.vertexes[v_to]:
-                    self.vertexes[v_to][v_from] = []
-                self.vertexes[v_to][v_from].append(weight)
-                self.vertexes[v_to][v_from].sort()
-            self.signals.update.emit()
         else:
             raise Exception('No vertex for adding edge')
 
-    def add_vertex(self, name: str, x: float, y: float, save: bool = True):
-        if name not in self.vertexes_coordinates:
+    def add_vertex(self, name: str, x: int, y: int, save: bool = True):
+        if self.vertexes_coordinates.get(name) is None:
             if save:
                 # данное условие необходимо для того, что не было повторного сохранения при откате
                 # или повторении действия, т.к. оно уже сохранено
@@ -65,21 +52,19 @@ class Graph:
 
             self.vertexes_coordinates[name] = Vertex(name, x, y)
             self.vertexes[name] = {}
-            self.signals.update.emit()
 
     def del_edge(self, v_from: str, v_to: str, weight: int, save: bool = True):
-        if v_from in self.vertexes and v_to in self.vertexes:
+        if self.vertexes.get(v_from) is not None and self.vertexes.get(v_to) is not None:
+            if save:
+                # данное условие необходимо для того, что не было повторного сохранения при откате
+                # или повторении действия, т.к. оно уже сохранено
+                self.save_action(self.DEL_EDGE, vertex_name=v_from, following_vertex_name=v_to, weight=weight)
+
             arr = self.vertexes[v_from][v_to]
-            if weight in arr:
-                if save:
-                    # данное условие необходимо для того, что не было повторного сохранения при откате
-                    # или повторении действия, т.к. оно уже сохранено
-                    self.save_action(self.DEL_EDGE, vertex_name=v_from, following_vertex_name=v_to, weight=weight)
-                arr.pop(arr.index(weight))
-            self.signals.update.emit()
+            arr.pop(arr.index(weight))
 
     def del_vertex(self, name: str, save: bool = True):
-        if name in self.vertexes_coordinates:
+        if self.vertexes_coordinates.get(name):
             if save:
                 # данное условие необходимо для того, что не было повторного сохранения при откате
                 # или повторении действия, т.к. оно уже сохранено
@@ -87,7 +72,7 @@ class Graph:
                 related_vertex = {}
                 # сохраняем все ребра, которые идут в удаляемую вершину
                 for v_from, adjacency_dict in self.vertexes.items():
-                    if name in adjacency_dict:
+                    if adjacency_dict.get(name) is not None:
                         related_vertex[v_from] = adjacency_dict[name]
                 self.save_action(self.DEL_VERTEX, vertex_name=name, x=v.x, y=v.y, vertex_row=self.vertexes[name])
 
@@ -96,14 +81,13 @@ class Graph:
             for item in self.vertexes.values():
                 if name in item:
                     item.pop(name)
-            self.signals.update.emit()
 
     def clear(self):
         self.vertexes.clear()
         self.vertexes_coordinates.clear()
+        self.__vertex_counter = 0
         self.__history.clear()
         self.__history_counter = 0
-        self.signals.update.emit()
 
     def undo(self):
         # если нечего отменять выходим
@@ -116,10 +100,9 @@ class Graph:
         # выполняем действие обратное выполненому
         if self.ADD_EDGE == act_list[0]:
             self.del_edge(act_list[1], act_list[2], act_list[3], False)
-            if not self.oriented:
-                self.del_edge(act_list[2], act_list[1], act_list[3], False)
         elif self.ADD_VERTEX == act_list[0]:
             self.del_vertex(act_list[1], False)
+            self.set_vertexes_counter(int(self.get_new_vertex_name())-1)
         elif self.DEL_EDGE == act_list[0]:
             self.add_edge(act_list[1], act_list[2], act_list[3], False)
         elif self.DEL_VERTEX == act_list[0]:
@@ -130,7 +113,6 @@ class Graph:
 
         # сдвигаем счетчик действия/состояния на пердыдущее
         self.__history_counter -= 1
-        self.signals.update.emit()
         return True
 
     def redo(self):
@@ -149,21 +131,19 @@ class Graph:
         # просто повторение действий
         if self.ADD_EDGE == act_list[0]:
             self.add_edge(act_list[1], act_list[2], act_list[3], False)
-            if not self.oriented:
-                self.add_edge(act_list[2], act_list[1], act_list[3], False)
         elif self.ADD_VERTEX == act_list[0]:
             self.add_vertex(act_list[1], act_list[2], act_list[3], False)
+            self.set_vertexes_counter(int(self.get_new_vertex_name()) + 1)
         elif self.DEL_EDGE == act_list[0]:
             self.del_edge(act_list[1], act_list[2], act_list[3], False)
         elif self.DEL_VERTEX == act_list[0]:
             self.del_vertex(act_list[1], False)
 
         self.__history_counter += 1
-        self.signals.update.emit()
         return True
 
     def save_action(self, action_code: int, vertex_name: str = None, following_vertex_name: str = None,
-                    weight: int = None, x: float = None, y: float = None, vertex_row: dict = None,
+                    weight: int = None, x: int = None, y: int = None, vertex_row: dict = None,
                     related_vertex: dict = None):
         """
             СОХРАНЯТЬ ДО ИЗМЕНЕНИЯ ОБЪЕКТОВ
@@ -218,4 +198,8 @@ class Graph:
             self.__history.pop(0)
 
     def get_new_vertex_name(self) -> str:
-        return str(len(self.vertexes) + 1)
+        self.__vertex_counter += 1
+        return str(self.__vertex_counter - 1)
+
+    def set_vertexes_counter(self, value: int):
+        self.__vertex_counter = value
