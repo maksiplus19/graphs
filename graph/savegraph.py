@@ -34,16 +34,23 @@ class SaveGraph:
             inc_matrix = []
             n = len(graph.vertexes_coordinates)
             for v_from, to_dict in graph.vertexes.items():
-                print(to_dict.items())
                 v_from = int(v_from)
                 for v_to, to_list in to_dict.items():
                     v_to = int(v_to)
                     for weight in to_list:
-                        data = [0]*n
+                        data = [0.]*n
                         data[v_from] = -weight
                         data[v_to] = weight
-                        inc_matrix.append(data)
-            file.write(str(inc_matrix))
+                        inv_data = [inv_data * -1 for inv_data in data]
+                        if inv_data in inc_matrix:
+                            for i in data:
+                                if i < 0:
+                                    data[data.index(i)] = i*-1
+                            inc_matrix[inc_matrix.index(inv_data)] = data
+                        else:
+                            inc_matrix.append(data)
+            file.write(str(np.matrix(inc_matrix)))
+
 
     @staticmethod
     def save_as_ribs_list(graph: Graph, file_name: str):
@@ -69,16 +76,15 @@ class SaveGraph:
             n = len(graph.vertexes_coordinates)
             adj_matrix = np.zeros((n, n))
             for v_from, to_dict in graph.vertexes.items():
-                print(to_dict.items())
                 for v_to, to_list in to_dict.items():
                     for weight in to_list:
                         adj_matrix[int(v_from)][int(v_to)] += weight
+                        adj_matrix[int(v_to)][int(v_from)] += weight
             file.write(str(adj_matrix))
 
     @staticmethod
     def save_as_image(file_name: str, scene: QGraphicsScene):
-        image = QImage(scene.width() + 0*scene.width(), scene.height() + 0*scene.height(),
-                       QImage.Format_ARGB32_Premultiplied)
+        image = QImage(scene.width(), scene.height(), QImage.Format_ARGB32_Premultiplied)
         image.fill(QColor(255, 255, 255).toRgb())
         painter = QPainter(image)
         scene.render(painter)

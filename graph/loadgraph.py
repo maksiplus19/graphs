@@ -9,6 +9,7 @@ class LoadGraph:
     """Статический класс для загрузки графа"""
     @staticmethod
     def __split_file(file_name: str) -> (str, str):
+        """Метод принимает на вход имя файла, читает файл, удаляя комментарии. Возврящает две строки до и после '||'"""
         with open(file_name, "r") as file:
             # проходим по файлу построчно и отделяем коментарии, а затем склеиваем обратно
             text = ''.join([line.split('%')[0] for line in file])
@@ -95,19 +96,51 @@ class LoadGraph:
         pass
 
     @staticmethod
+    def __isfloat(value):
+        try:
+            float(value)
+            return True
+        except ValueError:
+            return False
+
+    @staticmethod
     def load_from_adjacency_matrix(graph: Graph, file_name: str):
         matrix = []
         with open(file_name, mode='r') as file:
             for line in file:
-                # разделяем строку на веса по пробелу
-                weights = line.split(' ')
-                # преобразуем строки в числа и сразу добавляем в матрицу
-                matrix.append([int(w) for w in weights])
-        # далее надо сохранить информацию из матрицы в словарь
+                data = []
+                for weights in line:
+                    if LoadGraph.__isfloat(weights):
+                        data.append(weights)
+                matrix.append(data)
+            matrix = [x for x in matrix if x != []]
+            for i in range(len(matrix)):
+                for j in range(len(matrix[i])):
+                    if matrix[i][j] != '0' and i != []:
+                        graph.add_vertex(str(i), random.randint(-50, 100), random.randint(0, 100))
+                        graph.add_vertex(str(j), random.randint(-50, 100), random.randint(0, 100))
+                        graph.add_edge(str(i), str(j), int(matrix[i][j]))
+
 
     @staticmethod
     def load_from_incidence_matrix(graph: Graph, file_name: str):
-        pass
+        matrix = []
+        with open(file_name, mode='r') as file:
+            for line in file:
+                data = []
+                for weights in line:
+                    if LoadGraph.__isfloat(weights):
+                        data.append(weights)
+                matrix.append(data)
+            matrix = [x for x in matrix if x != []]
+            for i in range(len(matrix)):
+                for j in range(len(matrix[i])):
+                    if matrix[i][j] != '0' and i != []:
+                        graph.add_vertex(str(i), random.randint(-50, 100), random.randint(-50, 100))
+                        graph.add_vertex(str(j), random.randint(-50, 100), random.randint(0, 100))
+                        graph.add_edge(str(i), str(j), int(matrix[i][j]))
+
+
 
     @staticmethod
     def load_from_ribs_list(graph: Graph, file_name: str):
