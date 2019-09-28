@@ -20,7 +20,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.actionOpen.triggered.connect(self.load_graph)
         self.actionSave.triggered.connect(self.save_graph)
         self.actionExit.triggered.connect(self.close)
-        self.btnNext.clicked.connect(self.next)
+        self.btnNext.clicked.connect(self.redo)
         self.btnCancel.clicked.connect(self.undo)
 
     def load_graph(self):
