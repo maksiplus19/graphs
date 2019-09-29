@@ -1,10 +1,10 @@
 from PyQt5.QtCore import QPointF, Qt
-from PyQt5.QtGui import QMouseEvent, QPainter, QTransform
+from PyQt5.QtGui import QMouseEvent, QPainter, QTransform, QContextMenuEvent
 from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsEllipseItem, QGraphicsSimpleTextItem, \
-    QGraphicsLineItem
+    QGraphicsLineItem, QMenu
 from graph.graph import Graph
 from ui.sourse.graphicsvertex import GraphicsVertex
-
+from graph.savegraph import  SaveGraph
 
 class QGraphView(QGraphicsView):
     def __init__(self, centralwidget):
@@ -19,23 +19,47 @@ class QGraphView(QGraphicsView):
         self.endPos = None
         self.edge_from = None
         self.moveVertex = None
-
+        self.isVertex = None
         self.setRenderHint(QPainter.Antialiasing)
 
     def set_graph(self, graph: Graph):
         self.graph = graph
 
+    # def contextMenuEvent(self, QContextMenuEvent):
+    #     context_menu = QMenu(self)
+    #     add_loop = context_menu.addAction("Добавить петлю")
+    #     delete_loop = context_menu.addAction("Удалить петлю")
+
     def mouseDoubleClickEvent(self, event: QMouseEvent):
         print('double click')
         # только левая кнопка мыши
+        pos = QPointF(self.mapToScene(event.pos()))
         if event.button() == 1:
             # получаем имя вершины
             name = self.graph.get_new_vertex_name()
             # преобразум коодинаты в координаты сцены
-            pos = QPointF(self.mapToScene(event.pos()))
             # добавляем вершину в граф
             self.graph.add_vertex(name, pos.x(), pos.y())
             self.drawGraph()
+        if event.button() == 2:
+            item = self.scene.itemAt(self.mapToScene(event.pos()), QTransform())
+            if type(item) is GraphicsVertex or type(item) is QGraphicsEllipseItem or type(item)\
+                    is QGraphicsSimpleTextItem:
+                context_menu = QMenu(self)
+                add_loop = context_menu.addAction("Добавить петлю")
+                delete_loop = context_menu.addAction("Удалить петлю")
+                delete_vertex = context_menu.addAction("Удалить вершину")
+                action = context_menu.exec_(self.mapToGlobal(event.pos()))
+                if action == delete_vertex:
+                    self.graph.del_vertex(str(item.group().v.name), False)
+                    self.drawGraph()
+                #пока без петель
+                #это не работает
+            if type(item) is QGraphicsLineItem:
+                context_menu = QMenu(self)
+                oriented = context_menu.addAction("Ориентированное")
+                not_oriented = context_menu.addAction("Неориентированное")
+                action = context_menu.exec_(self.mapToGlobal(event.pos()))
 
     def mousePressEvent(self, event: QMouseEvent):
         if event.button() == 2:
@@ -56,6 +80,7 @@ class QGraphView(QGraphicsView):
         if self.rightButtonPressed and self.edge_from is not None:
             self.endPos = self.mapToScene(event.pos())
             self.scene.addLine(self.startPos.x(), self.startPos.y(), self.endPos.x(), self.endPos.y())
+            # self.isVertex = True
         elif self.leftButtonPressed and self.moveVertex is not None:
             pos = QPointF(self.mapToScene(event.pos()))
             self.graph.vertexes_coordinates[self.moveVertex].x = pos.x()
