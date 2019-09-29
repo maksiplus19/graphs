@@ -84,8 +84,7 @@ class SaveGraph:
 
     @staticmethod
     def save_as_image(file_name: str, scene: QGraphicsScene):
-        image = QImage(scene.width() + 0*scene.width(), scene.height() + 0*scene.height(),
-                       QImage.Format_ARGB32_Premultiplied)
+        image = QImage(scene.width(), scene.height(), QImage.Format_ARGB32_Premultiplied)
         image.fill(QColor(255, 255, 255).toRgb())
         painter = QPainter(image)
         scene.render(painter)

@@ -1,6 +1,7 @@
-from PyQt5.QtCore import QPointF
-from PyQt5.QtGui import QMouseEvent, QPainter
-from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene
+from PyQt5.QtCore import QPointF, Qt
+from PyQt5.QtGui import QMouseEvent, QPainter, QTransform
+from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsEllipseItem, QGraphicsSimpleTextItem, \
+    QGraphicsLineItem
 from graph.graph import Graph
 from ui.sourse.graphicsvertex import GraphicsVertex
 from graph.savegraph import  SaveGraph
@@ -13,9 +14,11 @@ class QGraphView(QGraphicsView):
         self.scene = QGraphicsScene()
         self.setScene(self.scene)
         self.rightButtonPressed = False
-        self.startPos = None
+        self.leftButtonPressed = True
+        self.startPos = QPointF()
         self.endPos = None
         self.edge_from = None
+        self.moveVertex = None
 
         self.setRenderHint(QPainter.Antialiasing)
 
@@ -38,44 +41,50 @@ class QGraphView(QGraphicsView):
             self.graph.add_edge('0', '1')
             self.graph.add_edge('0', '2')
 
-    # def mousePressEvent(self, event: QMouseEvent):
-    #     if event.button() == 2:
-    #         self.rightButtonPressed = True
-    #         self.startPos = self.mapToScene(event.pos())
-    #         item = self.scene.itemAt(self.mapToScene(event.pos()), QTransform()).group()
-    #         if item:
-    #             self.edge_from = item.v.name
-    #     else:
-    #         item = self.scene.itemAt(self.mapToScene(event.pos()), QTransform())
-    #         if item:
-    #             self.scene.itemAt(self.mapToScene(event.pos()), QTransform()).group().mousePressEvent(event)
+    def mousePressEvent(self, event: QMouseEvent):
+        if event.button() == 2:
+            self.rightButtonPressed = True
+            item = self.scene.itemAt(self.mapToScene(event.pos()), QTransform())
+            if item:
+                self.startPos = self.mapToScene(event.pos())
+                self.edge_from = item.group().v.name
+        elif event.button() == 1:
+            self.leftButtonPressed = True
+            item = self.scene.itemAt(self.mapToScene(event.pos()), QTransform())
+            if item:
+                self.moveVertex = item.group().v.name
+                self.setCursor(Qt.ClosedHandCursor)
 
-    # def mouseMoveEvent(self, event: QMouseEvent):
-    #     self.drawGraph()
-    #     if self.rightButtonPressed:
-    #         # if self.scene.items():
-    #         #     self.scene.removeItem(self.scene.items()[0])
-    #         self.endPos = self.mapToScene(event.pos())
-    #         self.scene.addLine(self.startPos.x(), self.startPos.y(), self.endPos.x(), self.endPos.y())
-    #     else:
-    #         item = self.scene.itemAt(self.mapToScene(event.pos()), QTransform())
-    #         if item:
-    #             self.scene.itemAt(self.mapToScene(event.pos()), QTransform()).group().mousePressEvent(event)
-    #
-    # def mouseReleaseEvent(self, event: QMouseEvent):
-    #     if event.button() == 2:
-    #         self.rightButtonPressed = False
-    #         self.scene.removeItem(self.scene.items()[0])
-    #         print(self.scene.itemAt(self.mapToScene(event.pos()), QTransform()))
-    #         item = self.scene.itemAt(self.mapToScene(event.pos()), QTransform()).group()
-    #         if item:
-    #             edge_to = item.v.name
-    #             self.graph.add_edge(self.edge_from, edge_to)
-    #             self.drawGraph()
-    #     else:
-    #         item = self.scene.itemAt(self.mapToScene(event.pos()), QTransform())
-    #         if item:
-    #             self.scene.itemAt(self.mapToScene(event.pos()), QTransform()).group().mousePressEvent(event)
+    def mouseMoveEvent(self, event: QMouseEvent):
+        self.drawGraph()
+        if self.rightButtonPressed and self.edge_from is not None:
+            self.endPos = self.mapToScene(event.pos())
+            self.scene.addLine(self.startPos.x(), self.startPos.y(), self.endPos.x(), self.endPos.y())
+        elif self.leftButtonPressed and self.moveVertex is not None:
+            pos = QPointF(self.mapToScene(event.pos()))
+            self.graph.vertexes_coordinates[self.moveVertex].x = pos.x()
+            self.graph.vertexes_coordinates[self.moveVertex].y = pos.y()
+
+    def mouseReleaseEvent(self, event: QMouseEvent):
+        if event.button() == 2 and self.edge_from is not None:
+            self.rightButtonPressed = False
+            self.scene.removeItem(self.scene.items()[0])
+            item = self.scene.itemAt(self.mapToScene(event.pos()), QTransform())
+            if item:
+                if type(item) is QGraphicsLineItem:
+                    pass
+                elif type(item) is GraphicsVertex:
+                    edge_to = item.v.name
+                    self.graph.add_edge(self.edge_from, edge_to)
+                elif type(item) is QGraphicsEllipseItem or QGraphicsSimpleTextItem:
+                    edge_to = item.group().v.name
+                    self.graph.add_edge(self.edge_from, edge_to)
+                self.drawGraph()
+            self.edge_from = None
+        elif event.button() == 1:
+            self.leftButtonPressed = False
+            self.moveVertex = None
+            self.setCursor(Qt.ArrowCursor)
 
     def drawGraph(self):
         # очищаем сцену

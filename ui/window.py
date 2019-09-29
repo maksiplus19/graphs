@@ -4,6 +4,7 @@ from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QFileDialog, QMessageBox
 
 from graph.graph import Graph
+from graph.graphmodel import GraphModel
 from graph.loadgraph import LoadGraph
 from graph.savegraph import SaveGraph
 from ui.design.design import Ui_MainWindow
@@ -15,13 +16,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.graph = Graph()
         self.graphView.set_graph(self.graph)
+        self.graphModel = GraphModel(self.graph)
+        self.graphMatrix.setModel(self.graphModel)
 
         # коннектим обработку нажатия кнопок меню
         self.actionOpen.triggered.connect(self.load_graph)
         self.actionSave.triggered.connect(self.save_graph)
         self.actionExit.triggered.connect(self.close)
-        self.btnNext.clicked.connect(self.next)
+        self.btnNext.clicked.connect(self.redo)
         self.btnCancel.clicked.connect(self.undo)
+        self.graph.signals.update.connect(self.graphModel.graphToMatrix)
+        self.graph.signals.update.connect(self.graphMatrix.resizeColumnsToContents)
 
     def load_graph(self):
         # получаем имя файла

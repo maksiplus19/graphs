@@ -9,6 +9,7 @@ class LoadGraph:
     """Статический класс для загрузки графа"""
     @staticmethod
     def __split_file(file_name: str) -> (str, str):
+        """Метод принимает на вход имя файла, читает файл, удаляя комментарии. Возврящает две строки до и после '||'"""
         with open(file_name, "r") as file:
             # проходим по файлу построчно и отделяем коментарии, а затем склеиваем обратно
             text = ''.join([line.split('%')[0] for line in file])
@@ -95,7 +96,8 @@ class LoadGraph:
         pass
 
     @staticmethod
-    def isfloat(value):
+
+    def __isfloat(value):
         try:
             float(value)
             return True
@@ -109,7 +111,7 @@ class LoadGraph:
             for line in file:
                 data = []
                 for weights in line:
-                    if LoadGraph.isfloat(weights):
+                    if LoadGraph.__isfloat(weights):
                         data.append(weights)
                 matrix.append(data)
             matrix = [x for x in matrix if x != []]
@@ -128,7 +130,11 @@ class LoadGraph:
             for line in file:
                 data = []
                 for weights in line:
+<<<<<<< HEAD
                     if LoadGraph.isfloat(weights):
+=======
+                    if LoadGraph.__isfloat(weights):
+>>>>>>> fa5243364154727a596269e9c6cc96dd3b2aa85c
                         data.append(weights)
                 matrix.append(data)
             matrix = [x for x in matrix if x != []]

@@ -1,6 +1,6 @@
 from PyQt5.QtCore import QPointF, Qt
 from PyQt5.QtWidgets import QGraphicsItemGroup, QGraphicsItem, QGraphicsEllipseItem, QGraphicsSimpleTextItem
-from PyQt5.QtGui import QMouseEvent, QFont, QBrush, QPen, QColor
+from PyQt5.QtGui import QFont, QBrush, QPen, QColor
 
 from graph.vertex import Vertex
 
@@ -38,22 +38,32 @@ class GraphicsVertex(QGraphicsItemGroup):
         self.addToGroup(ellipse)
         self.addToGroup(text)
 
-    def mouseDoubleClickEvent(self, event: QMouseEvent):
-        pass
+        self.startPos = None
+        self.rightButtonPressed = False
+        self.edge_from = None
 
-    def mousePressEvent(self, event: QMouseEvent):
-        if event.buttons() == Qt.LeftButton:
-            self.offset_coords = self.pos() - self.mapToScene(event.pos())
-            self.setCursor(Qt.ClosedHandCursor)
-
-    def mouseMoveEvent(self, event: QMouseEvent):
-        if event.buttons() == Qt.LeftButton:
-            pos = QPointF(self.mapToScene(event.pos()))
-
-            self.setPos(pos + self.offset_coords)
-            self.v.x = pos.x()
-            self.v.y = pos.y()
-
-    def mouseReleaseEvent(self, event: QMouseEvent):
-        self.setCursor(Qt.ArrowCursor)
+    # def mouseDoubleClickEvent(self, event: QMouseEvent):
+    #     pass
+    #
+    # def mousePressEvent(self, event: QMouseEvent):
+    #     if event.button() == 1:
+    #         self.offset_coords = self.pos() - self.mapToScene(event.pos())
+    #         self.setCursor(Qt.ClosedHandCursor)
+    #     elif event.button() == Qt.RightButton:
+    #         self.rightButtonPressed = True
+    #         self.startPos = self.mapToScene(event.pos())
+    #         item = self.scene().itemAt(self.mapToScene(event.pos()), QTransform()).group()
+    #         if item:
+    #             self.edge_from = item.v.name
+    #
+    # def mouseMoveEvent(self, event: QMouseEvent):
+    #     if event.buttons() == Qt.LeftButton:
+    #         pos = QPointF(self.mapToScene(event.pos()))
+    #
+    #         self.setPos(pos + self.offset_coords)
+    #         self.v.x = pos.x()
+    #         self.v.y = pos.y()
+    #
+    # def mouseReleaseEvent(self, event: QMouseEvent):
+    #     self.setCursor(Qt.ArrowCursor)
 
