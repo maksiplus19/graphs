@@ -117,7 +117,7 @@ class LoadGraph:
             matrix1 = [x for x in matrix1 if x != []]
             for i in range(len(matrix1)):
                 for j in range(len(matrix1[i])):
-                    if matrix[i][j] != '0' and i != []:
+                    if matrix1[i][j] != '0' and i != []:
                         graph.add_vertex(str(i), random.randint(-50, 100), random.randint(0, 100))
                         graph.add_vertex(str(j), random.randint(-50, 100), random.randint(0, 100))
                         graph.add_edge(str(i), str(j), int(matrix1[i][j]))
