@@ -106,21 +106,21 @@ class LoadGraph:
 
     @staticmethod
     def load_from_adjacency_matrix(graph: Graph, file_name: str):
-        matrix = []
+        matrix1 = []
         with open(file_name, mode='r') as file:
             for line in file:
                 data = []
                 for weights in line:
                     if LoadGraph.__isfloat(weights):
                         data.append(weights)
-                matrix.append(data)
-            matrix = [x for x in matrix if x != []]
-            for i in range(len(matrix)):
-                for j in range(len(matrix[i])):
+                matrix1.append(data)
+            matrix1 = [x for x in matrix1 if x != []]
+            for i in range(len(matrix1)):
+                for j in range(len(matrix1[i])):
                     if matrix[i][j] != '0' and i != []:
                         graph.add_vertex(str(i), random.randint(-50, 100), random.randint(0, 100))
                         graph.add_vertex(str(j), random.randint(-50, 100), random.randint(0, 100))
-                        graph.add_edge(str(i), str(j), int(matrix[i][j]))
+                        graph.add_edge(str(i), str(j), int(matrix1[i][j]))
 
 
     @staticmethod
@@ -130,11 +130,7 @@ class LoadGraph:
             for line in file:
                 data = []
                 for weights in line:
-<<<<<<< HEAD
-                    if LoadGraph.isfloat(weights):
-=======
                     if LoadGraph.__isfloat(weights):
->>>>>>> fa5243364154727a596269e9c6cc96dd3b2aa85c
                         data.append(weights)
                 matrix.append(data)
             matrix = [x for x in matrix if x != []]
