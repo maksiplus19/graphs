@@ -1,7 +1,8 @@
 import sys
 
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QApplication, QFileDialog, QMessageBox
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QApplication, QFileDialog, QMessageBox, QAbstractItemView
 
 from graph.graph import Graph
 from graph.graphmodel import GraphModel
@@ -18,6 +19,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.graphView.set_graph(self.graph)
         self.graphModel = GraphModel(self.graph)
         self.graphMatrix.setModel(self.graphModel)
+        self.graphMatrix.setEditTriggers(QAbstractItemView.AllEditTriggers)
 
         # коннектим обработку нажатия кнопок меню
         self.actionOpen.triggered.connect(self.load_graph)
@@ -27,6 +29,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.btnCancel.clicked.connect(self.undo)
         self.graph.signals.update.connect(self.graphModel.graphToMatrix)
         self.graph.signals.update.connect(self.graphMatrix.resizeColumnsToContents)
+        self.actionProgram.triggered.connect(self.open_program)
+        self.actionAuthor.triggered.connect(self.open_author)
+        self.cmbDirect.currentIndexChanged.connect(self.changeOrient)
+        self.cmbWeight.currentIndexChanged.connect(self.changeWeight)
 
     def load_graph(self):
         # получаем имя файла
@@ -89,12 +95,26 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             QMessageBox.warning(self, 'Ошибка', f'Неизвестный формат файла "{file_type}"')
 
     def undo(self):
-        if self.graph.undo():
-            self.graphView.drawGraph()
+        self.graphView.drawGraph()
 
     def redo(self):
-        if self.graph.redo():
-            self.graphView.drawGraph()
+        self.graphView.drawGraph()
+
+    def changeOrient(self, data):
+        self.graph.oriented = not bool(data)
+
+    def changeWeight(self, data):
+        self.graph.weighted = not bool(data)
+
+    def open_program(self):
+        QMessageBox.information(self, "Информация", "Программа предоставляет интерфейс для работы с графом."
+                                                    " Есть возможнсть добавить граф с файла(матрица смежности и "
+                                                    "инцидентности, список вершин и ребер), а также нарисовать граф. "
+                                                    "Программа является базовым инструментом для дальнейших "
+                                                    "лабораторных работ.")
+    def open_author(self):
+        QMessageBox.information(self, "Информация", "М8О-312Б-17 Комаров Виктор\nМ8О-313Б-17 Безенков Савелий"
+                                                    "\nМ8О-312Б-17 Якупова Айгуль")
 
 
 if __name__ == '__main__':
