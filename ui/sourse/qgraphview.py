@@ -1,5 +1,5 @@
 from PyQt5.QtCore import QPointF, Qt
-from PyQt5.QtGui import QMouseEvent, QPainter, QTransform, QContextMenuEvent
+from PyQt5.QtGui import QMouseEvent, QPainter, QTransform, QContextMenuEvent, QPen, QBrush, QColor
 from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsEllipseItem, QGraphicsSimpleTextItem, \
     QGraphicsLineItem, QMenu
 from graph.graph import Graph
@@ -21,6 +21,8 @@ class QGraphView(QGraphicsView):
         self.moveVertex = None
         self.isVertex = None
         self.setRenderHint(QPainter.Antialiasing)
+
+        self.pen = QPen(QBrush(QColor(0, 0, 0)), 3)
 
     def set_graph(self, graph: Graph):
         self.graph = graph
@@ -44,7 +46,12 @@ class QGraphView(QGraphicsView):
             self.drawGraph()
         if event.button() == 2:
             item = self.scene.itemAt(self.mapToScene(event.pos()), QTransform())
-            if type(item) is GraphicsVertex or type(item) is QGraphicsEllipseItem or type(item)\
+            if type(item) is QGraphicsLineItem:
+                context_menu = QMenu(self)
+                oriented = context_menu.addAction("Ориентированное")
+                not_oriented = context_menu.addAction("Неориентированное")
+                action = context_menu.exec_(self.mapToGlobal(event.pos()))
+            elif type(item) is QGraphicsEllipseItem or type(item)\
                     is QGraphicsSimpleTextItem:
                 context_menu = QMenu(self)
                 add_loop = context_menu.addAction("Добавить петлю")
@@ -56,19 +63,21 @@ class QGraphView(QGraphicsView):
                     self.drawGraph()
                 #пока без петель
                 #это не работает
-            if type(item) is QGraphicsLineItem:
-                context_menu = QMenu(self)
-                oriented = context_menu.addAction("Ориентированное")
-                not_oriented = context_menu.addAction("Неориентированное")
-                action = context_menu.exec_(self.mapToGlobal(event.pos()))
+
 
     def mousePressEvent(self, event: QMouseEvent):
         if event.button() == 2:
             self.rightButtonPressed = True
             item = self.scene.itemAt(self.mapToScene(event.pos()), QTransform())
             if item:
-                self.startPos = self.mapToScene(event.pos())
-                self.edge_from = item.group().v.name
+                if type(item) is QGraphicsLineItem:
+                    pass
+                elif type(item) is GraphicsVertex:
+                    self.startPos = self.mapToScene(event.pos())
+                    self.edge_from = item.v.name
+                elif type(item) is QGraphicsEllipseItem or QGraphicsSimpleTextItem:
+                    self.startPos = self.mapToScene(event.pos())
+                    self.edge_from = item.group().v.name
         elif event.button() == 1:
             self.leftButtonPressed = True
             item = self.scene.itemAt(self.mapToScene(event.pos()), QTransform())
@@ -120,6 +129,7 @@ class QGraphView(QGraphicsView):
                 for edge in to_list:
                     if not self.graph.oriented:
                         self.scene.addLine(v_from.x, v_from.y, v_to.x, v_to.y)
+                        self.scene.items()[0].setPen(self.pen)
 
         # рисуем вершины
         for v in self.graph.vertexes_coordinates.values():
