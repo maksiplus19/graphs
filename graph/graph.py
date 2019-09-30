@@ -71,7 +71,7 @@ class Graph:
             self.vertexes[name] = {}
             self.signals.update.emit()
 
-    def del_edge(self, v_from: str, v_to: str, weight: int, __save: bool = True):
+    def del_edge(self, v_from: str, v_to: str, weight: int=1, __save: bool = True):
         if v_from in self.vertexes and v_to in self.vertexes[v_from]:
             arr = self.vertexes[v_from][v_to]
             if weight in arr:

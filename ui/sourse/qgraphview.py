@@ -61,9 +61,12 @@ class QGraphView(QGraphicsView):
                 if action == delete_vertex:
                     self.graph.del_vertex(str(item.group().v.name), False)
                     self.drawGraph()
+                if action == add_loop:
+                    print(item.group().v.name)
+                    self.graph.add_edge(str(item.group().v.name), str(item.group().v.name))
+                if action == delete_loop:
+                    self.graph.del_edge(str(item.group().v.name), str(item.group().v.name))
                 #пока без петель
-                #это не работает
-
 
     def mousePressEvent(self, event: QMouseEvent):
         if event.button() == 2:
@@ -106,10 +109,12 @@ class QGraphView(QGraphicsView):
                     pass
                 elif type(item) is GraphicsVertex:
                     edge_to = item.v.name
-                    self.graph.add_edge(self.edge_from, edge_to)
+                    if edge_to != self.edge_from:
+                        self.graph.add_edge(self.edge_from, edge_to)
                 elif type(item) is QGraphicsEllipseItem or QGraphicsSimpleTextItem:
                     edge_to = item.group().v.name
-                    self.graph.add_edge(self.edge_from, edge_to)
+                    if edge_to != self.edge_from:
+                        self.graph.add_edge(self.edge_from, edge_to)
                 self.drawGraph()
             self.edge_from = None
         elif event.button() == 1:
