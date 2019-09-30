@@ -27,6 +27,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.btnCancel.clicked.connect(self.undo)
         self.graph.signals.update.connect(self.graphModel.graphToMatrix)
         self.graph.signals.update.connect(self.graphMatrix.resizeColumnsToContents)
+        self.actionProgram.triggered.connect(self.open_program)
+        self.actionAuthor.triggered.connect(self.open_author)
 
     def load_graph(self):
         # получаем имя файла
@@ -95,6 +97,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def redo(self):
         if self.graph.redo():
             self.graphView.drawGraph()
+
+    def open_program(self):
+        QMessageBox.information(self, "Информация", "Программа предоставляет интерфейс для работы с графом."
+                                                    " Есть возможнсть добавить граф с файла(матрица смежности и "
+                                                    "инцидентности, список вершин и ребер), а также нарисовать граф. "
+                                                    "Программа является базовым инструментом для дальнейших "
+                                                    "лабораторных работ.")
+    def open_author(self):
+        QMessageBox.information(self, "Информация", "М8О-312Б-17 Комаров Виктор\nМ8О-313Б-17 Безенков Савелий"
+                                                    "\nМ8О-312Б-17 Якупова Айгуль")
 
 
 if __name__ == '__main__':
