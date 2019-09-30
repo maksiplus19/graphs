@@ -12,10 +12,13 @@ class GraphModel(QAbstractTableModel):
         self.graphToMatrix()
 
     def graphToMatrix(self):
+        """
+            Метод для преобразования графа в матрицу смежности и обновления модели
+        """
         n = len(self.graph.vertexes_coordinates)
         if n > 0:
             # преобразование графа в матрицу смежности
-            self.matrix = [[0]*n for i in range(n)]
+            self.matrix = [[0] * n for i in range(n)]
             for v_from, to_dict in self.graph.vertexes.items():
                 v_from = int(v_from)
                 for v_to, to_list in to_dict.items():
@@ -38,8 +41,35 @@ class GraphModel(QAbstractTableModel):
     def data(self, index: QModelIndex, role=None) -> any:
         if role == Qt.DisplayRole:
             if not self.graph.oriented:
-                # вернуть 1 если есть ребро, 0 если нет
-                return 1 if self.matrix[index.row()][index.column()] > 0 else 0
+                # вернуть количество ребер
+                return self.matrix[index.row()][index.column()] // 2
             else:
                 # вернуть сумму весов ребер
                 return self.matrix[index.row()][index.column()]
+
+    def setData(self, index: QModelIndex, data: str, role=None):
+        if data == '' or not data.isdigit():
+            return False
+        data = int(data)
+        if data == 0:
+            # новй вес 0 значит нужно удалить все ребра между данными вершинами
+            v_from = str(index.row() + 1)
+            v_to = str(index.column() + 1)
+            self.graph.del_all_edges(v_from, v_to)
+            if not self.graph.oriented and v_from != v_to:
+                self.graph.del_all_edges(v_to, v_from)
+            self.graphToMatrix()
+            return True
+        elif data > 0:
+            # новый вес значит нужно обновить все старые на одно новое
+            v_from = str(index.row() + 1)
+            v_to = str(index.column() + 1)
+            self.graph.set_all_edges(v_from, v_to, data)
+            if not self.graph.oriented and v_to != v_from:
+                self.graph.set_all_edges(v_to, v_from, data)
+            self.graphToMatrix()
+            return True
+        return False
+
+    def flags(self, index: QModelIndex):
+        return Qt.ItemIsEditable | Qt.ItemIsEnabled

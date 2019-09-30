@@ -26,6 +26,7 @@ class QGraphView(QGraphicsView):
 
     def set_graph(self, graph: Graph):
         self.graph = graph
+        self.graph.signals.update.connect(self.drawGraph)
 
     # def contextMenuEvent(self, QContextMenuEvent):
     #     context_menu = QMenu(self)
