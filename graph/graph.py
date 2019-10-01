@@ -93,7 +93,7 @@ class Graph:
             self.signals.update.emit()
 
     def set_all_edges(self, v_from: str, v_to: str, weight: int, __save: bool = True):
-        if v_from in self.vertexes:
+        if v_from in self.vertexes and v_to in self.vertexes:
             if __save:
                 self.save_action(Graph.SET_ALL_EDGES, vertex_name=v_from, following_vertex_name=v_to,
                                  edges=self.vertexes[v_from].get(v_to), weight=weight)
@@ -121,7 +121,8 @@ class Graph:
                 for v_from, adjacency_dict in self.vertexes.items():
                     if name in adjacency_dict:
                         related_vertex[v_from] = adjacency_dict[name]
-                self.save_action(self.DEL_VERTEX, vertex_name=name, x=v.x, y=v.y, vertex_row=self.vertexes[name])
+                self.save_action(self.DEL_VERTEX, vertex_name=name, x=v.x, y=v.y, vertex_row=self.vertexes[name],
+                                 related_vertex=related_vertex)
 
             self.vertexes_coordinates.pop(name)
             self.vertexes.pop(name)
@@ -310,4 +311,9 @@ class Graph:
         self.__history_counter = len(self.__history)
 
     def get_new_vertex_name(self) -> str:
-        return str(len(self.vertexes) + 1)
+        if len(self.vertexes) == 0:
+            return '1'
+        return str(int(sorted(self.vertexes)[-1]) + 1)
+
+    def update(self):
+        self.signals.update.emit()
