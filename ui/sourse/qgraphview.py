@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsEllipseItem,
     QGraphicsLineItem, QMenu
 from graph.graph import Graph
 from ui.sourse.graphicsvertex import GraphicsVertex
-from graph.savegraph import  SaveGraph
+
 
 class QGraphView(QGraphicsView):
     def __init__(self, centralwidget):
@@ -43,7 +43,6 @@ class QGraphView(QGraphicsView):
             # преобразум коодинаты в координаты сцены
             # добавляем вершину в граф
             self.graph.add_vertex(name, pos.x(), pos.y())
-            self.drawGraph()
         if event.button() == 2:
             item = self.scene.itemAt(self.mapToScene(event.pos()), QTransform())
             if type(item) is QGraphicsLineItem:
@@ -59,8 +58,7 @@ class QGraphView(QGraphicsView):
                 delete_vertex = context_menu.addAction("Удалить вершину")
                 action = context_menu.exec_(self.mapToGlobal(event.pos()))
                 if action == delete_vertex:
-                    self.graph.del_vertex(str(item.group().v.name), False)
-                    self.drawGraph()
+                    self.graph.del_vertex(str(item.group().v.name))
                 #пока без петель
                 #это не работает
 
@@ -110,7 +108,6 @@ class QGraphView(QGraphicsView):
                 elif type(item) is QGraphicsEllipseItem or QGraphicsSimpleTextItem:
                     edge_to = item.group().v.name
                     self.graph.add_edge(self.edge_from, edge_to)
-                self.drawGraph()
             self.edge_from = None
         elif event.button() == 1:
             self.leftButtonPressed = False
