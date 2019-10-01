@@ -15,7 +15,9 @@ class GraphModel(QAbstractTableModel):
         """
             Метод для преобразования графа в матрицу смежности и обновления модели
         """
-        n = len(self.graph.vertexes_coordinates)
+        if not self.graph.vertexes_coordinates:
+            return
+        n = int(sorted(self.graph.vertexes_coordinates)[-1])
         if n > 0:
             # преобразование графа в матрицу смежности
             self.matrix = [[0] * n for i in range(n)]
@@ -57,7 +59,7 @@ class GraphModel(QAbstractTableModel):
             v_to = str(index.column() + 1)
             self.graph.del_all_edges(v_from, v_to)
             if not self.graph.oriented and v_from != v_to:
-                self.graph.del_all_edges(v_to, v_from)
+                self.graph.del_all_edges(v_to, v_from, False)
             self.graphToMatrix()
             return True
         elif data > 0:
@@ -66,7 +68,7 @@ class GraphModel(QAbstractTableModel):
             v_to = str(index.column() + 1)
             self.graph.set_all_edges(v_from, v_to, data)
             if not self.graph.oriented and v_to != v_from:
-                self.graph.set_all_edges(v_to, v_from, data)
+                self.graph.set_all_edges(v_to, v_from, data, False)
             self.graphToMatrix()
             return True
         return False
