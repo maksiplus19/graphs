@@ -59,8 +59,10 @@ class QGraphView(QGraphicsView):
                 action = context_menu.exec_(self.mapToGlobal(event.pos()))
                 if action == delete_vertex:
                     self.graph.del_vertex(str(item.group().v.name))
-                #пока без петель
-                #это не работает
+                if action == add_loop:
+                    self.graph.add_edge(str(item.group().v.name), str(item.group().v.name))
+                if action == delete_loop:
+                    self.graph.del_edge(str(item.group().v.name), str(item.group().v.name))
 
 
     def mousePressEvent(self, event: QMouseEvent):
