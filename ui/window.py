@@ -62,7 +62,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         else:
             QMessageBox.warning(self, 'Ошибка', 'Неизвестный формат файла')
 
-        self.graphView.drawGraph()
+        self.graph.update()
 
     def save_graph(self):
         # получаем имя файла
@@ -95,10 +95,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             QMessageBox.warning(self, 'Ошибка', f'Неизвестный формат файла "{file_type}"')
 
     def undo(self):
-        self.graphView.drawGraph()
+        self.graph.undo()
 
     def redo(self):
-        self.graphView.drawGraph()
+        self.graph.redo()
 
     def changeOrient(self, data):
         self.graph.oriented = not bool(data)
