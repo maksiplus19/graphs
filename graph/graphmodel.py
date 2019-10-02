@@ -5,16 +5,23 @@ from graph.graph import Graph
 
 
 class GraphModel(QAbstractTableModel):
-    def __init__(self, graph: Graph):
+    def __init__(self, graph: Graph = None):
         super().__init__()
         self.graph = graph
         self.matrix = []
         self.graphToMatrix()
 
+    def setGraph(self, graph: Graph):
+        self.graph = graph
+        self.graphToMatrix()
+        self.modelReset.emit()
+
     def graphToMatrix(self):
         """
             Метод для преобразования графа в матрицу смежности и обновления модели
         """
+        if self.graph is None:
+            return
         if not self.graph.vertexes_coordinates:
             return
         n = int(sorted(self.graph.vertexes_coordinates)[-1])
