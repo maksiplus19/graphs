@@ -1,7 +1,6 @@
 import sys
 
 from PyQt5 import QtWidgets
-from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QFileDialog, QMessageBox, QAbstractItemView
 
 from graph.graph import Graph
@@ -9,30 +8,52 @@ from graph.graphmodel import GraphModel
 from graph.loadgraph import LoadGraph
 from graph.savegraph import SaveGraph
 from ui.design.design import Ui_MainWindow
+from ui.sourse.qgraphview import QGraphView
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.graph = Graph()
-        self.graphView.set_graph(self.graph)
-        self.graphModel = GraphModel(self.graph)
+        self.tabCounter = 1
+
+        self.graphModel = GraphModel()
         self.graphMatrix.setModel(self.graphModel)
         self.graphMatrix.setEditTriggers(QAbstractItemView.AllEditTriggers)
+
+        self.addTab()
 
         # коннектим обработку нажатия кнопок меню
         self.actionOpen.triggered.connect(self.load_graph)
         self.actionSave.triggered.connect(self.save_graph)
         self.actionExit.triggered.connect(self.close)
+
         self.btnNext.clicked.connect(self.redo)
         self.btnCancel.clicked.connect(self.undo)
-        self.graph.signals.update.connect(self.graphModel.graphToMatrix)
-        self.graph.signals.update.connect(self.graphMatrix.resizeColumnsToContents)
+
         self.actionProgram.triggered.connect(self.open_program)
         self.actionAuthor.triggered.connect(self.open_author)
+
         self.cmbDirect.currentIndexChanged.connect(self.changeOrient)
         self.cmbWeight.currentIndexChanged.connect(self.changeWeight)
+
+        self.tabWidget.currentChanged.connect(self.tabChange)
+
+    def addTab(self, name: str = None):
+        self.tabWidget.addTab(QGraphView(self.tabWidget, Graph()), str(self.tabCounter) if name is None else name)
+        self.tabCounter += 1
+        graph = self.tabWidget.currentWidget().graph
+        self.graphModel.setGraph(graph)
+        graph.signals.update.connect(self.graphModel.graphToMatrix)
+        graph.signals.update.connect(self.graphMatrix.resizeColumnsToContents)
+        graph.update()
+
+    def tabChange(self, index: int):
+        graph = self.tabWidget.currentWidget().graph
+        self.graphModel.setGraph(graph)
+        graph.signals.update.connect(self.graphModel.graphToMatrix)
+        graph.signals.update.connect(self.graphMatrix.resizeColumnsToContents)
+        graph.update()
 
     def load_graph(self):
         # получаем имя файла
@@ -95,16 +116,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             QMessageBox.warning(self, 'Ошибка', f'Неизвестный формат файла "{file_type}"')
 
     def undo(self):
-        self.graph.undo()
+        self.tabWidget.currentWidget().graph.undo()
 
     def redo(self):
-        self.graph.redo()
+        self.tabWidget.currentWidget().graph.redo()
 
     def changeOrient(self, data):
-        self.graph.oriented = not bool(data)
+        self.tabWidget.currentWidget().graph.oriented = not bool(data)
+        self.tabWidget.currentWidget().graph.update()
 
     def changeWeight(self, data):
-        self.graph.weighted = not bool(data)
+        self.tabWidget.currentWidget().graph.weighted = not bool(data)
+        self.tabWidget.currentWidget().graph.update()
 
     def open_program(self):
         QMessageBox.information(self, "Информация", "Программа предоставляет интерфейс для работы с графом."
@@ -112,6 +135,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                                     "инцидентности, список вершин и ребер), а также нарисовать граф. "
                                                     "Программа является базовым инструментом для дальнейших "
                                                     "лабораторных работ.")
+
     def open_author(self):
         QMessageBox.information(self, "Информация", "М8О-312Б-17 Комаров Виктор\nМ8О-313Б-17 Безенков Савелий"
                                                     "\nМ8О-312Б-17 Якупова Айгуль")
