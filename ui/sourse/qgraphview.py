@@ -7,10 +7,8 @@ from ui.sourse.graphicsvertex import GraphicsVertex
 
 
 class QGraphView(QGraphicsView):
-    def __init__(self, centralwidget):
+    def __init__(self, centralwidget, graph: Graph):
         super().__init__(centralwidget)
-        self.graph = None
-
         self.scene = QGraphicsScene()
         self.setScene(self.scene)
         self.rightButtonPressed = False
@@ -24,7 +22,6 @@ class QGraphView(QGraphicsView):
 
         self.pen = QPen(QBrush(QColor(0, 0, 0)), 3)
 
-    def set_graph(self, graph: Graph):
         self.graph = graph
         self.graph.signals.update.connect(self.drawGraph)
 
@@ -34,7 +31,7 @@ class QGraphView(QGraphicsView):
     #     delete_loop = context_menu.addAction("Удалить петлю")
 
     def mouseDoubleClickEvent(self, event: QMouseEvent):
-        print('double click')
+        # print('double click')
         # только левая кнопка мыши
         pos = QPointF(self.mapToScene(event.pos()))
         if event.button() == 1:
