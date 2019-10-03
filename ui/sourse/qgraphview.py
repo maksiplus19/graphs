@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsEllipseItem,
     QGraphicsLineItem, QMenu
 from graph.graph import Graph
 from ui.sourse.graphicsvertex import GraphicsVertex
-
+from graph.savegraph import SaveGraph
 
 class QGraphView(QGraphicsView):
     def __init__(self, centralwidget, graph: Graph):
@@ -41,6 +41,7 @@ class QGraphView(QGraphicsView):
             # добавляем вершину в граф
             self.graph.add_vertex(name, pos.x(), pos.y())
         if event.button() == 2:
+            SaveGraph.save_as_adjacency_matrix(self.graph, "1.txt")
             item = self.scene.itemAt(self.mapToScene(event.pos()), QTransform())
             if type(item) is QGraphicsLineItem:
                 context_menu = QMenu(self)
@@ -80,8 +81,14 @@ class QGraphView(QGraphicsView):
             self.leftButtonPressed = True
             item = self.scene.itemAt(self.mapToScene(event.pos()), QTransform())
             if item:
-                self.moveVertex = item.group().v.name
-                self.setCursor(Qt.ClosedHandCursor)
+                if type(item) is QGraphicsLineItem:
+                    pass
+                elif type(item) is GraphicsVertex:
+                    self.moveVertex = item.v.name
+                    self.setCursor(Qt.ClosedHandCursor)
+                elif type(item) is QGraphicsEllipseItem or QGraphicsSimpleTextItem:
+                    self.moveVertex = item.group().v.name
+                    self.setCursor(Qt.ClosedHandCursor)
 
     def mouseMoveEvent(self, event: QMouseEvent):
         self.drawGraph()
@@ -97,7 +104,8 @@ class QGraphView(QGraphicsView):
     def mouseReleaseEvent(self, event: QMouseEvent):
         if event.button() == 2 and self.edge_from is not None:
             self.rightButtonPressed = False
-            self.scene.removeItem(self.scene.items()[0])
+            if type(self.scene.items()[0]) == QGraphicsLineItem:
+                self.scene.removeItem(self.scene.items()[0])
             item = self.scene.itemAt(self.mapToScene(event.pos()), QTransform())
             if item:
                 if type(item) is QGraphicsLineItem:
