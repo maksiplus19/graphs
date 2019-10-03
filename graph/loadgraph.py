@@ -24,18 +24,27 @@ class LoadGraph:
     def load(graph: Graph, file_name: str):
         graph.clear()
         # получаем данные из файла
-        vertexes, v_coordinates = LoadGraph.__split_file(file_name)
-
-        # десериализуем вершены-ребра
-        graph.vertexes = json.loads(vertexes)
-        # загружем данные о координатах или генерируем, если их нет
-        if v_coordinates is not None:
-            v_coordinates = json.loads(v_coordinates)
-            for d in v_coordinates:
-                graph.vertexes_coordinates[d['name']] = Vertex(d['name'], d['x'], d['y'])
-        else:
-            for v in graph.vertexes:
-                graph.vertexes_coordinates[v] = Vertex(v, random.randint(0, 100), random.randint(0, 100))
+        # vertexes, v_coordinates = LoadGraph.__split_file(file_name)
+        with open(file_name, 'r') as file:
+            data = json.load(file)
+            try:
+                graph.vertexes = data['vertexes']
+            except KeyError:
+                return False
+            # загружем данные о координатах или генерируем, если их нет
+            if 'coordinates' in data:
+                coordinates = data['coordinates']
+                for d in coordinates:
+                    graph.vertexes_coordinates[d['name']] = Vertex(d['name'], d['x'], d['y'])
+            else:
+                for v in graph.vertexes:
+                    graph.vertexes_coordinates[v] = Vertex(v, random.randint(0, 100), random.randint(0, 100))
+            if 'oriented' in data:
+                graph.oriented = data['oriented']
+            if 'weighted' in data:
+                graph.weighted = data['weighted']
+        graph.update()
+        return True
 
     @staticmethod
     def __isfloat(value):

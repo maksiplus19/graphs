@@ -32,9 +32,12 @@ class Graph:
         self.vertexes_coordinates = {}
         self.oriented = True
         self.weighted = True
+        self.saved = True
         self.__history = []
         self.__history_counter = 0
         self.signals = self.__Signals()
+
+        self.signals.update.connect(self.edited)
 
     def add_edge(self, v_from: str, v_to: str, weight: int = 1, __save: bool = True):
         if v_from in self.vertexes and v_to in self.vertexes:
@@ -317,3 +320,6 @@ class Graph:
 
     def update(self):
         self.signals.update.emit()
+
+    def edited(self):
+        self.saved = False
