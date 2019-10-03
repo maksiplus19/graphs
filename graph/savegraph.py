@@ -8,14 +8,15 @@ import numpy as np
 
 
 class SaveGraph:
-
     @staticmethod
     def save(graph: Graph, file_name: str):
         with open(file_name, "w") as file:
-            json.dump(graph.vertexes, file)
-            v_c = json.dumps([v.to_dict() for v in graph.vertexes_coordinates.values()])
-            file.write(f'||{v_c}')
-
+            graph_dict = {'vertexes': graph.vertexes}
+            coordinates = [v.to_dict() for v in graph.vertexes_coordinates.values()]
+            graph_dict['coordinates'] = coordinates
+            graph_dict['oriented'] = graph.oriented
+            graph_dict['weighted'] = graph.weighted
+            json.dump(graph_dict, file)
 
     @staticmethod
     def save_as_vertexes_list(graph: Graph, file_name: str):
@@ -50,7 +51,6 @@ class SaveGraph:
                         else:
                             inc_matrix.append(data)
             file.write(str(np.matrix(inc_matrix)))
-
 
     @staticmethod
     def save_as_ribs_list(graph: Graph, file_name: str):
