@@ -99,13 +99,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.tabWidget.setCurrentIndex(self.tabWidget.count() - 1)
         # LoadGraph.load(self.graph, file_name)
         # в зависимости от типа выбираем метод загрузки
-        if file_type == 'gal':
+        if file_type == 'gvl':
             LoadGraph.load_from_arc_list(self.tabWidget.currentWidget().graph, file_name)
         elif file_type == 'gam':
             LoadGraph.load_from_adjacency_matrix(self.tabWidget.currentWidget().graph, file_name)
         elif file_type == 'gim':
             LoadGraph.load_from_incidence_matrix(self.tabWidget.currentWidget().graph, file_name)
-        elif file_type == 'gar':
+        elif file_type == 'gal':
             LoadGraph.load_from_ribs_list(self.tabWidget.currentWidget().graph, file_name)
         elif file_type == 'json':
             if not LoadGraph.load(self.tabWidget.currentWidget().graph, file_name):
@@ -132,7 +132,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # в зависимости от типа выбираем метод сохранения
         if file_type == 'gvl':
             SaveGraph.save_as_vertexes_list(self.tabWidget.currentWidget().graph, file_name)
-        if file_type == 'gam':
+        elif file_type == 'gam':
             SaveGraph.save_as_adjacency_matrix(self.tabWidget.currentWidget().graph, file_name)
         elif file_type == 'gim':
             SaveGraph.save_as_incidence_matrix(self.tabWidget.currentWidget().graph, file_name)
@@ -141,7 +141,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         elif file_type == 'json':
             SaveGraph.save(self.tabWidget.currentWidget().graph, file_name)
         elif file_type == 'png':
-            SaveGraph.save_as_image(file_name, self.graphView.scene)
+            SaveGraph.save_as_image(file_name, self.tabWidget.currentWidget().scene)
         else:
             QMessageBox.warning(self, 'Ошибка', f'Неизвестный формат файла "{file_type}"')
             return False
