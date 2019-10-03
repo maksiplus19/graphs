@@ -103,9 +103,13 @@ class QGraphView(QGraphicsView):
                     pass
                 elif type(item) is GraphicsVertex:
                     edge_to = item.v.name
+                    if edge_to == self.edge_from and self.graph.vertexes[edge_to].get(edge_to) is not None:
+                        return
                     self.graph.add_edge(self.edge_from, edge_to)
                 elif type(item) is QGraphicsEllipseItem or QGraphicsSimpleTextItem:
                     edge_to = item.group().v.name
+                    if edge_to == self.edge_from and self.graph.vertexes[edge_to].get(edge_to) is not None:
+                        return
                     self.graph.add_edge(self.edge_from, edge_to)
             self.edge_from = None
         elif event.button() == 1:
