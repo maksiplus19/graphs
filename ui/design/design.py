@@ -2,13 +2,12 @@
 
 # Form implementation generated from reading ui file 'design.ui'
 #
-# Created by: PyQt5 UI code generator 5.13.1
+# Created by: PyQt5 UI code generator 5.13.0
 #
 # WARNING! All changes made in this file will be lost!
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from ui.sourse.qgraphview import QGraphView
 
 
 class Ui_MainWindow(object):
@@ -17,13 +16,10 @@ class Ui_MainWindow(object):
         MainWindow.resize(887, 562)
         self.centralWidget = QtWidgets.QWidget(MainWindow)
         self.centralWidget.setObjectName("centralWidget")
-        self.horizontalLayout_6 = QtWidgets.QHBoxLayout(self.centralWidget)
-        self.horizontalLayout_6.setContentsMargins(11, 11, 11, 11)
-        self.horizontalLayout_6.setSpacing(6)
-        self.horizontalLayout_6.setObjectName("horizontalLayout_6")
-        self.graphView = QGraphView(self.centralWidget)
-        self.graphView.setObjectName("graphView")
-        self.horizontalLayout_6.addWidget(self.graphView)
+        self.gridLayout = QtWidgets.QGridLayout(self.centralWidget)
+        self.gridLayout.setContentsMargins(11, 11, 11, 11)
+        self.gridLayout.setSpacing(6)
+        self.gridLayout.setObjectName("gridLayout")
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setSpacing(6)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -38,21 +34,10 @@ class Ui_MainWindow(object):
         self.cmbWeight.addItem("")
         self.verticalLayout.addWidget(self.cmbWeight)
         self.textEdit = QtWidgets.QTextEdit(self.centralWidget)
+        self.textEdit.setMaximumSize(QtCore.QSize(16777215, 50))
         self.textEdit.setFocusPolicy(QtCore.Qt.ClickFocus)
         self.textEdit.setObjectName("textEdit")
         self.verticalLayout.addWidget(self.textEdit)
-        self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_4.setSpacing(6)
-        self.horizontalLayout_4.setObjectName("horizontalLayout_4")
-        self.lblMatrSize = QtWidgets.QLabel(self.centralWidget)
-        self.lblMatrSize.setObjectName("lblMatrSize")
-        self.horizontalLayout_4.addWidget(self.lblMatrSize)
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_4.addItem(spacerItem)
-        self.spbMatrSize = QtWidgets.QSpinBox(self.centralWidget)
-        self.spbMatrSize.setObjectName("spbMatrSize")
-        self.horizontalLayout_4.addWidget(self.spbMatrSize)
-        self.verticalLayout.addLayout(self.horizontalLayout_4)
         self.graphMatrix = QtWidgets.QTableView(self.centralWidget)
         self.graphMatrix.setMaximumSize(QtCore.QSize(16777204, 16777215))
         self.graphMatrix.setSizeIncrement(QtCore.QSize(0, 0))
@@ -71,8 +56,8 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setSpacing(6)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_3.addItem(spacerItem1)
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_3.addItem(spacerItem)
         self.btnCancel = QtWidgets.QPushButton(self.centralWidget)
         self.btnCancel.setObjectName("btnCancel")
         self.horizontalLayout_3.addWidget(self.btnCancel)
@@ -80,14 +65,22 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setSpacing(6)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_2.addItem(spacerItem2)
+        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem1)
         self.btnNext = QtWidgets.QPushButton(self.centralWidget)
         self.btnNext.setObjectName("btnNext")
         self.horizontalLayout_2.addWidget(self.btnNext)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
-        self.horizontalLayout_6.addLayout(self.verticalLayout)
-        self.horizontalLayout_6.setStretch(0, 1)
+        self.gridLayout.addLayout(self.verticalLayout, 0, 1, 1, 1)
+        self.tabWidget = QtWidgets.QTabWidget(self.centralWidget)
+        self.tabWidget.setObjectName("tabWidget")
+        # self.tab = QtWidgets.QWidget()
+        # self.tab.setObjectName("tab")
+        # self.tabWidget.addTab(self.tab, "")
+        # self.tab_2 = QtWidgets.QWidget()
+        # self.tab_2.setObjectName("tab_2")
+        # self.tabWidget.addTab(self.tab_2, "")
+        self.gridLayout.addWidget(self.tabWidget, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralWidget)
         self.mainToolBar = QtWidgets.QToolBar(MainWindow)
         self.mainToolBar.setObjectName("mainToolBar")
@@ -125,6 +118,7 @@ class Ui_MainWindow(object):
         self.menuBar.addAction(self.menuInfo.menuAction())
 
         self.retranslateUi(MainWindow)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -134,9 +128,10 @@ class Ui_MainWindow(object):
         self.cmbDirect.setItemText(1, _translate("MainWindow", "Ненаправленный"))
         self.cmbWeight.setItemText(0, _translate("MainWindow", "Нагруженный"))
         self.cmbWeight.setItemText(1, _translate("MainWindow", "Ненагруженный"))
-        self.lblMatrSize.setText(_translate("MainWindow", "Размерность матрицы"))
         self.btnCancel.setText(_translate("MainWindow", "← Отменить"))
         self.btnNext.setText(_translate("MainWindow", "→ Дальше"))
+        # self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "Tab 1"))
+        # self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "Tab 2"))
         self.menuFile.setTitle(_translate("MainWindow", "Файл"))
         self.menuInfo.setTitle(_translate("MainWindow", "?"))
         self.menuTasks.setTitle(_translate("MainWindow", "Задачи"))
