@@ -114,7 +114,6 @@ class LoadGraph:
                         value = ''
                         graph.add_vertex(params[1], random.randint(0, 100), random.randint(0, 100))
                         graph.add_vertex(params[2], random.randint(0, 100), random.randint(0, 100))
-                        graph.add_edge(params[1], params[2], int(params[0]))
                         graph.add_edge(params[2], params[1], int(params[0]))
                         graph.oriented = bool(int(params[3]))
                         params = []
