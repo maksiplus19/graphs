@@ -68,9 +68,9 @@ class LoadGraph:
             for i in range(len(matrix1)):
                 for j in range(len(matrix1[i])):
                     if matrix1[i][j] != '0' and i != []:
-                        graph.add_vertex(str(i), random.randint(-50, 100), random.randint(0, 100))
-                        graph.add_vertex(str(j), random.randint(-50, 100), random.randint(0, 100))
-                        graph.add_edge(str(i), str(j), int(matrix1[i][j]))
+                        graph.add_vertex(str(i+1), random.randint(-50, 100), random.randint(0, 100))
+                        graph.add_vertex(str(j+1), random.randint(-50, 100), random.randint(0, 100))
+                        graph.add_edge(str(i+1), str(j+1), int(matrix1[i][j]))
 
     @staticmethod
     def load_from_incidence_matrix(graph: Graph, file_name: str):

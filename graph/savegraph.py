@@ -75,11 +75,17 @@ class SaveGraph:
         with open(file_name, "w") as file:
             n = len(graph.vertexes_coordinates)
             adj_matrix = np.zeros((n, n))
+            print(graph.vertexes.items())
             for v_from, to_dict in graph.vertexes.items():
                 for v_to, to_list in to_dict.items():
                     for weight in to_list:
-                        adj_matrix[int(v_from)][int(v_to)] += weight
-                        adj_matrix[int(v_to)][int(v_from)] += weight
+                        adj_matrix[int(v_from) - 1][int(v_to) - 1] += weight
+                        # if graph.oriented:
+                        #     adj_matrix[int(v_from)-1][int(v_to)-1] += weight
+                        #     # adj_matrix[int(v_to)-1][int(v_from)-1] += weight
+                        # else:
+                        #     adj_matrix[int(v_from) - 1][int(v_to) - 1] += weight/2
+                        #     adj_matrix[int(v_to) - 1][int(v_from) - 1] += weight/2
             file.write(str(adj_matrix))
 
     @staticmethod

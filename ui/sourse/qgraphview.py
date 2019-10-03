@@ -41,7 +41,6 @@ class QGraphView(QGraphicsView):
             # добавляем вершину в граф
             self.graph.add_vertex(name, pos.x(), pos.y())
         if event.button() == 2:
-            SaveGraph.save_as_adjacency_matrix(self.graph, "1.txt")
             item = self.scene.itemAt(self.mapToScene(event.pos()), QTransform())
             if type(item) is QGraphicsLineItem:
                 context_menu = QMenu(self)
