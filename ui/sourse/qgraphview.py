@@ -77,8 +77,9 @@ class QGraphView(QGraphicsView):
                     self.startPos = self.mapToScene(event.pos())
                     self.edge_from = item.v.name
                 elif type(item) is QGraphicsEllipseItem or QGraphicsSimpleTextItem:
-                    self.startPos = self.mapToScene(event.pos())
-                    self.edge_from = item.group().v.name
+                    if 'v' in item.group().__dict__:
+                        self.startPos = self.mapToScene(event.pos())
+                        self.edge_from = item.group().v.name
         elif event.button() == 1:
             self.leftButtonPressed = True
             item = self.scene.itemAt(self.mapToScene(event.pos()), QTransform())
