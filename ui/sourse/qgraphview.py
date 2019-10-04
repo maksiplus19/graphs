@@ -3,6 +3,8 @@ from PyQt5.QtGui import QMouseEvent, QPainter, QTransform, QContextMenuEvent, QP
 from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsEllipseItem, QGraphicsSimpleTextItem, \
     QGraphicsLineItem, QMenu
 from graph.graph import Graph
+from graph.vertex import Vertex
+from ui.sourse.graphicsedge import GraphicsEdge
 from ui.sourse.graphicsvertex import GraphicsVertex
 from graph.savegraph import SaveGraph
 
@@ -18,6 +20,7 @@ class QGraphView(QGraphicsView):
         self.edge_from = None
         self.moveVertex = None
         self.isVertex = None
+        self.i = 0
         self.setRenderHint(QPainter.Antialiasing)
 
         self.pen = QPen(QBrush(QColor(0, 0, 0)), 3)
@@ -86,7 +89,10 @@ class QGraphView(QGraphicsView):
                     self.moveVertex = item.v.name
                     self.setCursor(Qt.ClosedHandCursor)
                 elif type(item) is QGraphicsEllipseItem or QGraphicsSimpleTextItem:
-                    self.moveVertex = item.group().v.name
+                    if type(item.group()) is GraphicsVertex:
+                        self.moveVertex = item.group().v
+                    else:
+                        self.moveVertex = item.group().node
                     self.setCursor(Qt.ClosedHandCursor)
 
     def mouseMoveEvent(self, event: QMouseEvent):
@@ -97,8 +103,8 @@ class QGraphView(QGraphicsView):
             # self.isVertex = True
         elif self.leftButtonPressed and self.moveVertex is not None:
             pos = QPointF(self.mapToScene(event.pos()))
-            self.graph.vertexes_coordinates[self.moveVertex].x = pos.x()
-            self.graph.vertexes_coordinates[self.moveVertex].y = pos.y()
+            self.moveVertex.x = pos.x()
+            self.moveVertex.y = pos.y()
 
     def mouseReleaseEvent(self, event: QMouseEvent):
         if event.button() == 2 and self.edge_from is not None:
@@ -118,6 +124,7 @@ class QGraphView(QGraphicsView):
                     if edge_to != self.edge_from:
                         self.graph.add_edge(self.edge_from, edge_to)
             self.edge_from = None
+
         elif event.button() == 1:
             self.leftButtonPressed = False
             self.moveVertex = None
@@ -128,14 +135,17 @@ class QGraphView(QGraphicsView):
         self.scene.clear()
 
         # рисуем ребра
+        # for edge in self.edges:
+        #     self.scene.addItem(edge)
         for v_from, to_dict in self.graph.vertexes.items():
             v_from = self.graph.vertexes_coordinates[v_from]
             for v_to, to_list in to_dict.items():
                 v_to = self.graph.vertexes_coordinates[v_to]
-                for edge in to_list:
-                    if not self.graph.oriented:
-                        self.scene.addLine(v_from.x, v_from.y, v_to.x, v_to.y)
-                        self.scene.items()[0].setPen(self.pen)
+                for weight, node in to_list:
+                    # if not self.graph.oriented:
+                    # self.scene.addLine(v_from.x, v_from.y, v_to.x, v_to.y)
+                    # self.scene.items()[0].setPen(self.pen)
+                    self.scene.addItem(GraphicsEdge(v_from, v_to, node, self.graph.oriented, weight))
 
         # рисуем вершины
         for v in self.graph.vertexes_coordinates.values():
