@@ -2,3 +2,6 @@
 /venv
 .gitignore
 *__pycache__*
+*.png
+*.gam
+*.json
