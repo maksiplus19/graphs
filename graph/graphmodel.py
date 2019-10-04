@@ -49,7 +49,9 @@ class GraphModel(QAbstractTableModel):
     def columnCount(self, parent=None, *args, **kwargs) -> int:
         return len(self.matrix)
 
-    def data(self, index: QModelIndex, role=None) -> any:
+    def data(self, index: QModelIndex, role=None):
+        if not len(self.graph.vertexes_coordinates):
+            return
         if role == Qt.DisplayRole:
             if not self.graph.oriented:
                 # вернуть количество ребер
