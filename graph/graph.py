@@ -1,6 +1,7 @@
+import random
 from copy import copy
 
-from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5.QtCore import QObject, pyqtSignal, QPointF
 
 from graph.vertex import Vertex
 
@@ -30,6 +31,7 @@ class Graph:
         self.vertexes = {}
         # vertexes_coordinates = dict(name, Vertex)
         self.vertexes_coordinates = {}
+        self.nodes = []
         self.oriented = True
         self.weighted = True
         self.saved = True
@@ -50,7 +52,8 @@ class Graph:
             if v_to not in self.vertexes[v_from]:
                 self.vertexes[v_from][v_to] = []
             # добавляем ребро
-            self.vertexes[v_from][v_to].append(weight)
+            self.vertexes[v_from][v_to].append([weight, Vertex('node', self.vertexes_coordinates[v_from].x - (self.vertexes_coordinates[v_from].x - self.vertexes_coordinates[v_to].x) / 2 - random.randint(-50, 50),
+                                                 self.vertexes_coordinates[v_from].y - (self.vertexes_coordinates[v_from].y - self.vertexes_coordinates[v_to].y) / 2 - random.randint(-50, 50))])
             # сортируем, чтобы ребро с меньшим весом было первым
             self.vertexes[v_from][v_to].sort()
             if not self.oriented:
