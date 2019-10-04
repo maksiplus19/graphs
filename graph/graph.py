@@ -1,23 +1,31 @@
 import random
 from copy import copy
 
-from PyQt5.QtCore import QObject, pyqtSignal, QPointF
+from PyQt5.QtCore import QObject, pyqtSignal
 
 from graph.vertex import Vertex
 
 
+def edited(method):
+    def warped(self, *args):
+        method(self, *args)
+        self.saved = False
+    return warped
+
+
 class Graph:
-    ADD_VERTEX = 1  # Done
-    ADD_EDGE = 2  # Done
-    DEL_VERTEX = 3  # Done
-    DEL_EDGE = 4  # Done
-    MOVE_VERTEX = 5  # Done
+    """Класс графа"""
+
+    ADD_VERTEX = 1
+    ADD_EDGE = 2
+    DEL_VERTEX = 3
+    DEL_EDGE = 4
+    MOVE_VERTEX = 5
     GRAPH_CLEAR = 6
     SET_EDGE = 7
     SET_ALL_EDGES = 8
     DEL_ALL_EDGES = 9
     HISTORY_REC_NUM = 10
-    """Класс графа"""
 
     class __Signals(QObject):
         # сигнал, который будет отправляться при изменении графа
@@ -39,8 +47,7 @@ class Graph:
         self.__history_counter = 0
         self.signals = self.__Signals()
 
-        self.signals.update.connect(self.edited)
-
+    @edited
     def add_edge(self, v_from: str, v_to: str, weight: int = 1, __save: bool = True):
         if v_from in self.vertexes and v_to in self.vertexes:
             if __save:
@@ -66,6 +73,7 @@ class Graph:
         else:
             raise Exception('No vertex for adding edge')
 
+    @edited
     def add_vertex(self, name: str, x: float, y: float, __save: bool = True):
         if name not in self.vertexes_coordinates:
             if __save:
@@ -77,6 +85,7 @@ class Graph:
             self.vertexes[name] = {}
             self.signals.update.emit()
 
+    @edited
     def del_edge(self, v_from: str, v_to: str, weight: int=1, __save: bool = True):
         if v_from in self.vertexes and v_to in self.vertexes[v_from]:
             arr = self.vertexes[v_from][v_to]
@@ -88,6 +97,7 @@ class Graph:
                 arr.pop(arr.index(weight))
             self.signals.update.emit()
 
+    @edited
     def del_all_edges(self, v_from: str, v_to: str, __save: bool = True):
         if v_from in self.vertexes and v_to in self.vertexes[v_from]:
             if __save:
@@ -98,6 +108,7 @@ class Graph:
             self.vertexes[v_from].pop(v_to)
             self.signals.update.emit()
 
+    @edited
     def set_all_edges(self, v_from: str, v_to: str, weight: int, __save: bool = True):
         if v_from in self.vertexes and v_to in self.vertexes:
             if __save:
@@ -106,6 +117,7 @@ class Graph:
             self.vertexes[v_from][v_to] = [weight]
             self.signals.update.emit()
 
+    @edited
     def set_edge(self, v_from: str, v_to: str, old_weight: int, new_weight: int, __save: bool = True):
         if v_from in self.vertexes and v_to in self.vertexes[v_from]:
             arr = self.vertexes[v_from][v_to]
@@ -116,6 +128,7 @@ class Graph:
                 arr[arr.index(old_weight)] = new_weight
                 self.signals.update.emit()
 
+    @edited
     def del_vertex(self, name: str, __save: bool = True):
         if name in self.vertexes_coordinates:
             if __save:
@@ -323,6 +336,3 @@ class Graph:
 
     def update(self):
         self.signals.update.emit()
-
-    def edited(self):
-        self.saved = False
