@@ -34,7 +34,7 @@ class GraphModel(QAbstractTableModel):
                 v_from = int(v_from)
                 for v_to, to_list in to_dict.items():
                     v_to = int(v_to)
-                    for weight in to_list:
+                    for weight, node in to_list:
                         if self.graph.oriented:
                             self.matrix[v_from - 1][v_to - 1] += weight
                         else:
