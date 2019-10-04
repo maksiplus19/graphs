@@ -43,7 +43,7 @@ class QGraphView(QGraphicsView):
             # преобразум коодинаты в координаты сцены
             # добавляем вершину в граф
             self.graph.add_vertex(name, pos.x(), pos.y())
-        if event.button() == 2:
+        elif event.button() == 2:
             item = self.scene.itemAt(self.mapToScene(event.pos()), QTransform())
             if type(item) is QGraphicsLineItem:
                 context_menu = QMenu(self)

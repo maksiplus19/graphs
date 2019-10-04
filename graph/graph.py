@@ -10,6 +10,7 @@ def edited(method):
     def warped(self, *args):
         method(self, *args)
         self.saved = False
+
     return warped
 
 
@@ -59,10 +60,17 @@ class Graph:
             if v_to not in self.vertexes[v_from]:
                 self.vertexes[v_from][v_to] = []
             # добавляем ребро
-            self.vertexes[v_from][v_to].append([weight, Vertex('node', self.vertexes_coordinates[v_from].x - (self.vertexes_coordinates[v_from].x - self.vertexes_coordinates[v_to].x) / 2 - random.randint(-50, 50),
-                                                 self.vertexes_coordinates[v_from].y - (self.vertexes_coordinates[v_from].y - self.vertexes_coordinates[v_to].y) / 2 - random.randint(-50, 50))])
+            self.vertexes[v_from][v_to].append(
+                [weight,
+                 Vertex('node', self.vertexes_coordinates[v_from].x -
+                        (self.vertexes_coordinates[v_from].x - self.vertexes_coordinates[v_to].x) / 2 -
+                        random.randint(-50, 50),
+                        self.vertexes_coordinates[v_from].y -
+                        (self.vertexes_coordinates[v_from].y - self.vertexes_coordinates[v_to].y) / 2 -
+                        random.randint(-50, 50))]
+            )
             # сортируем, чтобы ребро с меньшим весом было первым
-            self.vertexes[v_from][v_to].sort()
+            self.vertexes[v_from][v_to].sort(key=lambda el: el[0])
             if not self.oriented:
                 # self.add_edge(v_to, v_from, weight)
                 if v_from not in self.vertexes[v_to]:
@@ -86,7 +94,7 @@ class Graph:
             self.signals.update.emit()
 
     @edited
-    def del_edge(self, v_from: str, v_to: str, weight: int=1, __save: bool = True):
+    def del_edge(self, v_from: str, v_to: str, weight: int = 1, __save: bool = True):
         if v_from in self.vertexes and v_to in self.vertexes[v_from]:
             arr = self.vertexes[v_from][v_to]
             if weight in arr:
