@@ -45,13 +45,12 @@ class QGraphView(QGraphicsView):
             self.graph.add_vertex(name, pos.x(), pos.y())
         elif event.button() == 2:
             item = self.scene.itemAt(self.mapToScene(event.pos()), QTransform())
-            if type(item) is QGraphicsLineItem:
+            if type(item) is QGraphicsLineItem or 'node' in item.group().__dict__:
                 context_menu = QMenu(self)
                 oriented = context_menu.addAction("Ориентированное")
                 not_oriented = context_menu.addAction("Неориентированное")
                 action = context_menu.exec_(self.mapToGlobal(event.pos()))
-            elif type(item) is QGraphicsEllipseItem or type(item)\
-                    is QGraphicsSimpleTextItem:
+            elif type(item) is QGraphicsEllipseItem or type(item) is QGraphicsSimpleTextItem:
                 context_menu = QMenu(self)
                 add_loop = context_menu.addAction("Добавить петлю")
                 delete_loop = context_menu.addAction("Удалить петлю")
