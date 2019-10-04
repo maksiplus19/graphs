@@ -23,6 +23,8 @@ class GraphModel(QAbstractTableModel):
         if self.graph is None:
             return
         if not self.graph.vertexes_coordinates:
+            self.matrix = [[None]]
+            self.modelReset.emit()
             return
         n = int(sorted(self.graph.vertexes_coordinates)[-1])
         if n > 0:
