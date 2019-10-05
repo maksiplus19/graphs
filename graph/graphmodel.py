@@ -26,7 +26,7 @@ class GraphModel(QAbstractTableModel):
             self.matrix = [[None]]
             self.modelReset.emit()
             return
-        n = int(sorted(self.graph.vertexes_coordinates)[-1])
+        n = int(sorted(self.graph.vertexes, key=lambda el: int(el))[-1])
         if n > 0:
             # преобразование графа в матрицу смежности
             self.matrix = [[0] * n for i in range(n)]
