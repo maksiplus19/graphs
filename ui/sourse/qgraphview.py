@@ -45,11 +45,19 @@ class QGraphView(QGraphicsView):
             self.graph.add_vertex(name, pos.x(), pos.y())
         elif event.button() == 2:
             item = self.scene.itemAt(self.mapToScene(event.pos()), QTransform())
-            if type(item) is QGraphicsLineItem or 'node' in item.group().__dict__:
-                context_menu = QMenu(self)
-                oriented = context_menu.addAction("Ориентированное")
-                not_oriented = context_menu.addAction("Неориентированное")
-                action = context_menu.exec_(self.mapToGlobal(event.pos()))
+            if item is None:
+                return
+            if type(item) is QGraphicsLineItem or type(item) is GraphicsEdge or 'node' in item.group().__dict__:
+                if self.graph.oriented:
+                    context_menu = QMenu(self)
+                    change_orient = context_menu.addAction("Изменить направление")
+                    action = context_menu.exec_(self.mapToGlobal(event.pos()))
+                    if action == change_orient:
+                        if type(item) is GraphicsEdge:
+                            d = item.__dict__
+                        else:
+                            d = item.group().__dict__
+                        self.graph.change_orient(d['v_from'].name, d['v_to'].name, d['weight'], d['node'])
             elif type(item) is QGraphicsEllipseItem or type(item) is QGraphicsSimpleTextItem:
                 context_menu = QMenu(self)
                 add_loop = context_menu.addAction("Добавить петлю")
@@ -57,13 +65,13 @@ class QGraphView(QGraphicsView):
                 delete_vertex = context_menu.addAction("Удалить вершину")
                 action = context_menu.exec_(self.mapToGlobal(event.pos()))
                 if action == delete_vertex:
-                    self.graph.del_vertex(str(item.group().v.name))
+                    self.graph.del_vertex(item.group().v.name)
                     self.drawGraph()
                 if action == add_loop:
                     print(item.group().v.name)
-                    self.graph.add_edge(str(item.group().v.name), str(item.group().v.name))
+                    self.graph.add_edge(item.group().v.name, item.group().v.name)
                 if action == delete_loop:
-                    self.graph.del_edge(str(item.group().v.name), str(item.group().v.name))
+                    self.graph.del_edge(item.group().v.name, item.group().v.name)
 
     def mousePressEvent(self, event: QMouseEvent):
         if event.button() == 2:
@@ -75,7 +83,7 @@ class QGraphView(QGraphicsView):
                 elif type(item) is GraphicsVertex:
                     self.startPos = self.mapToScene(event.pos())
                     self.edge_from = item.v.name
-                elif type(item) is QGraphicsEllipseItem or QGraphicsSimpleTextItem:
+                elif type(item) is QGraphicsEllipseItem or QGraphicsSimpleTextItem and not type(item) is GraphicsEdge:
                     if 'v' in item.group().__dict__:
                         self.startPos = self.mapToScene(event.pos())
                         self.edge_from = item.group().v.name
@@ -88,7 +96,7 @@ class QGraphView(QGraphicsView):
                 elif type(item) is GraphicsVertex:
                     self.moveVertex = item.v.name
                     self.setCursor(Qt.ClosedHandCursor)
-                elif type(item) is QGraphicsEllipseItem or QGraphicsSimpleTextItem:
+                elif type(item) is QGraphicsEllipseItem or QGraphicsSimpleTextItem and not type(item) is GraphicsEdge:
                     if type(item.group()) is GraphicsVertex:
                         self.moveVertex = item.group().v
                     else:
@@ -141,11 +149,15 @@ class QGraphView(QGraphicsView):
             v_from = self.graph.vertexes_coordinates[v_from]
             for v_to, to_list in to_dict.items():
                 v_to = self.graph.vertexes_coordinates[v_to]
-                for weight, node in to_list:
-                    # if not self.graph.oriented:
-                    # self.scene.addLine(v_from.x, v_from.y, v_to.x, v_to.y)
-                    # self.scene.items()[0].setPen(self.pen)
-                    self.scene.addItem(GraphicsEdge(v_from, v_to, node, self.graph.oriented, weight))
+                try:
+                    for weight, node in to_list:
+                        # if not self.graph.oriented:
+                        # self.scene.addLine(v_from.x, v_from.y, v_to.x, v_to.y)
+                        # self.scene.items()[0].setPen(self.pen)
+                        self.scene.addItem(GraphicsEdge(v_from, v_to, node, self.graph.oriented, weight))
+                except TypeError:
+                    self.graph.restore()
+                    self.drawGraph()
 
         # рисуем вершины
         for v in self.graph.vertexes_coordinates.values():
