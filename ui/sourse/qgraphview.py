@@ -138,6 +138,9 @@ class QGraphView(QGraphicsView):
             self.setCursor(Qt.ArrowCursor)
 
     def drawGraph(self):
+        # self.simpleDrawGraph()
+        # return
+
         # очищаем сцену
         self.scene.clear()
 
@@ -172,5 +175,15 @@ class QGraphView(QGraphicsView):
         for v in self.graph.vertexes_coordinates.values():
             self.scene.addItem(GraphicsVertex(v))
 
-    # def resizeEvent(self, event: QResizeEvent):
-    #     self.scene.setSceneRect(0, 0, event.size().width(), event.size().height())
+    def simpleDrawGraph(self):
+        self.scene.clear()
+        for v_from, to_dict in self.graph.vertexes.items():
+            v_from = self.graph.vertexes_coordinates[v_from]
+            for v_to, to_list in to_dict.items():
+                v_to = self.graph.vertexes_coordinates[v_to]
+                for weight, node in to_list:
+                    self.scene.addLine(v_from.x, v_from.y, v_to.x, v_to.y)
+
+        # рисуем вершины
+        for v in self.graph.vertexes_coordinates.values():
+            self.scene.addItem(GraphicsVertex(v))
