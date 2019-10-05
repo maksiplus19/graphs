@@ -1,3 +1,4 @@
+import random
 from PyQt5.QtCore import QPointF, Qt
 from PyQt5.QtGui import QMouseEvent, QPainter, QTransform, QContextMenuEvent, QPen, QBrush, QColor
 from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsEllipseItem, QGraphicsSimpleTextItem, \
@@ -28,11 +29,6 @@ class QGraphView(QGraphicsView):
         self.graph = graph
         self.graph.signals.update.connect(self.drawGraph)
 
-    # def contextMenuEvent(self, QContextMenuEvent):
-    #     context_menu = QMenu(self)
-    #     add_loop = context_menu.addAction("Добавить петлю")
-    #     delete_loop = context_menu.addAction("Удалить петлю")
-
     def mouseDoubleClickEvent(self, event: QMouseEvent):
         # print('double click')
         # только левая кнопка мыши
@@ -45,25 +41,27 @@ class QGraphView(QGraphicsView):
             self.graph.add_vertex(name, pos.x(), pos.y())
         elif event.button() == 2:
             item = self.scene.itemAt(self.mapToScene(event.pos()), QTransform())
-            if type(item) is QGraphicsLineItem or 'node' in item.group().__dict__:
-                context_menu = QMenu(self)
-                oriented = context_menu.addAction("Ориентированное")
-                not_oriented = context_menu.addAction("Неориентированное")
-                action = context_menu.exec_(self.mapToGlobal(event.pos()))
-            elif type(item) is QGraphicsEllipseItem or type(item) is QGraphicsSimpleTextItem:
-                context_menu = QMenu(self)
-                add_loop = context_menu.addAction("Добавить петлю")
-                delete_loop = context_menu.addAction("Удалить петлю")
-                delete_vertex = context_menu.addAction("Удалить вершину")
-                action = context_menu.exec_(self.mapToGlobal(event.pos()))
-                if action == delete_vertex:
-                    self.graph.del_vertex(str(item.group().v.name))
-                    self.drawGraph()
-                if action == add_loop:
-                    print(item.group().v.name)
-                    self.graph.add_edge(str(item.group().v.name), str(item.group().v.name))
-                if action == delete_loop:
-                    self.graph.del_edge(str(item.group().v.name), str(item.group().v.name))
+            if item:
+                if type(item) is QGraphicsLineItem or 'node' in item.group().__dict__:
+                    context_menu = QMenu(self)
+                    orientedTo = context_menu.addAction("Ориентированное к вершине " + item.group().v_to.name)
+                    orientedFrom = context_menu.addAction("Ориентированное к вершине " + item.group().v_from.name)
+                    action = context_menu.exec_(self.mapToGlobal(event.pos()))
+                elif (type(item) is QGraphicsEllipseItem or type(item)\
+                        is QGraphicsSimpleTextItem) and type(item.group()) is GraphicsVertex:
+                    context_menu = QMenu(self)
+                    add_loop = context_menu.addAction("Добавить петлю")
+                    delete_loop = context_menu.addAction("Удалить петлю")
+                    delete_vertex = context_menu.addAction("Удалить вершину")
+                    action = context_menu.exec_(self.mapToGlobal(event.pos()))
+                    if action == delete_vertex:
+                        self.graph.del_vertex(str(item.group().v.name))
+                        self.drawGraph()
+                    if action == add_loop:
+                        print(item.group().v.name)
+                        self.graph.add_edge(item.group().v.name, item.group().v.name)
+                    if action == delete_loop:
+                        self.graph.del_edge(item.group().v.name, item.group().v.name)
 
     def mousePressEvent(self, event: QMouseEvent):
         if event.button() == 2:
@@ -85,8 +83,11 @@ class QGraphView(QGraphicsView):
             if item:
                 if type(item) is QGraphicsLineItem:
                     pass
+                elif type(item) is GraphicsEdge:
+                    self.moveVertex = item.node
+                    self.setCursor(Qt.ClosedHandCursor)
                 elif type(item) is GraphicsVertex:
-                    self.moveVertex = item.v.name
+                    self.moveVertex = item.v
                     self.setCursor(Qt.ClosedHandCursor)
                 elif type(item) is QGraphicsEllipseItem or QGraphicsSimpleTextItem:
                     if type(item.group()) is GraphicsVertex:
@@ -142,10 +143,13 @@ class QGraphView(QGraphicsView):
             for v_to, to_list in to_dict.items():
                 v_to = self.graph.vertexes_coordinates[v_to]
                 for weight, node in to_list:
-                    # if not self.graph.oriented:
-                    # self.scene.addLine(v_from.x, v_from.y, v_to.x, v_to.y)
-                    # self.scene.items()[0].setPen(self.pen)
-                    self.scene.addItem(GraphicsEdge(v_from, v_to, node, self.graph.oriented, weight))
+                    if v_from is v_to:
+                        pen = QPen(QBrush(QColor(0, 0, 0)), 3)
+                        ellipse = QGraphicsEllipseItem(v_from.x - 30, v_from.y - 30, 30, 30)
+                        ellipse.setPen(pen)
+                        self.scene.addItem(ellipse)
+                    else:
+                        self.scene.addItem(GraphicsEdge(v_from, v_to, node, self.graph.oriented, self.graph.weighted, weight))
 
         # рисуем вершины
         for v in self.graph.vertexes_coordinates.values():
