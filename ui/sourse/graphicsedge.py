@@ -6,7 +6,7 @@ from graph.vertex import Vertex
 
 
 class GraphicsEdge(QGraphicsItemGroup):
-    def __init__(self, v_from: Vertex, v_to: Vertex, node: Vertex, oriented: bool, weighted: bool, weight: int = 1):
+    def __init__(self, v_from: Vertex, v_to: Vertex, node: Vertex, oriented: bool, weight: int = 1, weighted: bool=True):
         super().__init__()
 
         self.v_from = v_from
@@ -37,7 +37,7 @@ class GraphicsEdge(QGraphicsItemGroup):
             text = QGraphicsSimpleTextItem(str(self.weight))
             font = QFont()
             font.setPixelSize(8)
-            text.setBrush(QBrush(QColor(68, 191, 46)))
+            text.setPen(QColor(255, 255, 255))
             text.setFont(font)
             # настраиваем расположение текста
             if self.weight < 10:

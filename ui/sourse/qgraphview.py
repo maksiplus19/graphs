@@ -8,6 +8,7 @@ from ui.sourse.graphicsedge import GraphicsEdge
 from ui.sourse.graphicsvertex import GraphicsVertex
 from graph.savegraph import SaveGraph
 
+
 class QGraphView(QGraphicsView):
     def __init__(self, centralwidget, graph: Graph):
         super().__init__(centralwidget)
@@ -152,7 +153,17 @@ class QGraphView(QGraphicsView):
                         # if not self.graph.oriented:
                         # self.scene.addLine(v_from.x, v_from.y, v_to.x, v_to.y)
                         # self.scene.items()[0].setPen(self.pen)
-                        self.scene.addItem(GraphicsEdge(v_from, v_to, node, self.graph.oriented, weight))
+                        if v_from is v_to:
+                            pen = QPen(QBrush(QColor(0, 0, 0)), 3)
+                            ellipse = QGraphicsEllipseItem(v_from.x - 30, v_from.y - 30, 30, 30)
+                            ellipse.setPen(pen)
+                            self.scene.addItem(ellipse)
+                        else:
+                            if self.graph.oriented:
+                                self.scene.addItem(GraphicsEdge(v_from, v_to, node, self.graph.oriented, weight))
+                            else:
+                                if int(v_from.name) > int(v_to.name):
+                                    self.scene.addItem(GraphicsEdge(v_from, v_to, node, self.graph.oriented, weight))
                 except TypeError:
                     self.graph.restore()
                     self.drawGraph()
