@@ -406,7 +406,7 @@ class Graph:
     def get_new_vertex_name(self) -> str:
         if len(self.vertexes) == 0:
             return '1'
-        return str(int(sorted(self.vertexes)[-1]) + 1)
+        return str(int(sorted(self.vertexes, key=lambda el: int(el))[-1]) + 1)
 
     def update(self):
         self.signals.update.emit()
