@@ -90,8 +90,8 @@ class LoadGraph:
                     if line[i] > 0:
                         v_to = i + 1
                         break
-                graph.add_vertex(v_from)
-                graph.add_vertex(v_to)
+                graph.add_vertex(str(v_from))
+                graph.add_vertex(str(v_to))
                 graph.add_edge(str(v_from), str(v_to), v_to)
 
     @staticmethod

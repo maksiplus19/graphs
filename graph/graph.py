@@ -76,8 +76,12 @@ class Graph:
             raise Exception('No vertex for adding edge')
 
     @edited
-    def add_vertex(self, name: str, x: float, y: float, __save: bool = True):
+    def add_vertex(self, name: str, x: float = None, y: float = None, __save: bool = True):
         if name not in self.vertexes_coordinates:
+            if x is None:
+                x = random.randint(-100, 100)
+            if y is None:
+                y = random.randint(-100, 100)
             if __save:
                 # данное условие необходимо для того, что не было повторного сохранения при откате
                 # или повторении действия, т.к. оно уже сохранено
