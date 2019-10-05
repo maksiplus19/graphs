@@ -11,7 +11,12 @@ class SaveGraph:
     @staticmethod
     def save(graph: Graph, file_name: str):
         with open(file_name, "w") as file:
-            graph_dict = {'vertexes': graph.vertexes}
+            vertexes = {}
+            for v_from, to_dict in graph.vertexes.items():
+                vertexes[v_from] = {}
+                for v_to, to_list in to_dict.items():
+                    vertexes[v_from][v_to] = [el[0] for el in to_list]
+            graph_dict = {'vertexes': vertexes}
             coordinates = [v.to_dict() for v in graph.vertexes_coordinates.values()]
             graph_dict['coordinates'] = coordinates
             graph_dict['oriented'] = graph.oriented
@@ -35,10 +40,10 @@ class SaveGraph:
             inc_matrix = []
             n = len(graph.vertexes_coordinates)
             for v_from, to_dict in graph.vertexes.items():
-                v_from = int(v_from)
+                v_from = int(v_from) - 1
                 for v_to, to_list in to_dict.items():
-                    v_to = int(v_to)
-                    for weight in to_list:
+                    v_to = int(v_to) - 1
+                    for weight, node in to_list:
                         data = [0.]*n
                         data[v_from] = -weight
                         data[v_to] = weight
@@ -62,7 +67,7 @@ class SaveGraph:
                 if not to_dict:
                     continue
                 for v_to, to_list in to_dict.items():
-                    for weight in to_list:
+                    for weight, node in to_list:
                         count += 1
                         ribs += f'{count} ({weight}, {v_from}, {v_to}, {oriented})|'
             if ribs[len(ribs)-1] != '{':
@@ -78,7 +83,7 @@ class SaveGraph:
             print(graph.vertexes.items())
             for v_from, to_dict in graph.vertexes.items():
                 for v_to, to_list in to_dict.items():
-                    for weight in to_list:
+                    for weight, node in to_list:
                         adj_matrix[int(v_from) - 1][int(v_to) - 1] += weight
                         # if graph.oriented:
                         #     adj_matrix[int(v_from)-1][int(v_to)-1] += weight

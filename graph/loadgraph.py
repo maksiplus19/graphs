@@ -76,19 +76,23 @@ class LoadGraph:
     def load_from_incidence_matrix(graph: Graph, file_name: str):
         matrix = []
         with open(file_name, mode='r') as file:
-            for line in file:
-                data = []
-                for weights in line:
-                    if LoadGraph.__isfloat(weights):
-                        data.append(weights)
-                matrix.append(data)
-            matrix = [x for x in matrix if x != []]
-            for i in range(len(matrix)):
-                for j in range(len(matrix[i])):
-                    if matrix[i][j] != '0' and i != []:
-                        graph.add_vertex(str(i), random.randint(-50, 100), random.randint(-50, 100))
-                        graph.add_vertex(str(j), random.randint(-50, 100), random.randint(0, 100))
-                        graph.add_edge(str(i), str(j), int(matrix[i][j]))
+            data = file.read()
+            data = data.replace('.', ',')
+            data = data.replace(',]', ']')
+            data = data.replace('\n', ',')
+            matrix = json.loads(data)
+            for line in matrix:
+                for i in range(len(line)):
+                    if line[i] < 0:
+                        v_from = i + 1
+                        break
+                for i in range(len(line)):
+                    if line[i] > 0:
+                        v_to = i + 1
+                        break
+                graph.add_vertex(v_from)
+                graph.add_vertex(v_to)
+                graph.add_edge(str(v_from), str(v_to), v_to)
 
     @staticmethod
     def load_from_ribs_list(graph: Graph, file_name: str):
