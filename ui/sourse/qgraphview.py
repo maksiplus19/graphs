@@ -28,11 +28,6 @@ class QGraphView(QGraphicsView):
         self.graph = graph
         self.graph.signals.update.connect(self.drawGraph)
 
-    # def contextMenuEvent(self, QContextMenuEvent):
-    #     context_menu = QMenu(self)
-    #     add_loop = context_menu.addAction("Добавить петлю")
-    #     delete_loop = context_menu.addAction("Удалить петлю")
-
     def mouseDoubleClickEvent(self, event: QMouseEvent):
         # print('double click')
         # только левая кнопка мыши
@@ -93,8 +88,11 @@ class QGraphView(QGraphicsView):
             if item:
                 if type(item) is QGraphicsLineItem:
                     pass
+                elif type(item) is GraphicsEdge:
+                    self.moveVertex = item.node
+                    self.setCursor(Qt.ClosedHandCursor)
                 elif type(item) is GraphicsVertex:
-                    self.moveVertex = item.v.name
+                    self.moveVertex = item.v
                     self.setCursor(Qt.ClosedHandCursor)
                 elif type(item) is QGraphicsEllipseItem or QGraphicsSimpleTextItem and not type(item) is GraphicsEdge:
                     if type(item.group()) is GraphicsVertex:
