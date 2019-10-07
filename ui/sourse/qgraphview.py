@@ -163,6 +163,14 @@ class QGraphView(QGraphicsView):
                             self.scene.addItem(ellipse)
                         else:
                             if self.graph.oriented:
+                                line1 = QGraphicsLineItem(v_from.x, v_from.y, node.x, node.y)
+                                line1.setPen(QPen(QBrush(QColor(0, 0, 0)), 3))
+
+                                line2 = QGraphicsLineItem(node.x, node.y, v_to.x, v_to.y)
+                                line2.setPen(QPen(QBrush(QColor(68, 191, 46)), 3))
+
+                                self.scene.addItem(line1)
+                                self.scene.addItem(line2)
                                 self.scene.addItem(GraphicsEdge(v_from, v_to, node, self.graph.oriented, weight))
                             else:
                                 if int(v_from.name) > int(v_to.name):

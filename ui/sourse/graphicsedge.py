@@ -17,17 +17,7 @@ class GraphicsEdge(QGraphicsItemGroup):
 
         # self.pen = QPen(QBrush(QColor(0, 0, 0)), 3)
 
-        self.line1 = QGraphicsLineItem(self.v_from.x, self.v_from.y, self.node.x, self.node.y)
-        self.line1.setPen(QPen(QBrush(QColor(0, 0, 0)), 3))
 
-        self.line2 = QGraphicsLineItem(self.node.x, self.node.y, self.v_to.x, self.v_to.y)
-        if oriented:
-            self.line2.setPen(QPen(QBrush(QColor(68, 191, 46)), 3))
-        else:
-            self.line2.setPen(QPen(QBrush(QColor(0, 0, 0)), 3))
-
-        self.addToGroup(self.line1)
-        self.addToGroup(self.line2)
 
         if weighted:
             self.ellipse = QGraphicsEllipseItem(self.node.x - 8, self.node.y - 8, 16, 16)
