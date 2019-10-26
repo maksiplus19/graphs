@@ -24,7 +24,10 @@ class QGraphView(QGraphicsView):
         self.i = 0
         self.setRenderHint(QPainter.Antialiasing)
 
-        self.pen = QPen(QBrush(QColor(0, 0, 0)), 3)
+        self.pen = QPen(QColor(0, 0, 0), 3)
+        self.greenPen = QPen(QColor(68, 191, 46), 3)
+        self.pathPen = QPen(QColor(68, 133, 255), 3)
+        self.pathBrush = QBrush(QColor(68, 133, 255))
 
         self.graph = graph
         self.graph.signals.update.connect(self.drawGraph)
@@ -153,35 +156,61 @@ class QGraphView(QGraphicsView):
                 v_to = self.graph.vertexes_coordinates[v_to]
                 try:
                     for weight, node in to_list:
-                        # if not self.graph.oriented:
-                        # self.scene.addLine(v_from.x, v_from.y, v_to.x, v_to.y)
-                        # self.scene.items()[0].setPen(self.pen)
-                        if v_from is v_to:
-                            pen = QPen(QBrush(QColor(0, 0, 0)), 3)
-                            ellipse = QGraphicsEllipseItem(v_from.x - 30, v_from.y - 30, 30, 30)
-                            ellipse.setPen(pen)
-                            self.scene.addItem(ellipse)
-                        else:
-                            if self.graph.oriented:
-                                line1 = QGraphicsLineItem(v_from.x, v_from.y, node.x, node.y)
-                                line1.setPen(QPen(QBrush(QColor(0, 0, 0)), 3))
+                        # key = f'{v_from.name}_{v_to.name}'
+                        # if key in self.graph.edge_path and self.graph.edge_path[key] == weight:
+                        #     pen = self.pathPen
+                        # elif self.graph.oriented:
+                        #     pen = self.greenPen
+                        # else:
+                        #     pen = self.pen
 
-                                line2 = QGraphicsLineItem(node.x, node.y, v_to.x, v_to.y)
-                                line2.setPen(QPen(QBrush(QColor(68, 191, 46)), 3))
-
-                                self.scene.addItem(line1)
-                                self.scene.addItem(line2)
-                                self.scene.addItem(GraphicsEdge(v_from, v_to, node, self.graph.oriented, weight))
+                        # if v_from is v_to:
+                        #     pen = QPen(QBrush(QColor(255, 0, 0)), 3)
+                        #     ellipse = QGraphicsEllipseItem(v_from.x - 30, v_from.y - 30, 30, 30)
+                        #     ellipse.setPen(pen)
+                        #     self.scene.addItem(ellipse)
+                        # else:
+                        # print(self.graph.oriented)
+                        if self.graph.oriented:
+                            key = f'{v_from.name}_{v_to.name}'
+                            if key in self.graph.edge_path and self.graph.edge_path[key] == weight:
+                                pen = self.pathPen
                             else:
-                                if int(v_from.name) > int(v_to.name):
-                                    self.scene.addItem(GraphicsEdge(v_from, v_to, node, self.graph.oriented, weight))
-                except TypeError:
+                                pen = self.greenPen
+                            self.scene.addLine(v_from.x, v_from.y, node.x, node.y, self.pen)
+                            self.scene.addLine(node.x, node.y, v_to.x, v_to.y, pen)
+
+                            # self.scene.addItem(line1)
+                            # self.scene.addItem(line2)
+                            self.scene.addItem(GraphicsEdge(v_from, v_to, node, self.graph.oriented, weight))
+                        elif int(v_from.name) > int(v_to.name):
+                            key = f'{v_from.name}_{v_to.name}'
+                            rev_key = f'{v_to.name}_{v_from.name}'
+                            if (key in self.graph.edge_path and self.graph.edge_path[key] == weight)\
+                                    or (rev_key in self.graph.edge_path and self.graph.edge_path[rev_key] == weight):
+                                pen = self.pathPen
+                            else:
+                                pen = self.pen
+                            self.scene.addLine(v_from.x, v_from.y, node.x, node.y, pen)
+                            self.scene.addLine(node.x, node.y, v_to.x, v_to.y, pen)
+
+                            # self.scene.addItem(line1)
+                            # self.scene.addItem(line2)
+                            self.scene.addItem(GraphicsEdge(v_from, v_to, node, self.graph.oriented, weight))
+                except TypeError as e:
+                    # print(e)
                     self.graph.restore()
                     self.drawGraph()
+                except Exception as e:
+                    print(e)
+                    exit(-2)
 
         # рисуем вершины
         for v in self.graph.vertexes_coordinates.values():
-            self.scene.addItem(GraphicsVertex(v))
+            if v.name in self.graph.path:
+                self.scene.addItem(GraphicsVertex(v, self.pathPen, self.pathBrush))
+            else:
+                self.scene.addItem(GraphicsVertex(v))
 
     def simpleDrawGraph(self):
         self.scene.clear()
