@@ -11,7 +11,8 @@ def edited(method):
     def warped(self, *args):
         method(self, *args)
         self.saved = False
-
+        self.path = []
+        self.edge_path = {}
     return warped
 
 
@@ -48,6 +49,9 @@ class Graph:
         self.__history_counter = 0
         self.signals = self.__Signals()
 
+        self.path: List[str] = []  # ['2', '3', '5']
+        self.edge_path: Dict[str, int] = {}  # {'2_3': 2, '3_5': 1}
+
     @edited
     def add_edge(self, v_from: str, v_to: str, weight: int = 1, node: Vertex = None, __save: bool = True):
         if v_from in self.vertexes and v_to in self.vertexes:
@@ -79,9 +83,9 @@ class Graph:
     def add_vertex(self, name: str, x: float = None, y: float = None, __save: bool = True):
         if name not in self.vertexes_coordinates:
             if x is None:
-                x = random.randint(-100, 100)
+                x = random.randint(-500, 500)
             if y is None:
-                y = random.randint(-100, 100)
+                y = random.randint(-500, 500)
             if __save:
                 # данное условие необходимо для того, что не было повторного сохранения при откате
                 # или повторении действия, т.к. оно уже сохранено
@@ -191,28 +195,6 @@ class Graph:
             self.add_edge(v_to, v_from, weight, node, False)
             if not self.vertexes[v_from][v_to]:
                 self.vertexes[v_from].pop(v_to)
-            # arr = self.vertexes[v_from][v_to]
-            # helper = [el[0] for el in arr]
-            # if weight in helper:
-            #     if node is None:
-            #         index = helper.index(weight)
-            #     else:
-            #         index = [el[1] for el in arr].index(node)
-            #     if __save:
-            #         # данное условие необходимо для того, что не было повторного сохранения при откате
-            #         # или повторении действия, т.к. оно уже сохранено
-            #         self.save_action(self.CHANGE_ORIENT, vertex_name=v_from, following_vertex_name=v_to, weight=weight,
-            #                          node=arr[index][1])
-            #     if v_from in self.vertexes[v_to]:
-            #         self.vertexes[v_to][v_from].append(arr.pop(index))
-            #         self.vertexes[v_to][v_from].sort(key=lambda el: el[0])
-            #         if not arr:
-            #             self.vertexes[v_from].pop(v_to)
-            #     else:
-            #         self.vertexes[v_to][v_from] = [arr.pop(index)]
-            #         if len(self.vertexes[v_from][v_to]) == 0:
-            #             self.vertexes[v_from].pop(v_to)
-            # self.signals.update.emit()
 
     def clear(self):
         self.vertexes.clear()
