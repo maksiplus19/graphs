@@ -6,7 +6,8 @@ from graph.vertex import Vertex
 
 
 class GraphicsEdge(QGraphicsItemGroup):
-    def __init__(self, v_from: Vertex, v_to: Vertex, node: Vertex, oriented: bool, weight: int = 1, weighted: bool=True):
+    def __init__(self, v_from: Vertex, v_to: Vertex, node: Vertex, oriented: bool, weight: int = 1,
+                 weighted: bool = True):
         super().__init__()
 
         self.v_from = v_from
