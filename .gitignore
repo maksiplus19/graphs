@@ -5,3 +5,5 @@
 *.png
 *.gam
 *.json
+*.gim
+/ui/design/convert.bat
