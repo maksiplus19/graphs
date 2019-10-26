@@ -8,8 +8,27 @@ from graph.graph import Graph
 from graph.graphmodel import GraphModel
 from graph.loadgraph import LoadGraph
 from graph.savegraph import SaveGraph
+from ui.design import BeginEndDialog
 from ui.design.design import Ui_MainWindow
 from ui.sourse.qgraphview import QGraphView
+import algorithm
+
+
+def get_begin_end(method):
+    def warped(self):
+        dialog = BeginEndDialog.Ui_BeginEndDialog(None)
+        dialog.setModal(True)
+        if not dialog.exec_():
+            return
+        if dialog.textBegin is None or dialog.textEnd is None:
+            return
+
+        distance = method(self, dialog.textBegin, dialog.textEnd)
+
+        self.textEdit.setText(f'Расстояние от {dialog.textBegin} до {dialog.textEnd} = {distance}')
+        self.tabWidget.currentWidget().graph.update()
+
+    return warped
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
@@ -24,6 +43,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.graphMatrix.setModel(self.graphModel)
         self.graphMatrix.setEditTriggers(QAbstractItemView.AllEditTriggers)
 
+        self.tabWidget.removeTab(0)
+        self.tabWidget.removeTab(0)
         self.addTab()
         self.tabWidget.setTabsClosable(True)
 
@@ -44,6 +65,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.tabWidget.currentChanged.connect(self.tabChange)
         self.tabWidget.tabCloseRequested.connect(self.tabClose)
 
+        self.BFSaction.triggered.connect(self.BFS)
+        self.actionA.triggered.connect(self.A_star)
+
     def addTab(self, name: str = None):
         self.tabWidget.addTab(QGraphView(self.tabWidget, Graph()), str(self.tabCounter) if name is None else name)
         self.tabCounter += 1
@@ -53,6 +77,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         graph.signals.update.connect(self.graphMatrix.resizeColumnsToContents)
         graph.update()
         graph.saved = True
+        # for i in range(10**4):
+        #     graph.add_vertex(graph.get_new_vertex_name())
+        #     if i % 100 == 0:
+        #         print(i)
 
     def tabChange(self, index: int):
         if self.tabWidget.widget(index) is None:
@@ -179,6 +207,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     # def close(self):
     #     self.tabWidget.
+
+    @get_begin_end
+    def BFS(self, begin: str, end: str):
+        return algorithm.BFS(self.tabWidget.currentWidget().graph, begin, end)
+
+    @get_begin_end
+    def A_star(self, begin: str, end: str):
+        return algorithm.A_star(self.tabWidget.currentWidget().graph, begin, end)
 
 
 if __name__ == '__main__':
