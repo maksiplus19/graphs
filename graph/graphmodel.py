@@ -77,7 +77,10 @@ class GraphModel(QAbstractTableModel):
             # новый вес значит нужно обновить все старые на одно новое
             v_from = str(index.row() + 1)
             v_to = str(index.column() + 1)
-            self.graph.set_all_edges(v_from, v_to, data)
+            if self.graph.weighted:
+                self.graph.set_all_edges(v_from, v_to, data)
+            else:
+                self.graph.set_all_edges(v_from, v_to, 1)
             if not self.graph.oriented and v_to != v_from:
                 self.graph.set_all_edges(v_to, v_from, data, False)
             self.graphToMatrix()
