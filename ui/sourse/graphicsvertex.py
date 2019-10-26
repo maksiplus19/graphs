@@ -6,12 +6,12 @@ from graph.vertex import Vertex
 
 
 class GraphicsVertex(QGraphicsItemGroup):
-    def __init__(self, v: Vertex):
+    def __init__(self, v: Vertex, pen: QPen = None, brush: QBrush = None):
         super().__init__()
 
         self.vertex_radius = 30
-        self.pen = QPen(QBrush(QColor(68, 191, 46)), 3)
-        self.brush = QBrush(QColor(91, 255, 62))
+        self.pen = QPen(QBrush(QColor(68, 191, 46)), 3) if pen is None else pen
+        self.brush = QBrush(QColor(91, 255, 62)) if brush is None else brush
 
         self.v = v
         self.offset_coords = QPointF()
