@@ -203,6 +203,7 @@
     </property>
     <addaction name="actionOpen"/>
     <addaction name="actionSave"/>
+    <addaction name="actionNewTab"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuInfo">
@@ -382,6 +383,11 @@
   <action name="IDAaction">
    <property name="text">
     <string>Iterative deepening A</string>
+   </property>
+  </action>
+  <action name="actionNewTab">
+   <property name="text">
+    <string>Новая вкладка</string>
    </property>
   </action>
  </widget>

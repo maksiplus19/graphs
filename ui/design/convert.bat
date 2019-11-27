@@ -1,1 +1,1 @@
-pyuic5 BeginEndDialog.ui -o BeginEndDialog.py
+pyuic5 design.ui -o design.py
