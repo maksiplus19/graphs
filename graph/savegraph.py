@@ -21,6 +21,7 @@ class SaveGraph:
             graph_dict['coordinates'] = coordinates
             graph_dict['oriented'] = graph.oriented
             graph_dict['weighted'] = graph.weighted
+            graph_dict['path'] = graph.path
             json.dump(graph_dict, file)
 
     @staticmethod

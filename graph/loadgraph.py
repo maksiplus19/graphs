@@ -43,6 +43,8 @@ class LoadGraph:
                 graph.oriented = data['oriented']
             if 'weighted' in data:
                 graph.weighted = data['weighted']
+            if 'path' in data:
+                graph.path = data['path']
         graph.update()
         return True
 
