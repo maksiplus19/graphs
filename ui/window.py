@@ -52,6 +52,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.actionOpen.triggered.connect(self.load_graph)
         self.actionSave.triggered.connect(self.save_graph)
         self.actionExit.triggered.connect(self.close)
+        self.actionNewTab.triggered.connect(self.addTab)
 
         self.btnNext.clicked.connect(self.redo)
         self.btnCancel.clicked.connect(self.undo)
@@ -67,9 +68,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.BFSaction.triggered.connect(self.BFS)
         self.actionA.triggered.connect(self.A_star)
+        self.IDAaction.triggered.connect(self.IDA)
 
     def addTab(self, name: str = None):
-        self.tabWidget.addTab(QGraphView(self.tabWidget, Graph()), str(self.tabCounter) if name is None else name)
+        self.tabWidget.addTab(QGraphView(self.tabWidget, Graph()),
+                              str(self.tabCounter) if name is None or name is False else name)
+        self.tabWidget.setCurrentIndex(self.tabWidget.count() - 1)
         self.tabCounter += 1
         graph = self.tabWidget.currentWidget().graph
         self.graphModel.setGraph(graph)
@@ -124,7 +128,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # вытаскиваем формат
         file_type = file_name.split('.')[-1]
         self.addTab()
-        self.tabWidget.setCurrentIndex(self.tabWidget.count() - 1)
         # LoadGraph.load(self.graph, file_name)
         # в зависимости от типа выбираем метод загрузки
         if file_type == 'gvl':
@@ -215,6 +218,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     @get_begin_end
     def A_star(self, begin: str, end: str):
         return algorithm.A_star(self.tabWidget.currentWidget().graph, begin, end)
+
+    @get_begin_end
+    def IDA(self, begin: str, end: str):
+        return algorithm.IDA_star(self.tabWidget.currentWidget().graph, begin, end)
 
 
 if __name__ == '__main__':
