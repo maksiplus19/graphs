@@ -127,10 +127,16 @@ class QGraphView(QGraphicsView):
                     pass
                 elif type(item) is GraphicsVertex:
                     edge_to = item.v.name
+                    if edge_to == 'node':
+                        return
                     if edge_to != self.edge_from:
                         self.graph.add_edge(self.edge_from, edge_to)
                 elif type(item) is QGraphicsEllipseItem or QGraphicsSimpleTextItem:
+                    if type(item.group()) is GraphicsEdge:
+                        return
                     edge_to = item.group().v.name
+                    if edge_to == 'node':
+                        return
                     if edge_to != self.edge_from:
                         self.graph.add_edge(self.edge_from, edge_to)
             self.edge_from = None
@@ -148,8 +154,6 @@ class QGraphView(QGraphicsView):
         self.scene.clear()
 
         # рисуем ребра
-        # for edge in self.edges:
-        #     self.scene.addItem(edge)
         for v_from, to_dict in self.graph.vertexes.items():
             v_from = self.graph.vertexes_coordinates[v_from]
             for v_to, to_list in to_dict.items():
@@ -173,7 +177,7 @@ class QGraphView(QGraphicsView):
                         # print(self.graph.oriented)
                         if self.graph.oriented:
                             key = f'{v_from.name}_{v_to.name}'
-                            if key in self.graph.edge_path and self.graph.edge_path[key] == weight:
+                            if (key, node) in self.graph.edge_path.items():
                                 pen = self.pathPen
                             else:
                                 pen = self.greenPen
@@ -183,7 +187,7 @@ class QGraphView(QGraphicsView):
                             # self.scene.addItem(line1)
                             # self.scene.addItem(line2)
                             self.scene.addItem(GraphicsEdge(v_from, v_to, node, self.graph.oriented, weight))
-                        elif int(v_from.name) > int(v_to.name):
+                        elif int(v_from.name) >= int(v_to.name):
                             key = f'{v_from.name}_{v_to.name}'
                             rev_key = f'{v_to.name}_{v_from.name}'
                             if (key in self.graph.edge_path and self.graph.edge_path[key] == weight)\
