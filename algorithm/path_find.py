@@ -190,4 +190,3 @@ def IDA_star(graph: Graph, begin: str, end: str) -> Union[None, int]:
         graph.path = path
         graph.edge_path = __find_edge(graph, path)
         return __get_distance(graph, path)
-    # обработать восстановить путь
