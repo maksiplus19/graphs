@@ -1,6 +1,7 @@
 import random
 from copy import copy
-from typing import Dict, List
+from typing import Dict, List, Tuple
+from enum import auto
 
 from PyQt5.QtCore import QObject, pyqtSignal
 
@@ -19,17 +20,18 @@ def edited(method):
 class Graph:
     """Класс графа"""
 
-    ADD_VERTEX = 1
-    ADD_EDGE = 2
-    DEL_VERTEX = 3
-    DEL_EDGE = 4
-    MOVE_VERTEX = 5
-    GRAPH_CLEAR = 6
-    SET_EDGE = 7
-    SET_ALL_EDGES = 8
-    DEL_ALL_EDGES = 9
+    ADD_VERTEX = auto()
+    ADD_EDGE = auto()
+    DEL_VERTEX = auto()
+    DEL_EDGE = auto()
+    MOVE_VERTEX = auto()
+    GRAPH_CLEAR = auto()
+    SET_EDGE = auto()
+    SET_ALL_EDGES = auto()
+    DEL_ALL_EDGES = auto()
+    CHANGE_ORIENT = auto()
+
     HISTORY_REC_NUM = 10
-    CHANGE_ORIENT = 11
 
     class __Signals(QObject):
         # сигнал, который будет отправляться при изменении графа
@@ -39,8 +41,7 @@ class Graph:
         # Граф хранится в виде словаря.
         # Каждой вершине соответсвуеет словарь вершин,
         # до которых есть дуги и список их весов
-        self.vertexes: Dict[str, Dict[str, (int, Vertex)]] = {}
-        # vertexes_coordinates = dict(name, Vertex)
+        self.vertexes: Dict[str, Dict[str, Tuple[int, Vertex]]] = {}
         self.vertexes_coordinates: Dict[str, Vertex] = {}
         self.oriented = True
         self.weighted = True
@@ -50,7 +51,7 @@ class Graph:
         self.signals = self.__Signals()
 
         self.path: List[str] = []  # ['2', '3', '5']
-        self.edge_path: Dict[str, int] = {}  # {'2_3': 2, '3_5': 1}
+        self.edge_path: Dict[str, Vertex] = {}  # {'2_3': Vertex('node'), '3_5': Vertex('node')}
 
     @edited
     def add_edge(self, v_from: str, v_to: str, weight: int = 1, node: Vertex = None, __save: bool = True):
@@ -133,25 +134,6 @@ class Graph:
                                  edges=self.vertexes[v_from].get(v_to), weight=weight, node=node)
             self.vertexes[v_from][v_to] = [(weight, node)]
             self.signals.update.emit()
-
-    @edited
-    def set_edge(self, v_from: str, v_to: str, old_weight: int, new_weight: int, __save: bool = True):
-        pass
-        # if v_from in self.vertexes and v_to in self.vertexes[v_from]:
-        #     node = Vertex('node', self.vertexes_coordinates[v_from].x -
-        #                   (self.vertexes_coordinates[v_from].x - self.vertexes_coordinates[v_to].x) / 2 -
-        #                   random.randint(-50, 50),
-        #                   self.vertexes_coordinates[v_from].y -
-        #                   (self.vertexes_coordinates[v_from].y - self.vertexes_coordinates[v_to].y) / 2 -
-        #                   random.randint(-50, 50))
-        #     arr = self.vertexes[v_from][v_to]
-        #     helper = [el[0] for el in arr]
-        #     if old_weight in helper:
-        #         if __save:
-        #             self.save_action(self.SET_EDGE, vertex_name=v_from, following_vertex_name=v_to,
-        #                              weight=old_weight, new_weight=new_weight)
-        #         arr[arr.index(old_weight)] = new_weight
-        #         self.signals.update.emit()
 
     @edited
     def del_vertex(self, name: str, __save: bool = True):
@@ -288,11 +270,6 @@ class Graph:
             self.vertexes[act_list[1]][act_list[2]] = [(act_list[4], act_list[5])]
             if not self.oriented:
                 self.vertexes[act_list[2]][act_list[1]] = [(act_list[4], act_list[5])]
-        # elif self.SET_EDGE == act_list[0]:
-        #     # [action_code, vertex_name, following_vertex_name, weight, new_weight]
-        #     self.set_edge(act_list[1], act_list[2], act_list[3], act_list[4], False)
-        #     if not self.oriented:
-        #         self.set_edge(act_list[2], act_list[1], act_list[3], act_list[4], False)
         elif self.DEL_ALL_EDGES == act_list[0]:
             # [action_code, vertex_name, following_vertex_name, edges]
             self.del_all_edges(act_list[1], act_list[2], False)
@@ -312,7 +289,7 @@ class Graph:
             СОХРАНЯТЬ ДО ИЗМЕНЕНИЯ ОБЪЕКТОВ
 
             Метод пердназначен для сохранения действий на графом
-            action_code - код выполненой операции каждой операции требуютя свои аргументы
+            action_code - код выполненой операции, для каждой операции требуются свои аргументы
 
             ADD_VERTEX нужно только имя вершины (vertex_name)
 
