@@ -41,7 +41,7 @@ class Graph:
         # Граф хранится в виде словаря.
         # Каждой вершине соответсвуеет словарь вершин,
         # до которых есть дуги и список их весов
-        self.vertexes: Dict[str, Dict[str, Tuple[int, Vertex]]] = {}
+        self.vertexes: Dict[str, Dict[str, List[Tuple[int, Vertex]]]] = {}
         self.vertexes_coordinates: Dict[str, Vertex] = {}
         self.oriented = True
         self.weighted = True
