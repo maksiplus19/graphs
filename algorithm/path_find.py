@@ -1,4 +1,4 @@
-from typing import Optional, Dict, List, Union
+from typing import Dict, List, Union
 from enum import IntEnum, auto
 
 import numpy as np
@@ -6,12 +6,13 @@ import numpy as np
 from graph.graph import Graph
 from graph.vertex import Vertex
 
+
 class Flags(IntEnum):
     FOUND = auto()
     NOT_FOUND = auto()
 
 
-def __get_path(parents: dict, v_from: str, v_to: str) -> list:
+def __get_path(parents: dict, v_to: str) -> list:
     path = []
     vertex = v_to
     while vertex is not None:
@@ -35,7 +36,7 @@ def __get_edges(path: list, edges: Dict[str, Vertex], oriented: bool) -> Dict:
 
 def after_work(graph: Graph, v_from: str, end: str, edges: Dict, parents: Dict, distance: np.array):
     if distance[int(end) - 1] < np.inf:
-        p = __get_path(parents, v_from, end)
+        p = __get_path(parents, end)
         graph.path = p
         graph.edge_path = __get_edges(p, edges, graph.oriented)
     else:
@@ -90,7 +91,7 @@ def __cost(graph: Graph, v1: str, v2: str) -> float:
 
 def A_star(graph: Graph, begin: str, end: str) -> Union[None, int]:
     def get_min(d: dict):
-        key = min(d.items(), key=lambda el: el[1])[0]
+        key = min(d.items(), key=lambda el: el[1] + __cost(graph, el[0], end))[0]
         d.pop(key)
         return key
 
@@ -107,44 +108,26 @@ def A_star(graph: Graph, begin: str, end: str) -> Union[None, int]:
     while queue:
         current_vertex = get_min(queue)
 
-        if current_vertex == end:
-            p = __get_path(parents, begin, end)
-            graph.path = p
-            graph.edge_path = __get_edges(p, edges, graph.oriented)
-            return distance[int(end) - 1]
+        # if current_vertex == end:
+        #     p = __get_path(parents, end)
+        #     graph.path = p
+        #     graph.edge_path = __get_edges(p, edges, graph.oriented)
+        #     return distance[int(end) - 1]
 
         for v_to in graph.vertexes[current_vertex]:
-            new_cost = distance[int(current_vertex) - 1] + __cost(graph, current_vertex, end)
+            new_cost = distance[int(current_vertex) - 1] + graph.vertexes[current_vertex][v_to][0][0]
             if v_to in closed and new_cost >= distance[int(v_to) - 1]:
                 continue
-            if v_to not in opened or new_cost < distance[int(v_to) - 1]:
+            if v_to not in queue or new_cost < distance[int(v_to) - 1]:
                 parents[v_to] = current_vertex
                 distance[int(v_to) - 1] = distance[int(current_vertex) - 1] + graph.vertexes[current_vertex][v_to][0][0]
                 edges[f'{current_vertex}_{v_to}'] = graph.vertexes[current_vertex][v_to][0][1]
                 if v_to not in queue:
                     queue[v_to] = distance[int(v_to) - 1]
 
+        closed[current_vertex] = True
+
     return after_work(graph, begin, end, edges, parents, distance)
-
-
-def IDA_search(path: List, g: int, bound: int, graph: Graph, end: str) -> int:
-    node = path[-1]
-    f = g + int(__cost(graph, node, end))
-    if f > bound:
-        return f
-    if node == end:
-        return Flags.FOUND
-    less = np.inf
-    for v_to, weight in graph.vertexes[node].items():
-        if v_to not in path:
-            path.append(v_to)
-            t = IDA_search(path, g + weight[0][0], bound, graph, end)
-            if t == Flags.FOUND:
-                return Flags.FOUND
-            if t < less:
-                less = t
-            path.pop()
-    return less
 
 
 def __find_edge(graph: Graph, path: List):
@@ -154,8 +137,8 @@ def __find_edge(graph: Graph, path: List):
         node = graph.vertexes[path[i]][path[i + 1]][0][1]
         edges[key] = node
         if not graph.oriented:
-            key = f'{path[i+1]}_{path[i]}'
-            node = graph.vertexes[path[i+1]][path[i]][1]
+            key = f'{path[i + 1]}_{path[i]}'
+            node = graph.vertexes[path[i + 1]][path[i]][1]
             edges[key] = node
     return edges
 
@@ -163,11 +146,40 @@ def __find_edge(graph: Graph, path: List):
 def __get_distance(graph: Graph, path: List):
     d = 0
     for i in range(1, len(path)):
-        d += graph.vertexes[path[i-1]][path[i]][0][0]
+        d += graph.vertexes[path[i - 1]][path[i]][0][0]
     return d
 
 
+best_path: List = None
+
+
 def IDA_star(graph: Graph, begin: str, end: str) -> Union[None, int]:
+    global best_path
+    best_path = None
+
+    def IDA_search(p: List, g: int, b: int, finish: str) -> int:
+        # global best_path
+        global best_path
+        node = p[-1]
+        f = g + int(__cost(graph, node, finish))
+        if node == finish:
+            return Flags.FOUND
+        less = np.inf
+        found = False
+        for v_to, weight in graph.vertexes[node].items():
+            if v_to not in p:
+                p.append(v_to)
+                t = IDA_search(p, g + weight[0][0], b, finish)
+                if t == Flags.FOUND:
+                    found = True
+                    if best_path is None or (
+                            p[-1] == finish and __get_distance(graph, p) < __get_distance(graph, best_path)):
+                        best_path = p.copy()
+                    p.pop()
+                if t < less:
+                    less = t
+        return Flags.FOUND if found else less
+
     size = int(graph.get_new_vertex_name()) - 1
     if size <= 0 or begin not in graph.vertexes or end not in graph.vertexes:
         return None
@@ -176,8 +188,9 @@ def IDA_star(graph: Graph, begin: str, end: str) -> Union[None, int]:
     path = [begin]
 
     status = None
+    t = None
     while status is None:
-        t = IDA_search(path, 0, bound, graph, end)
+        t = IDA_search(path, 0, bound, end)
         if t == Flags.FOUND:
             status = Flags.FOUND
         if t == np.inf:
@@ -187,6 +200,6 @@ def IDA_star(graph: Graph, begin: str, end: str) -> Union[None, int]:
     if status == Flags.NOT_FOUND:
         return None
     else:
-        graph.path = path
-        graph.edge_path = __find_edge(graph, path)
-        return __get_distance(graph, path)
+        graph.path = best_path
+        graph.edge_path = __find_edge(graph, best_path)
+        return __get_distance(graph, best_path)
