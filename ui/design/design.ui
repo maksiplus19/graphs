@@ -239,8 +239,8 @@
     <addaction name="action13"/>
     <addaction name="action14"/>
     <addaction name="action15"/>
-    <addaction name="action16_2"/>
-    <addaction name="action17_2"/>
+    <addaction name="action16"/>
+    <addaction name="action17"/>
     <addaction name="action18_2"/>
     <addaction name="action19"/>
     <addaction name="action20"/>
@@ -340,12 +340,12 @@
     <string>15. Задача о свадьбах</string>
    </property>
   </action>
-  <action name="action16_2">
+  <action name="action16">
    <property name="text">
     <string>16. Дополнение 2-комплекса</string>
    </property>
   </action>
-  <action name="action17_2">
+  <action name="action17">
    <property name="text">
     <string>17. Восстановление 2-комплекса из вектора</string>
    </property>
