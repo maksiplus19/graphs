@@ -50,7 +50,7 @@ def BFS(graph: Graph, begin: str, end: str) -> Union[None, int]:
     Поиск пути
     (a) Breadth-First Search для пары указанных вершин;
     """
-    size = int(graph.get_new_vertex_name()) - 1
+    size = graph.size()
     if size <= 0 or begin not in graph.vertexes or end not in graph.vertexes:
         return None
     queue = [begin]
@@ -95,7 +95,7 @@ def A_star(graph: Graph, begin: str, end: str) -> Union[None, int]:
         d.pop(key)
         return key
 
-    size = int(graph.get_new_vertex_name()) - 1
+    size = graph.size()
     if size <= 0 or begin not in graph.vertexes or end not in graph.vertexes:
         return None
     opened, closed, parents, edges, queue = {}, {}, {}, {}, {}
@@ -108,11 +108,11 @@ def A_star(graph: Graph, begin: str, end: str) -> Union[None, int]:
     while queue:
         current_vertex = get_min(queue)
 
-        # if current_vertex == end:
-        #     p = __get_path(parents, end)
-        #     graph.path = p
-        #     graph.edge_path = __get_edges(p, edges, graph.oriented)
-        #     return distance[int(end) - 1]
+        if current_vertex == end:
+            p = __get_path(parents, end)
+            graph.path = p
+            graph.edge_path = __get_edges(p, edges, graph.oriented)
+            return distance[int(end) - 1]
 
         for v_to in graph.vertexes[current_vertex]:
             new_cost = distance[int(current_vertex) - 1] + graph.vertexes[current_vertex][v_to][0][0]
@@ -180,7 +180,7 @@ def IDA_star(graph: Graph, begin: str, end: str) -> Union[None, int]:
                     less = t
         return Flags.FOUND if found else less
 
-    size = int(graph.get_new_vertex_name()) - 1
+    size = graph.size()
     if size <= 0 or begin not in graph.vertexes or end not in graph.vertexes:
         return None
 
