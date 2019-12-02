@@ -14,7 +14,15 @@ def edited(method):
         self.saved = False
         self.path = []
         self.edge_path = {}
+
     return warped
+
+
+def gen():
+    counter = 0
+    while True:
+        counter += 1
+        yield str(counter)
 
 
 class Graph:
@@ -52,6 +60,8 @@ class Graph:
 
         self.path: List[str] = []  # ['2', '3', '5']
         self.edge_path: Dict[str, Vertex] = {}  # {'2_3': Vertex('node'), '3_5': Vertex('node')}
+
+        self.generator = gen()
 
     @edited
     def add_edge(self, v_from: str, v_to: str, weight: int = 1, node: Vertex = None, __save: bool = True):
@@ -363,9 +373,7 @@ class Graph:
         self.__history_counter = len(self.__history)
 
     def get_new_vertex_name(self) -> str:
-        if len(self.vertexes) == 0:
-            return '1'
-        return str(int(sorted(self.vertexes, key=lambda el: int(el))[-1]) + 1)
+        return self.generator.__next__()
 
     def update(self):
         self.signals.update.emit()
@@ -382,3 +390,9 @@ class Graph:
         for v_from, to_dict in self.vertexes.items():
             for v_to, to_list in to_dict.items():
                 to_dict[v_to] = [(weight, self.create_node(v_from, v_to)) for weight in to_list]
+
+    def size(self) -> int:
+        if len(self.vertexes) == 0:
+            return 0
+        else:
+            return int(sorted(self.vertexes, key=lambda el: int(el))[-1])
