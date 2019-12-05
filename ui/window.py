@@ -69,6 +69,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.BFSaction.triggered.connect(self.BFS)
         self.actionA.triggered.connect(self.A_star)
         self.IDAaction.triggered.connect(self.IDA)
+        self.action5.triggered.connect(self.check_isomorphic)
 
     def addTab(self, name: str = None):
         self.tabWidget.addTab(QGraphView(self.tabWidget, Graph()),
@@ -208,9 +209,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.cmbDirect.setCurrentIndex(int(not self.tabWidget.currentWidget().graph.oriented))
         self.cmbWeight.setCurrentIndex(int(not self.tabWidget.currentWidget().graph.weighted))
 
-    # def close(self):
-    #     self.tabWidget.
-
     @get_begin_end
     def BFS(self, begin: str, end: str):
         return algorithm.BFS(self.tabWidget.currentWidget().graph, begin, end)
@@ -222,6 +220,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     @get_begin_end
     def IDA(self, begin: str, end: str):
         return algorithm.IDA_star(self.tabWidget.currentWidget().graph, begin, end)
+
+    def check_isomorphic(self):
+        if self.tabWidget.count() < 2:
+            QMessageBox.information(self, 'Информация', 'Этот алгоритм требует 2 графов')
+            return
+        index = self.tabWidget.count()
+        res = algorithm.isomorphic(self.tabWidget.widget(index - 1).graph, self.tabWidget.widget(index - 2).graph)
+        QMessageBox.information(self, 'Резкльтат', res)
 
 
 if __name__ == '__main__':
