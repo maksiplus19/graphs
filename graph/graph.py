@@ -9,8 +9,8 @@ from graph.vertex import Vertex
 
 
 def edited(method):
-    def warped(self, *args):
-        method(self, *args)
+    def warped(self, *args, **kwargs):
+        method(self, *args, **kwargs)
         self.saved = False
         self.path = []
         self.edge_path = {}
@@ -64,7 +64,7 @@ class Graph:
         self.generator = gen()
 
     @edited
-    def add_edge(self, v_from: str, v_to: str, weight: int = 1, node: Vertex = None, __save: bool = True):
+    def add_edge(self, v_from: str, v_to: str, weight: int = 1, node: Vertex = None, __save: bool = True, shadowed: bool = False):
         if v_from in self.vertexes and v_to in self.vertexes:
             if node is None:
                 node = self.create_node(v_from, v_to)
@@ -86,12 +86,13 @@ class Graph:
                     self.vertexes[v_to][v_from] = []
                 self.vertexes[v_to][v_from].append([weight, node])
                 self.vertexes[v_to][v_from].sort(key=lambda el: el[0])
-            self.signals.update.emit()
+            if not shadowed:
+                self.signals.update.emit()
         else:
             raise Exception('No vertex for adding edge')
 
     @edited
-    def add_vertex(self, name: str, x: float = None, y: float = None, __save: bool = True):
+    def add_vertex(self, name: str, x: float = None, y: float = None, __save: bool = True, shadowed: bool = False):
         if name not in self.vertexes_coordinates:
             if x is None:
                 x = random.randint(-500, 500)
@@ -104,7 +105,8 @@ class Graph:
 
             self.vertexes_coordinates[name] = Vertex(name, x, y)
             self.vertexes[name] = {}
-            self.signals.update.emit()
+            if not shadowed:
+                self.signals.update.emit()
 
     @edited
     def del_edge(self, v_from: str, v_to: str, weight: int = 1, node: Vertex = None, __save: bool = True):
@@ -125,7 +127,7 @@ class Graph:
             self.signals.update.emit()
 
     @edited
-    def del_all_edges(self, v_from: str, v_to: str, __save: bool = True):
+    def del_all_edges(self, v_from: str, v_to: str, *, __save: bool = True):
         if v_from in self.vertexes and v_to in self.vertexes[v_from]:
             if __save:
                 # данное условие необходимо для того, что не было повторного сохранения при откате
@@ -254,7 +256,7 @@ class Graph:
         if len(self.__history) == self.__history_counter:
             return False
         # если счетчик событий больше
-        elif len(self.__history) < self.__history_counter:
+        if len(self.__history) < self.__history_counter:
             return False
 
         # сохраняем данные события
@@ -292,7 +294,7 @@ class Graph:
         self.signals.update.emit()
         return True
 
-    def save_action(self, action_code: int, vertex_name: str = None, following_vertex_name: str = None,
+    def save_action(self, action_code: int, *, vertex_name: str = None, following_vertex_name: str = None,
                     weight: int = None, x: float = None, y: float = None, vertex_row: dict = None,
                     related_vertex: dict = None, edges: list = None, new_weight: int = None, node: Vertex = None):
         """
@@ -396,3 +398,22 @@ class Graph:
             return 0
         else:
             return int(sorted(self.vertexes, key=lambda el: int(el))[-1])
+
+    def to_matrix(self, with_weight: bool = True):
+        size = self.size()
+        matrix = [[0 for i in range(size)] for i in range(size)]
+
+        for v_from, to_dict in self.vertexes.items():
+            for v_to, to_list in to_dict.items():
+                if with_weight:
+                    matrix[int(v_from) - 1][int(v_to)-1] += sum(el[0] for el in to_list)
+                else:
+                    matrix[int(v_from) - 1][int(v_to)-1] = 1
+        return matrix
+
+    @staticmethod
+    def from_matrix(matrix: List[List[int]]):
+        graph = Graph()
+        for i in range(1, len(matrix) + 1):
+            graph.add_vertex(str(i), shadowed=True)
+        return graph
