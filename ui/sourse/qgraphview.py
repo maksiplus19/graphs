@@ -187,7 +187,7 @@ class QGraphView(QGraphicsView):
                             # self.scene.addItem(line1)
                             # self.scene.addItem(line2)
                             self.scene.addItem(GraphicsEdge(v_from, v_to, node, self.graph.oriented, weight))
-                        elif int(v_from.name) >= int(v_to.name):
+                        elif int(v_from.name) > int(v_to.name):
                             key = f'{v_from.name}_{v_to.name}'
                             rev_key = f'{v_to.name}_{v_from.name}'
                             if (key in self.graph.edge_path and self.graph.edge_path[key] == weight)\
@@ -201,6 +201,7 @@ class QGraphView(QGraphicsView):
                             # self.scene.addItem(line1)
                             # self.scene.addItem(line2)
                             self.scene.addItem(GraphicsEdge(v_from, v_to, node, self.graph.oriented, weight))
+
                 except TypeError as e:
                     # print(e)
                     self.graph.restore()

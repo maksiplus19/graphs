@@ -414,6 +414,10 @@ class Graph:
     @staticmethod
     def from_matrix(matrix: List[List[int]]):
         graph = Graph()
-        for i in range(1, len(matrix) + 1):
-            graph.add_vertex(str(i), shadowed=True)
+        for i in range(len(matrix)):
+            for j in range(len(matrix[i])):
+                if matrix[i][j] != 0 and i != []:
+                    graph.add_vertex(str(i + 1), random.randint(-50, 100), random.randint(0, 100))
+                    graph.add_vertex(str(j + 1), random.randint(-50, 100), random.randint(0, 100))
+                    graph.add_edge(str(i + 1), str(j + 1), matrix[i][j])
         return graph

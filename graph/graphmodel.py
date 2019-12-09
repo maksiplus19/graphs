@@ -55,7 +55,10 @@ class GraphModel(QAbstractTableModel):
         if role == Qt.DisplayRole:
             if not self.graph.oriented:
                 # вернуть количество ребер
-                return self.matrix[index.row()][index.column()] // 2
+                if self.matrix[index.row()][index.column()]/2 == 0.5:
+                    return 1
+                else:
+                    return self.matrix[index.row()][index.column()] // 2
             else:
                 # вернуть сумму весов ребер
                 return self.matrix[index.row()][index.column()]
