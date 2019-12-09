@@ -64,11 +64,11 @@ class Graph:
         self.generator = gen()
 
     @edited
-    def add_edge(self, v_from: str, v_to: str, weight: int = 1, node: Vertex = None, __save: bool = True, shadowed: bool = False):
+    def add_edge(self, v_from: str, v_to: str, weight: int = 1, node: Vertex = None, *, save: bool = True, shadowed: bool = False):
         if v_from in self.vertexes and v_to in self.vertexes:
             if node is None:
                 node = self.create_node(v_from, v_to)
-            if __save:
+            if save:
                 # данное условие необходимо для того, что не было повторного сохранения при откате
                 # или повторении действия, т.к. оно уже сохранено
                 self.save_action(self.ADD_EDGE, vertex_name=v_from, following_vertex_name=v_to,
@@ -92,13 +92,13 @@ class Graph:
             raise Exception('No vertex for adding edge')
 
     @edited
-    def add_vertex(self, name: str, x: float = None, y: float = None, __save: bool = True, shadowed: bool = False):
+    def add_vertex(self, name: str, x: float = None, y: float = None, *, save: bool = True, shadowed: bool = False):
         if name not in self.vertexes_coordinates:
             if x is None:
                 x = random.randint(-500, 500)
             if y is None:
                 y = random.randint(-500, 500)
-            if __save:
+            if save:
                 # данное условие необходимо для того, что не было повторного сохранения при откате
                 # или повторении действия, т.к. оно уже сохранено
                 self.save_action(self.ADD_VERTEX, vertex_name=name, x=x, y=y)
@@ -109,7 +109,7 @@ class Graph:
                 self.signals.update.emit()
 
     @edited
-    def del_edge(self, v_from: str, v_to: str, weight: int = 1, node: Vertex = None, __save: bool = True):
+    def del_edge(self, v_from: str, v_to: str, weight: int = 1, node: Vertex = None, *, save: bool = True, shadowed: bool = False):
         if v_from in self.vertexes and v_to in self.vertexes[v_from]:
             arr = self.vertexes[v_from][v_to]
             helper = [el[0] for el in arr]
@@ -118,39 +118,42 @@ class Graph:
                     index = helper.index(weight)
                 else:
                     index = [el[1] for el in arr].index(node)
-                if __save:
+                if save:
                     # данное условие необходимо для того, что не было повторного сохранения при откате
                     # или повторении действия, т.к. оно уже сохранено
                     self.save_action(self.DEL_EDGE, vertex_name=v_from, following_vertex_name=v_to, weight=weight,
                                      node=arr[index][1])
                 arr.pop(index)
-            self.signals.update.emit()
+            if not shadowed:
+                self.signals.update.emit()
 
     @edited
-    def del_all_edges(self, v_from: str, v_to: str, *, __save: bool = True):
+    def del_all_edges(self, v_from: str, v_to: str, *, save: bool = True, shadowed: bool = False):
         if v_from in self.vertexes and v_to in self.vertexes[v_from]:
-            if __save:
+            if save:
                 # данное условие необходимо для того, что не было повторного сохранения при откате
                 # или повторении действия, т.к. оно уже сохранено
                 self.save_action(self.DEL_ALL_EDGES, vertex_name=v_from, following_vertex_name=v_to,
                                  edges=self.vertexes[v_from][v_to])
             self.vertexes[v_from].pop(v_to)
-            self.signals.update.emit()
+            if not shadowed:
+                self.signals.update.emit()
 
     @edited
-    def set_all_edges(self, v_from: str, v_to: str, weight: int, __save: bool = True):
+    def set_all_edges(self, v_from: str, v_to: str, weight: int, *, save: bool = True, shadowed: bool = False):
         if v_from in self.vertexes and v_to in self.vertexes:
             node = self.create_node(v_from, v_to)
-            if __save:
+            if save:
                 self.save_action(Graph.SET_ALL_EDGES, vertex_name=v_from, following_vertex_name=v_to,
                                  edges=self.vertexes[v_from].get(v_to), weight=weight, node=node)
             self.vertexes[v_from][v_to] = [(weight, node)]
-            self.signals.update.emit()
+            if not shadowed:
+                self.signals.update.emit()
 
     @edited
-    def del_vertex(self, name: str, __save: bool = True):
+    def del_vertex(self, name: str, *, save: bool = True, shadowed: bool = False):
         if name in self.vertexes_coordinates:
-            if __save:
+            if save:
                 # данное условие необходимо для того, что не было повторного сохранения при откате
                 # или повторении действия, т.к. оно уже сохранено
                 v = self.vertexes_coordinates[name]
@@ -167,10 +170,11 @@ class Graph:
             for item in self.vertexes.values():
                 if name in item:
                     item.pop(name)
-            self.signals.update.emit()
+            if not shadowed:
+                self.signals.update.emit()
 
     @edited
-    def change_orient(self, v_from: str, v_to: str, weight: int, node: Vertex, __save: bool = True):
+    def change_orient(self, v_from: str, v_to: str, weight: int, node: Vertex, *, save: bool = True, shadowed: bool = False):
         if v_from in self.vertexes and v_to in self.vertexes[v_from]:
             arr = self.vertexes[v_from][v_to]
             helper = [el[0] for el in arr]
@@ -179,7 +183,7 @@ class Graph:
                     index = helper.index(weight)
                 else:
                     index = [el[1] for el in arr].index(node)
-                if __save:
+                if save:
                     # данное условие необходимо для того, что не было повторного сохранения при откате
                     # или повторении действия, т.к. оно уже сохранено
                     self.save_action(self.CHANGE_ORIENT, vertex_name=v_from, following_vertex_name=v_to, weight=weight,
@@ -189,6 +193,9 @@ class Graph:
             self.add_edge(v_to, v_from, weight, node, False)
             if not self.vertexes[v_from][v_to]:
                 self.vertexes[v_from].pop(v_to)
+
+            if not shadowed:
+                self.signals.update.emit()
 
     def clear(self):
         self.vertexes.clear()
@@ -414,10 +421,11 @@ class Graph:
     @staticmethod
     def from_matrix(matrix: List[List[int]]):
         graph = Graph()
-        for i in range(len(matrix)):
-            for j in range(len(matrix[i])):
-                if matrix[i][j] != 0 and i != []:
-                    graph.add_vertex(str(i + 1), random.randint(-50, 100), random.randint(0, 100))
-                    graph.add_vertex(str(j + 1), random.randint(-50, 100), random.randint(0, 100))
-                    graph.add_edge(str(i + 1), str(j + 1), matrix[i][j])
+        size = len(matrix)
+        for i in range(1, size + 1):
+            graph.add_vertex(str(i), shadowed=True)
+        for i in range(size):
+            for j in range(size):
+                if matrix[i][j]:
+                    graph.add_edge(str(i+1), str(j+1), matrix[i][j], None, save=False, shadowed=True)
         return graph

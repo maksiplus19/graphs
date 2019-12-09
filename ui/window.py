@@ -8,7 +8,7 @@ from graph.graph import Graph
 from graph.graphmodel import GraphModel
 from graph.loadgraph import LoadGraph
 from graph.savegraph import SaveGraph
-from ui.design import BeginEndDialog
+from ui.design import BeginEndDialog, binaryDialog
 from ui.design.design import Ui_MainWindow
 from ui.sourse.qgraphview import QGraphView
 import algorithm
@@ -27,6 +27,16 @@ def get_begin_end(method):
 
         self.textEdit.setText(f'Расстояние от {dialog.textBegin} до {dialog.textEnd} = {distance}')
         self.tabWidget.currentWidget().graph.update()
+
+    return warped
+
+
+def two_graphs(method):
+    def warped(self, *args, **kwargs):
+        if self.tabWidget.count() < 2:
+            QMessageBox.information(self, 'Информация', 'Этот алгоритм требует 2 графов')
+            return
+        method(self)
 
     return warped
 
@@ -71,9 +81,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.IDAaction.triggered.connect(self.IDA)
         self.action5.triggered.connect(self.check_isomorphic)
         self.action7.triggered.connect(self.addition)
+        self.action8.triggered.connect(self.binary_operations)
 
-    def addTab(self, name: str = None):
-        self.tabWidget.addTab(QGraphView(self.tabWidget, Graph()),
+    def addTab(self, name: str = None, graph: Graph = None):
+        self.tabWidget.addTab(QGraphView(self.tabWidget, Graph() if graph is None else graph),
                               str(self.tabCounter) if name is None or name is False else name)
         self.tabWidget.setCurrentIndex(self.tabWidget.count() - 1)
         self.tabCounter += 1
@@ -249,13 +260,25 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.tabWidget.currentWidget().graph.update()
 
 
+    @two_graphs
     def check_isomorphic(self):
-        if self.tabWidget.count() < 2:
-            QMessageBox.information(self, 'Информация', 'Этот алгоритм требует 2 графов')
-            return
         index = self.tabWidget.count()
         res = algorithm.isomorphic(self.tabWidget.widget(index - 1).graph, self.tabWidget.widget(index - 2).graph)
         QMessageBox.information(self, 'Резкльтат', res)
+
+    @two_graphs
+    def binary_operations(self):
+        bin_d = binaryDialog.Ui_BinaryDialog()
+        bin_d.exec_()
+        if bin_d.getOperation() == '':
+            return
+        op = bin_d.getOperation()
+        index = self.tabWidget.count()
+        first, second = self.tabWidget.widget(index - 2).graph, self.tabWidget.widget(index - 1).graph
+        if op[0] == 'b':
+            first, second = second, first
+        res = algorithm.binary_operation(first, second, op[1:-1])
+        self.addTab('Результат', res)
 
 
 if __name__ == '__main__':
