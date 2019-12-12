@@ -29,8 +29,9 @@ def __get_edges(path: list, edges: Dict[str, Vertex], oriented: bool) -> Dict:
         key = f'{path[i]}_{path[i + 1]}'
         res[key] = edges[key]
         if not oriented:
+            old_key = key
             key = f'{path[i + 1]}_{path[i]}'
-            res[key] = edges[key]
+            res[key] = edges[old_key]
     return res
 
 
