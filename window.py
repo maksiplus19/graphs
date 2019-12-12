@@ -8,7 +8,7 @@ from graph.graph import Graph
 from graph.graphmodel import GraphModel
 from graph.loadgraph import LoadGraph
 from graph.savegraph import SaveGraph
-from ui.design import BeginEndDialog, binaryDialog
+from ui.design import BeginEndDialog
 from ui.design.design import Ui_MainWindow
 from ui.sourse.qgraphview import QGraphView
 import algorithm
@@ -256,6 +256,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     if not self.tabWidget.currentWidget().graph.oriented and i < j:
                         break
                     self.tabWidget.currentWidget().graph.add_edge(str(i+1), str(j+1))
+                if matrix[i][j] == 0:
+                    self.tabWidget.currentWidget().graph.del_edge(str(i + 1), str(j + 1))
+
 
         self.tabWidget.currentWidget().graph.update()
 
