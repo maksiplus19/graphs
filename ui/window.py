@@ -247,10 +247,21 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         op = bin_d.getOperation()
         index = self.tabWidget.count()
         first, second = self.tabWidget.widget(index - 2).graph, self.tabWidget.widget(index - 1).graph
-        if op[0] == 'b':
-            first, second = second, first
-        res = algorithm.binary_operation(first, second, op[1:-1])
-        self.addTab('Результат', res)
+        if op != 'aallb':
+            if op[0] == 'b':
+                first, second = second, first
+            res = algorithm.binary_operation(first, second, op[1:-1])
+            self.addTab('Результат', res)
+        else:
+            all_op = ['aandb', 'aorb', 'aminusb', 'bminusa',
+                      'aimplb', 'bimpla', 'acoimplb', 'bcoimpla',
+                      'axorb', 'aeqb', 'ashephb', 'apirsb']
+            for op in all_op:
+                if op[0] == 'b':
+                    res = algorithm.binary_operation(second, first, op[1:-1])
+                else:
+                    res = algorithm.binary_operation(first, second, op[1:-1])
+                self.addTab(op, res)
 
 
 if __name__ == '__main__':
