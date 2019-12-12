@@ -1,9 +1,0 @@
-/.idea
-/venv
-.gitignore
-*__pycache__*
-*.png
-*.gam
-*.json
-*.gim
-/ui/design/convert.bat

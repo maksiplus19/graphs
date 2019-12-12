@@ -8,7 +8,7 @@ from graph.graph import Graph
 from graph.graphmodel import GraphModel
 from graph.loadgraph import LoadGraph
 from graph.savegraph import SaveGraph
-from ui.design import BeginEndDialog, binaryDialog
+from ui.design import BeginEndDialog
 from ui.design.design import Ui_MainWindow
 from ui.sourse.qgraphview import QGraphView
 import algorithm
@@ -80,6 +80,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.actionA.triggered.connect(self.A_star)
         self.IDAaction.triggered.connect(self.IDA)
         self.action5.triggered.connect(self.check_isomorphic)
+        self.action7.triggered.connect(self.addition)
         self.action8.triggered.connect(self.binary_operations)
 
     def addTab(self, name: str = None, graph: Graph = None):
@@ -199,6 +200,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def changeOrient(self, data):
         self.tabWidget.currentWidget().graph.oriented = not bool(data)
+
         self.tabWidget.currentWidget().graph.update()
 
     def changeWeight(self, data):
@@ -231,6 +233,35 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     @get_begin_end
     def IDA(self, begin: str, end: str):
         return algorithm.IDA_star(self.tabWidget.currentWidget().graph, begin, end)
+
+    def radius_other(self):
+        return algoritm.radius(self.tabWidget.currentWidget().graph)
+
+    def addition(self):
+        self.textEdit.setText("")
+        matrix = algorithm.additional(self.graphModel.matrix)
+        is_full = True
+        for i in range(len(matrix)):
+            for j in range(len(matrix[i])):
+                if matrix[i][j] != 0:
+                    is_full = False
+
+        if is_full:
+            self.textEdit.setText("Граф полный")
+            return
+
+        for i in range(len(matrix)):
+            for j in range(len(matrix[i])):
+                if matrix[i][j] == 1:
+                    if not self.tabWidget.currentWidget().graph.oriented and i < j:
+                        break
+                    self.tabWidget.currentWidget().graph.add_edge(str(i+1), str(j+1))
+                if matrix[i][j] == 0:
+                    self.tabWidget.currentWidget().graph.del_edge(str(i + 1), str(j + 1))
+
+
+        self.tabWidget.currentWidget().graph.update()
+
 
     @two_graphs
     def check_isomorphic(self):

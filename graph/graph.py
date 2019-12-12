@@ -424,7 +424,6 @@ class Graph:
         size = len(matrix)
         for i in range(1, size + 1):
             graph.add_vertex(str(i), shadowed=True)
-
         for i in range(size):
             for j in range(size):
                 if matrix[i][j]:
