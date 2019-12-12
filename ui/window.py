@@ -11,6 +11,7 @@ from graph.savegraph import SaveGraph
 from ui.design import BeginEndDialog
 from ui.design.design import Ui_MainWindow
 from ui.sourse.qgraphview import QGraphView
+from ui.design.binaryDialog import Ui_BinaryDialog
 import algorithm
 
 
@@ -235,7 +236,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         return algorithm.IDA_star(self.tabWidget.currentWidget().graph, begin, end)
 
     def radius_other(self):
-        return algoritm.radius(self.tabWidget.currentWidget().graph)
+        return algorithm.radius(self.tabWidget.currentWidget().graph, 'None')
 
     def addition(self):
         self.textEdit.setText("")
@@ -255,13 +256,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 if matrix[i][j] == 1:
                     if not self.tabWidget.currentWidget().graph.oriented and i < j:
                         break
-                    self.tabWidget.currentWidget().graph.add_edge(str(i+1), str(j+1))
+                    self.tabWidget.currentWidget().graph.add_edge(str(i + 1), str(j + 1))
                 if matrix[i][j] == 0:
                     self.tabWidget.currentWidget().graph.del_edge(str(i + 1), str(j + 1))
 
-
         self.tabWidget.currentWidget().graph.update()
-
 
     @two_graphs
     def check_isomorphic(self):
@@ -271,7 +270,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     @two_graphs
     def binary_operations(self):
-        bin_d = binaryDialog.Ui_BinaryDialog()
+        bin_d = Ui_BinaryDialog()
         bin_d.exec_()
         if bin_d.getOperation() == '':
             return
