@@ -9,10 +9,12 @@ from graph.graphmodel import GraphModel
 from graph.loadgraph import LoadGraph
 from graph.savegraph import SaveGraph
 from ui.design import BeginEndDialog
+from ui.design import BeginDialog
 from ui.design.design import Ui_MainWindow
 from ui.sourse.qgraphview import QGraphView
 from ui.design.binaryDialog import Ui_BinaryDialog
 import algorithm
+import numpy as np
 
 
 def get_begin_end(method):
@@ -31,7 +33,6 @@ def get_begin_end(method):
 
     return warped
 
-
 def two_graphs(method):
     def warped(self, *args, **kwargs):
         if self.tabWidget.count() < 2:
@@ -39,6 +40,31 @@ def two_graphs(method):
             return
         method(self)
 
+    return warped
+
+
+def get_begin(method):
+    def warped(self):
+        self.textEdit.setText("")
+        dialog = BeginDialog.Ui_BeginDialog(None)
+        dialog.setModal(True)
+        if not dialog.exec_():
+            return
+        if dialog.textBegin is None:
+            return
+        if dialog.textBegin == '0':
+            for i in range(len(self.tabWidget.currentWidget().graph.vertexes)):
+                distance = method(self, str(i + 1))
+                for j in range(len(distance)):
+                    self.textEdit.append(f'Расстояние от {i+1} до {j+1} = {distance[j]}')
+            self.tabWidget.currentWidget().graph.update()
+            return
+
+        distance = method(self, dialog.textBegin)
+
+        for i in range(len(distance)):
+            self.textEdit.append(f'Расстояние от {dialog.textBegin} до {i+1} = {distance[i]}')
+        self.tabWidget.currentWidget().graph.update()
     return warped
 
 
@@ -81,11 +107,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.actionA.triggered.connect(self.A_star)
         self.IDAaction.triggered.connect(self.IDA)
         self.action5.triggered.connect(self.check_isomorphic)
+        self.action.triggered.connect(self.dijkstra)
+        self.action_2.triggered.connect(self.floyd_worshel)
+        self.action_3.triggered.connect(self.bellman_ford)
+        self.action4.triggered.connect(self.radius_diametr)
+        self.action_4.triggered.connect(self.djonson)
         self.action7.triggered.connect(self.addition)
         self.action8.triggered.connect(self.binary_operations)
 
-    def addTab(self, name: str = None, graph: Graph = None):
-        self.tabWidget.addTab(QGraphView(self.tabWidget, Graph() if graph is None else graph),
+    def addTab(self, name: str = None):
+        self.tabWidget.addTab(QGraphView(self.tabWidget, Graph()),
                               str(self.tabCounter) if name is None or name is False else name)
         self.tabWidget.setCurrentIndex(self.tabWidget.count() - 1)
         self.tabCounter += 1
@@ -201,7 +232,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def changeOrient(self, data):
         self.tabWidget.currentWidget().graph.oriented = not bool(data)
-
         self.tabWidget.currentWidget().graph.update()
 
     def changeWeight(self, data):
@@ -235,33 +265,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def IDA(self, begin: str, end: str):
         return algorithm.IDA_star(self.tabWidget.currentWidget().graph, begin, end)
 
-    def radius_other(self):
-        return algorithm.radius(self.tabWidget.currentWidget().graph, 'None')
-
-    def addition(self):
-        self.textEdit.setText("")
-        matrix = algorithm.additional(self.graphModel.matrix)
-        is_full = True
-        for i in range(len(matrix)):
-            for j in range(len(matrix[i])):
-                if matrix[i][j] != 0:
-                    is_full = False
-
-        if is_full:
-            self.textEdit.setText("Граф полный")
-            return
-
-        for i in range(len(matrix)):
-            for j in range(len(matrix[i])):
-                if matrix[i][j] == 1:
-                    if not self.tabWidget.currentWidget().graph.oriented and i < j:
-                        break
-                    self.tabWidget.currentWidget().graph.add_edge(str(i + 1), str(j + 1))
-                if matrix[i][j] == 0:
-                    self.tabWidget.currentWidget().graph.del_edge(str(i + 1), str(j + 1))
-
-        self.tabWidget.currentWidget().graph.update()
-
     @two_graphs
     def check_isomorphic(self):
         index = self.tabWidget.count()
@@ -292,6 +295,100 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 else:
                     res = algorithm.binary_operation(first, second, op[1:-1])
                 self.addTab(op, res)
+
+    @get_begin
+    def dijkstra(self, begin: str):
+        return algorithm.dijkstra(begin, self.graphModel.matrix, self.tabWidget.currentWidget().graph.oriented)
+
+    def floyd_worshel(self):
+        self.textEdit.setText("")
+        result = algorithm.floydWorshel(self.graphModel.matrix, self.tabWidget.currentWidget().graph.oriented)
+        for i in range(len(result)):
+            for j in range(len(result)):
+                self.textEdit.append(f'Расстояние от {i+1} до {j+1} = {result[i][j]}')
+                self.tabWidget.currentWidget().graph.update()
+
+    @get_begin
+    def bellman_ford(self, begin: str):
+        return algorithm.bellmanFord(self.tabWidget.currentWidget().graph, begin)
+
+    def djonson(self):
+        self.textEdit.setText("")
+        for i in range(len(self.tabWidget.currentWidget().graph.vertexes)):
+            distance = algorithm.dijkstra(str(i + 1), self.graphModel.matrix, self.tabWidget.currentWidget().graph.oriented)
+            for j in range(len(distance)):
+                self.textEdit.append(f'Расстояние от {i+1} до {j+1} = {distance[j]}')
+        self.tabWidget.currentWidget().graph.update()
+
+    def radius_diametr(self):
+        self.textEdit.setText("")
+        f = open("res.txt", "w")
+        size = self.tabWidget.currentWidget().graph.size()
+        ecscentr = []
+        for i in range(size):
+            dist = algorithm.dijkstra(str(i+1), self.graphModel.matrix, self.tabWidget.currentWidget().graph.oriented)
+            max = np.inf * -1
+            for j in range(len(dist)):
+                if dist[j] > max:
+                    max = dist[j]
+            ecscentr.append(max)
+        self.textEdit.append(f'Эксцентриситеты: {ecscentr}')
+        f.write('Эксцентриситеты: ' + str(ecscentr) + "\n")
+        diam = np.inf * -1
+        rad = np.inf
+        for i in range(len(ecscentr)):
+            if ecscentr[i] > diam:
+                diam = ecscentr[i]
+            if ecscentr[i] < rad:
+                rad = ecscentr[i]
+
+
+
+        if rad == 0:
+            self.textEdit.append(f'Граф не связный')
+        else:
+            self.textEdit.append(f'Диаметр = {diam}')
+            self.textEdit.append(f'Радиус = {rad}')
+        f.write("Диаметр = " + str(diam) + "\n")
+        f.write("Радиус = " + str(rad) + "\n")
+
+        matrix = self.graphModel.matrix
+        degrees = np.zeros(size)
+        for i in range(len(matrix)):
+            for j in range(len(matrix)):
+                if matrix[i][j] != 0:
+                    degrees[i] += 1
+                    degrees[j] += 1
+
+        self.textEdit.append(f'Вектор степеней: {degrees}')
+        f.write("Вектор степеней: " + str(degrees) + "\n")
+        f.close()
+
+    def addition(self):
+        self.textEdit.setText("")
+        matrix = algorithm.additional(self.graphModel.matrix)
+        is_full = True
+        for i in range(len(matrix)):
+            for j in range(len(matrix[i])):
+                if matrix[i][j] != 0:
+                    is_full = False
+
+        if is_full:
+            self.textEdit.setText("Граф полный")
+            return
+
+        for i in range(len(matrix)):
+            for j in range(len(matrix[i])):
+                if matrix[i][j] == 1:
+                    if not self.tabWidget.currentWidget().graph.oriented and i < j:
+                        break
+                    self.tabWidget.currentWidget().graph.add_edge(str(i + 1), str(j + 1))
+                if matrix[i][j] == 0:
+                    self.tabWidget.currentWidget().graph.del_edge(str(i + 1), str(j + 1))
+
+        self.tabWidget.currentWidget().graph.update()
+
+
 
 
 if __name__ == '__main__':
