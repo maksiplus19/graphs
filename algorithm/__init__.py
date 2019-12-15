@@ -7,6 +7,7 @@ from .dijkstra_and_other import floydWorshel
 from .dijkstra_and_other import bellmanFord
 from .additional import additional
 from .binary_operation import binary_operation
+from .binary_operation import binary_operation_with_matrix
 from .planary import isPlanary
 from .connectedness import isConnected
 from .connectedness import find_comps
