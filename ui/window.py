@@ -11,6 +11,7 @@ from graph.loadgraph import LoadGraph
 from graph.savegraph import SaveGraph
 from ui.design import BeginEndDialog
 from ui.design import BeginDialog
+from ui.design.GetTextDialog import Ui_GetTextDialog
 from ui.design.design import Ui_MainWindow
 from ui.sourse.qgraphview import QGraphView
 from ui.design.binaryDialog import Ui_BinaryDialog
@@ -117,6 +118,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.action_4.triggered.connect(self.djonson)
         self.action7.triggered.connect(self.addition)
         self.action8.triggered.connect(self.binary_operations)
+        self.action11.triggered.connect(self.extreme)
 
     def addTab(self, name: str = None, graph: Graph = None):
         self.tabWidget.addTab(QGraphView(self.tabWidget, Graph() if graph is None else graph),
@@ -322,8 +324,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     @get_begin
     def dijkstra(self, begin: str):
-        return algorithm.dijkstra(begin, self.tabWidget.currentWidget().graph.to_matrix(),
-                                  self.tabWidget.currentWidget().graph.oriented)
+        return algorithm.dijkstra(begin, self.tabWidget.currentWidget().graph.to_matrix())
 
     def floyd_worshel(self):
         self.textEdit.setText("")
@@ -341,8 +342,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def djonson(self):
         self.textEdit.setText("")
         for i in range(len(self.tabWidget.currentWidget().graph.vertexes)):
-            distance = algorithm.dijkstra(str(i + 1), self.tabWidget.currentWidget().graph.to_matrix(),
-                                          self.tabWidget.currentWidget().graph.oriented)
+            distance = algorithm.dijkstra(str(i + 1), self.tabWidget.currentWidget().graph.to_matrix())
             for j in range(len(distance)):
                 self.textEdit.append(f'Расстояние от {i + 1} до {j + 1} = {distance[j]}')
         self.tabWidget.currentWidget().graph.update()
@@ -353,8 +353,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             size = self.tabWidget.currentWidget().graph.size()
             ecscentr = []
             for i in range(size):
-                dist = algorithm.dijkstra(str(i + 1), self.tabWidget.currentWidget().graph.to_matrix(),
-                                          self.tabWidget.currentWidget().graph.oriented)
+                dist = algorithm.dijkstra(str(i + 1), self.tabWidget.currentWidget().graph.to_matrix())
                 maximum = np.inf * -1
                 for j in range(len(dist)):
                     if dist[j] > maximum:
@@ -389,6 +388,22 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             degrees = [d / 2 for d in degrees]
             self.textEdit.append(f'Вектор степеней: {degrees}')
             f.write("Вектор степеней: " + str(degrees) + "\n")
+
+    def extreme(self):
+        # dialog = Ui_GetTextDialog('База', 'Введите базу')
+        # dialog.exec_()
+        # base1 = dialog.getText()
+        # dialog = Ui_GetTextDialog('База', 'Введите базу')
+        # dialog.exec_()
+        # base2 = dialog.getText()
+
+        base1 = '1 6\n2 3'
+        base2 = '2 6'
+
+        res = algorithm.extreme(base1, base2)
+
+        for name, graph in res.items():
+            self.addTab(name, graph)
 
 
 if __name__ == '__main__':
