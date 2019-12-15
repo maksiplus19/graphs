@@ -67,7 +67,6 @@ def bellmanFord(graph: Graph, begin: str):
             for j in graph.vertexes[i].keys():
                 if dist[int(i)-1] + graph.vertexes[i][j][0][0] < dist[int(j)-1]:
                     dist[int(j) - 1] = dist[int(i)-1] + graph.vertexes[i][j][0][0]
-
     print(dist)
     return dist
 

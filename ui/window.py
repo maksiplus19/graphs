@@ -114,6 +114,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.action_4.triggered.connect(self.djonson)
         self.action7.triggered.connect(self.addition)
         self.action8.triggered.connect(self.binary_operations)
+        self.action6.triggered.connect(self.is_connect)
 
     def addTab(self, name: str = None):
         self.tabWidget.addTab(QGraphView(self.tabWidget, Graph()),
@@ -126,6 +127,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         graph.signals.update.connect(self.graphMatrix.resizeColumnsToContents)
         graph.update()
         graph.saved = True
+        self.textEdit.setText('')
         # for i in range(10**4):
         #     graph.add_vertex(graph.get_new_vertex_name())
         #     if i % 100 == 0:
@@ -342,9 +344,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if ecscentr[i] < rad:
                 rad = ecscentr[i]
 
-
-
-        if rad == 0:
+        if diam == np.inf:
             self.textEdit.append(f'Граф не связный')
         else:
             self.textEdit.append(f'Диаметр = {diam}')
@@ -359,7 +359,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 if matrix[i][j] != 0:
                     degrees[i] += 1
                     degrees[j] += 1
-
+        if not self.tabWidget.currentWidget().graph.oriented:
+            for i in range(len(degrees)):
+                degrees[i] = degrees[i]//2
         self.textEdit.append(f'Вектор степеней: {degrees}')
         f.write("Вектор степеней: " + str(degrees) + "\n")
         f.close()
@@ -388,7 +390,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.tabWidget.currentWidget().graph.update()
 
-
+    def is_connect(self):
+        self.textEdit.setText(algorithm.isConnected(self.graphModel.matrix, self.tabWidget.currentWidget().graph.oriented))
+        comps = algorithm.find_comps(self.tabWidget.currentWidget().graph)
+        if self.tabWidget.currentWidget().graph.oriented:
+            self.textEdit.append("Компоненты сильной связности:")
+        else:
+            self.textEdit.append("Компоненты связности:")
+        for i in comps:
+            self.textEdit.append(str(i))
 
 
 if __name__ == '__main__':
