@@ -1,14 +1,11 @@
-from typing import Dict, List, Union
-from enum import IntEnum, auto
-
-import numpy as np
 import copy
 
+import numpy as np
+
 from graph.graph import Graph
-from graph.vertex import Vertex
 
 
-def dijkstra(begin: str, matr, oriented):
+def dijkstra(begin: str, matr):
     size = len(matr)
     matrix = copy.deepcopy(matr)
 
@@ -16,8 +13,6 @@ def dijkstra(begin: str, matr, oriented):
         for j in range(size):
             if matrix[i][j] == 0:
                 matrix[i][j] = np.inf
-            if not oriented:
-                matrix[i][j] = matrix[i][j]//2
 
     valid = np.repeat(True, size)
     weight = np.repeat(np.inf, size)

@@ -1,4 +1,5 @@
 import sys
+from copy import deepcopy
 
 from PyQt5 import QtWidgets
 from PyQt5.QtGui import QIcon
@@ -33,6 +34,7 @@ def get_begin_end(method):
 
     return warped
 
+
 def two_graphs(method):
     def warped(self, *args, **kwargs):
         if self.tabWidget.count() < 2:
@@ -56,15 +58,16 @@ def get_begin(method):
             for i in range(len(self.tabWidget.currentWidget().graph.vertexes)):
                 distance = method(self, str(i + 1))
                 for j in range(len(distance)):
-                    self.textEdit.append(f'Расстояние от {i+1} до {j+1} = {distance[j]}')
+                    self.textEdit.append(f'Расстояние от {i + 1} до {j + 1} = {distance[j]}')
             self.tabWidget.currentWidget().graph.update()
             return
 
         distance = method(self, dialog.textBegin)
 
         for i in range(len(distance)):
-            self.textEdit.append(f'Расстояние от {dialog.textBegin} до {i+1} = {distance[i]}')
+            self.textEdit.append(f'Расстояние от {dialog.textBegin} до {i + 1} = {distance[i]}')
         self.tabWidget.currentWidget().graph.update()
+
     return warped
 
 
@@ -116,8 +119,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.action8.triggered.connect(self.binary_operations)
         self.action6.triggered.connect(self.is_connect)
 
-    def addTab(self, name: str = None):
-        self.tabWidget.addTab(QGraphView(self.tabWidget, Graph()),
+    def addTab(self, name: str = None, graph: Graph = None):
+        self.tabWidget.addTab(QGraphView(self.tabWidget, Graph() if graph is None else graph),
                               str(self.tabCounter) if name is None or name is False else name)
         self.tabWidget.setCurrentIndex(self.tabWidget.count() - 1)
         self.tabCounter += 1
@@ -127,7 +130,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         graph.signals.update.connect(self.graphMatrix.resizeColumnsToContents)
         graph.update()
         graph.saved = True
-        self.textEdit.setText('')
         # for i in range(10**4):
         #     graph.add_vertex(graph.get_new_vertex_name())
         #     if i % 100 == 0:
@@ -234,6 +236,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def changeOrient(self, data):
         self.tabWidget.currentWidget().graph.oriented = not bool(data)
+
         self.tabWidget.currentWidget().graph.update()
 
     def changeWeight(self, data):
@@ -254,6 +257,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def setComboBox(self):
         self.cmbDirect.setCurrentIndex(int(not self.tabWidget.currentWidget().graph.oriented))
         self.cmbWeight.setCurrentIndex(int(not self.tabWidget.currentWidget().graph.weighted))
+        self.tabWidget.currentWidget().graph.update()
 
     @get_begin_end
     def BFS(self, begin: str, end: str):
@@ -266,6 +270,25 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     @get_begin_end
     def IDA(self, begin: str, end: str):
         return algorithm.IDA_star(self.tabWidget.currentWidget().graph, begin, end)
+
+    def addition(self):
+        self.textEdit.setText("")
+        matrix = algorithm.additional(self.tabWidget.currentWidget().graph.to_matrix(with_weight=False))
+        matrix_copy = deepcopy(matrix)
+        for i in range(len(matrix_copy)):
+            matrix[i][i] = 0
+
+        is_full = not any(sum(matrix_copy, []))
+        if is_full:
+            self.textEdit.setText("Граф полный")
+            return
+
+        g = Graph.from_matrix(matrix)
+        g.oriented = self.tabWidget.currentWidget().graph.oriented
+        self.tabWidget.currentWidget().graph = g
+        self.graphModel.setGraph(g)
+        self.tabWidget.currentWidget().graph.update()
+        self.tabWidget.currentWidget().drawGraph()
 
     @two_graphs
     def check_isomorphic(self):
@@ -300,14 +323,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     @get_begin
     def dijkstra(self, begin: str):
-        return algorithm.dijkstra(begin, self.graphModel.matrix, self.tabWidget.currentWidget().graph.oriented)
+        return algorithm.dijkstra(begin, self.tabWidget.currentWidget().graph.to_matrix(),
+                                  self.tabWidget.currentWidget().graph.oriented)
 
     def floyd_worshel(self):
         self.textEdit.setText("")
-        result = algorithm.floydWorshel(self.graphModel.matrix, self.tabWidget.currentWidget().graph.oriented)
+        result = algorithm.floydWorshel(self.tabWidget.currentWidget().graph.to_matrix(),
+                                        self.tabWidget.currentWidget().graph.oriented)
         for i in range(len(result)):
             for j in range(len(result)):
-                self.textEdit.append(f'Расстояние от {i+1} до {j+1} = {result[i][j]}')
+                self.textEdit.append(f'Расстояние от {i + 1} до {j + 1} = {result[i][j]}')
                 self.tabWidget.currentWidget().graph.update()
 
     @get_begin
@@ -317,9 +342,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def djonson(self):
         self.textEdit.setText("")
         for i in range(len(self.tabWidget.currentWidget().graph.vertexes)):
-            distance = algorithm.dijkstra(str(i + 1), self.graphModel.matrix, self.tabWidget.currentWidget().graph.oriented)
+            distance = algorithm.dijkstra(str(i + 1), self.tabWidget.currentWidget().graph.to_matrix(),
+                                          self.tabWidget.currentWidget().graph.oriented)
             for j in range(len(distance)):
-                self.textEdit.append(f'Расстояние от {i+1} до {j+1} = {distance[j]}')
+                self.textEdit.append(f'Расстояние от {i + 1} до {j + 1} = {distance[j]}')
         self.tabWidget.currentWidget().graph.update()
 
     def radius_diametr(self):
