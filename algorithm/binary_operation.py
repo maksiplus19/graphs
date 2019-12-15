@@ -1,4 +1,4 @@
-from typing import Callable, Dict, Optional
+from typing import Callable, Dict, Optional, List
 
 from graph.graph import Graph
 
@@ -10,7 +10,7 @@ def minus(l, r):
 
 
 class Operation:
-    operation: Dict[str, Callable[[bool, bool], bool]] = {
+    operation: Dict[str, Callable[[int, int], int]] = {
         'and': lambda left, right: left and right,
         'or': lambda left, right: left or right,
         'xor': lambda left, right: left != right,
@@ -25,7 +25,7 @@ class Operation:
     def __init__(self, op: str):
         self.op = op
 
-    def __call__(self, left: bool, right: bool) -> bool:
+    def __call__(self, left: int, right: int) -> int:
         return self.operation[self.op](left, right)
 
 
@@ -47,3 +47,17 @@ def binary_operation(a: Graph, b: Graph, op: str) -> Optional[Graph]:
             g[i][j] = int(operation(a[i][j], b[i][j]))
 
     return Graph.from_matrix(g)
+
+
+def binary_operation_with_matrix(a: List[List[int]], b: List[List[int]], op: str) -> Optional[List[List[int]]]:
+    if len(a) != len(b):
+        return None
+    size = len(a)
+    g = [[0 for i in range(size)] for i in range(size)]
+    operation = Operation(op)
+    for i in range(size):
+        for j in range(size):
+            if i == j:
+                continue
+            g[i][j] = int(operation(a[i][j], b[i][j]))
+    return g
