@@ -118,6 +118,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.action_4.triggered.connect(self.djonson)
         self.action7.triggered.connect(self.addition)
         self.action8.triggered.connect(self.binary_operations)
+        self.action6.triggered.connect(self.is_connect)
         self.action11.triggered.connect(self.extreme)
 
     def addTab(self, name: str = None, graph: Graph = None):
@@ -369,25 +370,61 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 if ecscentr[i] < rad:
                     rad = ecscentr[i]
 
-            if rad == 0:
-                self.textEdit.append(f'Граф не связный')
-            else:
-                self.textEdit.append(f'Диаметр = {diam}')
-                self.textEdit.append(f'Радиус = {rad}')
-            f.write("Диаметр = " + str(diam) + "\n")
-            f.write("Радиус = " + str(rad) + "\n")
+        if diam == np.inf:
+            self.textEdit.append(f'Граф не связный')
+        else:
+            self.textEdit.append(f'Диаметр = {diam}')
+            self.textEdit.append(f'Радиус = {rad}')
+        f.write("Диаметр = " + str(diam) + "\n")
+        f.write("Радиус = " + str(rad) + "\n")
 
-            matrix = self.tabWidget.currentWidget().graph.to_matrix()
-            degrees = np.zeros(size)
-            for i in range(len(matrix)):
-                for j in range(len(matrix)):
-                    if matrix[i][j] != 0:
-                        degrees[i] += 1
-                        degrees[j] += 1
+        matrix = self.graphModel.matrix
+        degrees = np.zeros(size)
+        for i in range(len(matrix)):
+            for j in range(len(matrix)):
+                if matrix[i][j] != 0:
+                    degrees[i] += 1
+                    degrees[j] += 1
+        if not self.tabWidget.currentWidget().graph.oriented:
+            for i in range(len(degrees)):
+                degrees[i] = degrees[i]//2
+        self.textEdit.append(f'Вектор степеней: {degrees}')
+        f.write("Вектор степеней: " + str(degrees) + "\n")
+        f.close()
 
-            degrees = [d / 2 for d in degrees]
-            self.textEdit.append(f'Вектор степеней: {degrees}')
-            f.write("Вектор степеней: " + str(degrees) + "\n")
+    def addition(self):
+        self.textEdit.setText("")
+        matrix = algorithm.additional(self.graphModel.matrix)
+        is_full = True
+        for i in range(len(matrix)):
+            for j in range(len(matrix[i])):
+                if matrix[i][j] != 0:
+                    is_full = False
+
+        if is_full:
+            self.textEdit.setText("Граф полный")
+            return
+
+        for i in range(len(matrix)):
+            for j in range(len(matrix[i])):
+                if matrix[i][j] == 1:
+                    if not self.tabWidget.currentWidget().graph.oriented and i < j:
+                        break
+                    self.tabWidget.currentWidget().graph.add_edge(str(i + 1), str(j + 1))
+                if matrix[i][j] == 0:
+                    self.tabWidget.currentWidget().graph.del_edge(str(i + 1), str(j + 1))
+
+        self.tabWidget.currentWidget().graph.update()
+
+    def is_connect(self):
+        self.textEdit.setText(algorithm.isConnected(self.graphModel.matrix, self.tabWidget.currentWidget().graph.oriented))
+        comps = algorithm.find_comps(self.tabWidget.currentWidget().graph)
+        if self.tabWidget.currentWidget().graph.oriented:
+            self.textEdit.append("Компоненты сильной связности:")
+        else:
+            self.textEdit.append("Компоненты связности:")
+        for i in comps:
+            self.textEdit.append(str(i))
 
     def extreme(self):
         # dialog = Ui_GetTextDialog('База', 'Введите базу')

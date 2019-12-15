@@ -8,5 +8,6 @@ from .dijkstra_and_other import bellmanFord
 from .additional import additional
 from .binary_operation import binary_operation
 from .planary import isPlanary
-from .binary_operation import binary_operation_with_matrix
+from .connectedness import isConnected
+from .connectedness import find_comps
 from .extreme_graph import extreme

@@ -8,7 +8,7 @@ class GraphModel(QAbstractTableModel):
     def __init__(self, graph: Graph = None):
         super().__init__()
         self.graph = graph
-        self.__matrix = []
+        self.matrix = []
         self.graphToMatrix()
 
     def setGraph(self, graph: Graph):
@@ -23,31 +23,31 @@ class GraphModel(QAbstractTableModel):
         if self.graph is None:
             return
         if not self.graph.vertexes_coordinates:
-            self.__matrix = [[None]]
+            self.matrix = [[None]]
             self.modelReset.emit()
             return
         n = self.graph.size()
         if n > 0:
             # преобразование графа в матрицу смежности
-            self.__matrix = [[0] * n for i in range(n)]
+            self.matrix = [[0] * n for i in range(n)]
             for v_from, to_dict in self.graph.vertexes.items():
                 v_from = int(v_from)
                 for v_to, to_list in to_dict.items():
                     v_to = int(v_to)
                     for weight, node in to_list:
                         if self.graph.oriented:
-                            self.__matrix[v_from - 1][v_to - 1] += weight
+                            self.matrix[v_from - 1][v_to - 1] += weight
                         else:
-                            self.__matrix[v_from - 1][v_to - 1] += weight
-                            self.__matrix[v_to - 1][v_from - 1] += weight
+                            self.matrix[v_from - 1][v_to - 1] += weight
+                            self.matrix[v_to - 1][v_from - 1] += weight
             # сообраем вьюхе, что модель обновилась
             self.modelReset.emit()
 
     def rowCount(self, parent=None, *args, **kwargs) -> int:
-        return len(self.__matrix)
+        return len(self.matrix)
 
     def columnCount(self, parent=None, *args, **kwargs) -> int:
-        return len(self.__matrix)
+        return len(self.matrix)
 
     def data(self, index: QModelIndex, role=None):
         if not len(self.graph.vertexes_coordinates):
@@ -55,13 +55,13 @@ class GraphModel(QAbstractTableModel):
         if role == Qt.DisplayRole:
             if not self.graph.oriented:
                 # вернуть количество ребер
-                if self.__matrix[index.row()][index.column()]/2 == 0.5:
+                if self.matrix[index.row()][index.column()]/2 == 0.5:
                     return 1
                 else:
-                    return self.__matrix[index.row()][index.column()] // 2
+                    return self.matrix[index.row()][index.column()] // 2
             else:
                 # вернуть сумму весов ребер
-                return self.__matrix[index.row()][index.column()]
+                return self.matrix[index.row()][index.column()]
 
     def setData(self, index: QModelIndex, data: str, role=None):
         if data == '' or not data.isdigit():
