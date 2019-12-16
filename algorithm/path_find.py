@@ -2,6 +2,7 @@ from typing import Dict, List, Union
 from enum import IntEnum, auto
 
 import numpy as np
+from PyQt5.QtGui import QColor
 
 from graph.graph import Graph
 from graph.vertex import Vertex
@@ -12,7 +13,7 @@ class Flags(IntEnum):
     NOT_FOUND = auto()
 
 
-def __get_path(parents: dict, v_to: str) -> list:
+def __get_path(parents: dict, v_to: str) -> List[str]:
     path = []
     vertex = v_to
     while vertex is not None:
@@ -40,6 +41,8 @@ def after_work(graph: Graph, v_from: str, end: str, edges: Dict, parents: Dict, 
         p = __get_path(parents, end)
         graph.path = p
         graph.edge_path = __get_edges(p, edges, graph.oriented)
+        for _, v in graph.vertexes_coordinates.items():
+            v.color = QColor(68, 133, 255)
     else:
         graph.path = []
         graph.edge_path = {}

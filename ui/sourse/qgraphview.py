@@ -212,10 +212,7 @@ class QGraphView(QGraphicsView):
 
         # рисуем вершины
         for v in self.graph.vertexes_coordinates.values():
-            if v.name in self.graph.path:
-                self.scene.addItem(GraphicsVertex(v, self.pathPen, self.pathBrush))
-            else:
-                self.scene.addItem(GraphicsVertex(v))
+            self.scene.addItem(GraphicsVertex(v))
 
     def simpleDrawGraph(self):
         self.scene.clear()
