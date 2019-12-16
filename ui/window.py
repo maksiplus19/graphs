@@ -331,7 +331,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def radius_diametr(self):
         self.textEdit.setText("")
-        with open("res.txt", "w") as f:
+        with open("res.txt", "w", encoding='utf8') as f:
             size = self.tabWidget.currentWidget().graph.size()
             ecscentr = []
             for i in range(size):
@@ -342,7 +342,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         maximum = dist[j]
                 ecscentr.append(maximum)
             self.textEdit.append(f'Эксцентриситеты: {ecscentr}')
-            f.write('Эксцентриситеты: ' + str(ecscentr) + "\n")
+            f.write(f'Эксцентриситеты: {str(ecscentr)}\n')
             diam = np.inf * -1
             rad = np.inf
             for i in range(len(ecscentr)):
@@ -356,8 +356,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             else:
                 self.textEdit.append(f'Диаметр = {diam}')
                 self.textEdit.append(f'Радиус = {rad}')
-            f.write("Диаметр = " + str(diam) + "\n")
-            f.write("Радиус = " + str(rad) + "\n")
+            f.write(f'Диаметр = {str(diam)}\n')
+            f.write(f'Радиус = {str(rad)}\n')
 
             matrix = self.tabWidget.currentWidget().graph.to_matrix()
             degrees = np.zeros(size)
@@ -370,7 +370,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 for i in range(len(degrees)):
                     degrees[i] = degrees[i]//2
             self.textEdit.append(f'Вектор степеней: {degrees}')
-            f.write("Вектор степеней: " + str(degrees) + "\n")
+            f.write(f'Вектор степеней: {str(degrees)}\n')
 
     def addition(self):
         self.textEdit.setText("")
