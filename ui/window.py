@@ -120,6 +120,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.action8.triggered.connect(self.binary_operations)
         self.action6.triggered.connect(self.is_connect)
         self.action11.triggered.connect(self.extreme)
+        self.action14.triggered.connect(self.coloring)
 
     def addTab(self, name: str = None, graph: Graph = None):
         self.tabWidget.addTab(QGraphView(self.tabWidget, Graph() if graph is None else graph),
@@ -414,6 +415,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         for name, graph in res.items():
             self.addTab(name, graph)
+
+    def coloring(self):
+        g = self.tabWidget.currentWidget().graph
+        chromatic_number = algorithm.coloring(g)
+        self.textEdit.setText(f'Хроматическое число {chromatic_number}')
+        g.update()
 
 
 if __name__ == '__main__':

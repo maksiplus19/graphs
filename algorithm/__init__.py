@@ -12,3 +12,4 @@ from .planary import isPlanary
 from .connectedness import isConnected
 from .connectedness import find_comps
 from .extreme_graph import extreme
+from .coloring import coloring
