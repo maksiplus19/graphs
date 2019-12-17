@@ -8,9 +8,11 @@ from graph.vertex import Vertex
 class GraphicsVertex(QGraphicsItemGroup):
     def __init__(self, v: Vertex):
         super().__init__()
+        dark = 20
 
         self.vertex_radius = 30
-        self.pen = QPen(QBrush(QColor(68, 191, 46)), 3) if v.color is None else QPen(QBrush(v.color), 3)
+        self.pen = QPen(QBrush(QColor(68, 191, 46)), 3) if v.color is None \
+            else QPen(QBrush(QColor(v.color.red() - dark, v.color.green() - dark, v.color.blue() - dark)), 3)
         self.brush = QBrush(QColor(91, 255, 62)) if v.color is None else QBrush(v.color)
 
         self.v = v
