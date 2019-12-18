@@ -11,5 +11,6 @@ from .binary_operation import binary_operation_with_matrix
 from .planary import isPlanary
 from .connectedness import isConnected
 from .connectedness import find_comps
+from .connectedness import find_bridges
 from .extreme_graph import extreme
 from .coloring import coloring

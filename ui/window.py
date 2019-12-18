@@ -393,7 +393,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.tabWidget.currentWidget().drawGraph()
 
     def is_connect(self):
-        self.textEdit.setText(algorithm.isConnected(self.graphModel.tabWidget.currentWidget().graph.to_matrix(),
+        self.textEdit.setText(algorithm.isConnected(self.tabWidget.currentWidget().graph.to_matrix(),
                                                     self.tabWidget.currentWidget().graph.oriented))
         comps = algorithm.find_comps(self.tabWidget.currentWidget().graph)
         if self.tabWidget.currentWidget().graph.oriented:
@@ -402,6 +402,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.textEdit.append("Компоненты связности:")
         for i in comps:
             self.textEdit.append(str(i))
+
+        algorithm.find_bridges(self.tabWidget.currentWidget().graph)
 
     def extreme(self):
         dialog = Ui_GetTextDialog('База', 'Введите базу')
