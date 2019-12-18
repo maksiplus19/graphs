@@ -403,7 +403,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         for i in comps:
             self.textEdit.append(str(i))
 
-        algorithm.find_bridges(self.tabWidget.currentWidget().graph)
+        bridges, hinges = algorithm.find_bridges(self.tabWidget.currentWidget().graph)
+
+        self.textEdit.append("Мосты:")
+        self.textEdit.append(str(bridges))
+        # for i in bridges:
+        #     self.textEdit.append(i)
+        self.textEdit.append("Шарниры:")
+        self.textEdit.append(str(hinges))
 
     def extreme(self):
         dialog = Ui_GetTextDialog('База', 'Введите базу')

@@ -59,22 +59,31 @@ def find_comps(graph):
 
 
 def find_bridges(graph):
-
-    def dfs(v, used, g, tin, fup, timer, before: int = -1):
-        used[v] = True
-        timer += 1
-        tin[v] = fup[v] = timer
+    def dfs(v, used, g, tin, fup, timer, bridges, hinges, before: int = -1):
+        if before == -1 or str(before + 1) in g.vertexes[str(v + 1)]:
+            used[v] = True
+            timer += 1
+            tin[v] = fup[v] = timer
+            children = 0
+        else:
+            return
         for key in g.vertexes[str(v + 1)]:
             if key == str(before + 1):
                 continue
             if used[int(key) - 1]:
                 fup[v] = min(fup[v], tin[int(key) - 1])
             else:
-                dfs(int(key) - 1, used, g, tin, fup, timer, v)
+                dfs(int(key) - 1, used, g, tin, fup, timer, bridges, hinges, v)
                 fup[v] = min(fup[v], fup[int(key) - 1])
                 if fup[int(key) - 1] > tin[v]:
-                    print(str(v + 1), key)
+                    bridges.append(str(v + 1) + " - " + key)
+                if fup[int(key) - 1] >= tin[v] and before != -1:
+                    hinges.append(str(v+1))
+        if before == -1 and children > 1:
+            hinges.append(str(v+1))
 
+    bridges = []
+    hinges = []
     timer = 0
     size = graph.size()
     used = []
@@ -86,5 +95,6 @@ def find_bridges(graph):
         fup.append(np.inf)
     for i in range(size):
         if not used[i]:
-            dfs(i, used, graph, tin, fup, timer)
+            dfs(i, used, graph, tin, fup, timer, bridges, hinges)
 
+    return bridges, hinges
