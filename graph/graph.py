@@ -373,7 +373,7 @@ class Graph:
         self.__history_counter = len(self.__history)
 
     def get_new_vertex_name(self) -> str:
-        return self.size() + 1
+        return str(self.size() + 1)
 
     def update(self):
         self.signals.update.emit()
