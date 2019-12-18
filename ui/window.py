@@ -56,18 +56,18 @@ def get_begin(method):
         if dialog.textBegin is None:
             return
         if dialog.textBegin == '0':
-            for i in range(len(self.tabWidget.currentWidget().graph.vertexes)):
+            for i in range(len(self.graph.vertexes)):
                 distance = method(self, str(i + 1))
                 for j in range(len(distance)):
                     self.textEdit.append(f'Расстояние от {i + 1} до {j + 1} = {distance[j]}')
-            self.tabWidget.currentWidget().graph.update()
+            self.graph.update()
             return
 
         distance = method(self, dialog.textBegin)
 
         for i in range(len(distance)):
             self.textEdit.append(f'Расстояние от {dialog.textBegin} до {i + 1} = {distance[i]}')
-        self.tabWidget.currentWidget().graph.update()
+        self.graph.update()
 
     return warped
 
@@ -127,7 +127,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                               str(self.tabCounter) if name is None or name is False else name)
         self.tabWidget.setCurrentIndex(self.tabWidget.count() - 1)
         self.tabCounter += 1
-        graph = self.tabWidget.currentWidget().graph
+        graph = self.graph
         self.graphModel.setGraph(graph)
         graph.signals.update.connect(self.graphModel.graphToMatrix)
         graph.signals.update.connect(self.graphMatrix.resizeColumnsToContents)
@@ -183,15 +183,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # LoadGraph.load(self.graph, file_name)
         # в зависимости от типа выбираем метод загрузки
         if file_type == 'gvl':
-            LoadGraph.load_from_arc_list(self.tabWidget.currentWidget().graph, file_name)
+            LoadGraph.load_from_arc_list(self.graph, file_name)
         elif file_type == 'gam':
-            LoadGraph.load_from_adjacency_matrix(self.tabWidget.currentWidget().graph, file_name)
+            LoadGraph.load_from_adjacency_matrix(self.graph, file_name)
         elif file_type == 'gim':
-            LoadGraph.load_from_incidence_matrix(self.tabWidget.currentWidget().graph, file_name)
+            LoadGraph.load_from_incidence_matrix(self.graph, file_name)
         elif file_type == 'gal':
-            LoadGraph.load_from_ribs_list(self.tabWidget.currentWidget().graph, file_name)
+            LoadGraph.load_from_ribs_list(self.graph, file_name)
         elif file_type == 'json':
-            if not LoadGraph.load(self.tabWidget.currentWidget().graph, file_name):
+            if not LoadGraph.load(self.graph, file_name):
                 QMessageBox.critical(self, 'Ошибка файла', 'Файл не корректен')
         else:
             QMessageBox.warning(self, 'Ошибка', 'Неизвестный формат файла')
@@ -214,37 +214,37 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # LoadGraph.load(self.graph, file_name)
         # в зависимости от типа выбираем метод сохранения
         if file_type == 'gvl':
-            SaveGraph.save_as_vertexes_list(self.tabWidget.currentWidget().graph, file_name)
+            SaveGraph.save_as_vertexes_list(self.graph, file_name)
         elif file_type == 'gam':
-            SaveGraph.save_as_adjacency_matrix(self.tabWidget.currentWidget().graph, file_name)
+            SaveGraph.save_as_adjacency_matrix(self.graph, file_name)
         elif file_type == 'gim':
-            SaveGraph.save_as_incidence_matrix(self.tabWidget.currentWidget().graph, file_name)
+            SaveGraph.save_as_incidence_matrix(self.graph, file_name)
         elif file_type == 'gal':
-            SaveGraph.save_as_ribs_list(self.tabWidget.currentWidget().graph, file_name)
+            SaveGraph.save_as_ribs_list(self.graph, file_name)
         elif file_type == 'json':
-            SaveGraph.save(self.tabWidget.currentWidget().graph, file_name)
+            SaveGraph.save(self.graph, file_name)
         elif file_type == 'png':
-            SaveGraph.save_as_image(file_name, self.tabWidget.currentWidget().scene)
+            SaveGraph.save_as_image(file_name, self.scene)
         else:
             QMessageBox.warning(self, 'Ошибка', f'Неизвестный формат файла "{file_type}"')
             return False
-        self.tabWidget.currentWidget().graph.saved = True
+        self.graph.saved = True
         return True
 
     def undo(self):
-        self.tabWidget.currentWidget().graph.undo()
+        self.graph.undo()
 
     def redo(self):
-        self.tabWidget.currentWidget().graph.redo()
+        self.graph.redo()
 
     def changeOrient(self, data):
-        self.tabWidget.currentWidget().graph.oriented = not bool(data)
+        self.graph.oriented = not bool(data)
 
-        self.tabWidget.currentWidget().graph.update()
+        self.graph.update()
 
     def changeWeight(self, data):
-        self.tabWidget.currentWidget().graph.weighted = not bool(data)
-        self.tabWidget.currentWidget().graph.update()
+        self.graph.weighted = not bool(data)
+        self.graph.update()
 
     def open_program(self):
         QMessageBox.information(self, "Информация", "Программа предоставляет интерфейс для работы с графом."
@@ -258,21 +258,21 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                                     "\nМ8О-312Б-17 Якупова Айгуль")
 
     def setComboBox(self):
-        self.cmbDirect.setCurrentIndex(int(not self.tabWidget.currentWidget().graph.oriented))
-        self.cmbWeight.setCurrentIndex(int(not self.tabWidget.currentWidget().graph.weighted))
-        self.tabWidget.currentWidget().graph.update()
+        self.cmbDirect.setCurrentIndex(int(not self.graph.oriented))
+        self.cmbWeight.setCurrentIndex(int(not self.graph.weighted))
+        self.graph.update()
 
     @get_begin_end
     def BFS(self, begin: str, end: str):
-        return algorithm.BFS(self.tabWidget.currentWidget().graph, begin, end)
+        return algorithm.BFS(self.graph, begin, end)
 
     @get_begin_end
     def A_star(self, begin: str, end: str):
-        return algorithm.A_star(self.tabWidget.currentWidget().graph, begin, end)
+        return algorithm.A_star(self.graph, begin, end)
 
     @get_begin_end
     def IDA(self, begin: str, end: str):
-        return algorithm.IDA_star(self.tabWidget.currentWidget().graph, begin, end)
+        return algorithm.IDA_star(self.graph, begin, end)
 
     @two_graphs
     def check_isomorphic(self):
@@ -307,36 +307,35 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     @get_begin
     def dijkstra(self, begin: str):
-        return algorithm.dijkstra(begin, self.tabWidget.currentWidget().graph.to_matrix())
+        return algorithm.dijkstra(begin, self.graph.to_matrix())
 
     def floyd_worshel(self):
         self.textEdit.setText("")
-        result = algorithm.floydWorshel(self.tabWidget.currentWidget().graph.to_matrix(),
-                                        self.tabWidget.currentWidget().graph.oriented)
+        result = algorithm.floydWorshel(self.graph.to_matrix(), self.graph.oriented)
         for i in range(len(result)):
             for j in range(len(result)):
                 self.textEdit.append(f'Расстояние от {i + 1} до {j + 1} = {result[i][j]}')
-                self.tabWidget.currentWidget().graph.update()
+                self.graph.update()
 
     @get_begin
     def bellman_ford(self, begin: str):
-        return algorithm.bellmanFord(self.tabWidget.currentWidget().graph, begin)
+        return algorithm.bellmanFord(self.graph, begin)
 
     def djonson(self):
         self.textEdit.setText("")
-        for i in range(len(self.tabWidget.currentWidget().graph.vertexes)):
-            distance = algorithm.dijkstra(str(i + 1), self.tabWidget.currentWidget().graph.to_matrix())
+        for i in range(len(self.graph.vertexes)):
+            distance = algorithm.dijkstra(str(i + 1), self.graph.to_matrix())
             for j in range(len(distance)):
                 self.textEdit.append(f'Расстояние от {i + 1} до {j + 1} = {distance[j]}')
-        self.tabWidget.currentWidget().graph.update()
+        self.graph.update()
 
     def radius_diametr(self):
         self.textEdit.setText("")
         with open("res.txt", "w", encoding='utf8') as f:
-            size = self.tabWidget.currentWidget().graph.size()
+            size = self.graph.size()
             ecscentr = []
             for i in range(size):
-                dist = algorithm.dijkstra(str(i + 1), self.tabWidget.currentWidget().graph.to_matrix())
+                dist = algorithm.dijkstra(str(i + 1), self.graph.to_matrix())
                 maximum = np.inf * -1
                 for j in range(len(dist)):
                     if dist[j] > maximum:
@@ -360,14 +359,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             f.write(f'Диаметр = {str(diam)}\n')
             f.write(f'Радиус = {str(rad)}\n')
 
-            matrix = self.tabWidget.currentWidget().graph.to_matrix()
+            matrix = self.graph.to_matrix()
             degrees = np.zeros(size)
             for i in range(len(matrix)):
                 for j in range(len(matrix)):
                     if matrix[i][j] != 0:
                         degrees[i] += 1
                         degrees[j] += 1
-            if not self.tabWidget.currentWidget().graph.oriented:
+            if not self.graph.oriented:
                 for i in range(len(degrees)):
                     degrees[i] = degrees[i]//2
             self.textEdit.append(f'Вектор степеней: {degrees}')
@@ -375,7 +374,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def addition(self):
         self.textEdit.setText("")
-        matrix = algorithm.additional(self.tabWidget.currentWidget().graph.to_matrix(with_weight=False))
+        matrix = algorithm.additional(self.graph.to_matrix(with_weight=False))
         matrix_copy = deepcopy(matrix)
         for i in range(len(matrix_copy)):
             matrix[i][i] = 0
@@ -386,17 +385,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             return
 
         g = Graph.from_matrix(matrix)
-        g.oriented = self.tabWidget.currentWidget().graph.oriented
-        self.tabWidget.currentWidget().graph = g
+        g.oriented = self.graph.oriented
+        g.vertexes_coordinates = deepcopy(self.graph.vertexes_coordinates)
+        self.graph = g
         self.graphModel.setGraph(g)
-        self.tabWidget.currentWidget().graph.update()
+        g.update()
         self.tabWidget.currentWidget().drawGraph()
 
     def is_connect(self):
-        self.textEdit.setText(algorithm.isConnected(self.tabWidget.currentWidget().graph.to_matrix(),
-                                                    self.tabWidget.currentWidget().graph.oriented))
-        comps = algorithm.find_comps(self.tabWidget.currentWidget().graph)
-        if self.tabWidget.currentWidget().graph.oriented:
+        self.textEdit.setText(algorithm.isConnected(self.graph.to_matrix(),
+                                                    self.graph.oriented))
+        comps = algorithm.find_comps(self.graph)
+        if self.graph.oriented:
             self.textEdit.append("Компоненты сильной связности:")
         else:
             self.textEdit.append("Компоненты связности:")
@@ -419,10 +419,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.addTab(name, graph)
 
     def coloring(self):
-        g = self.tabWidget.currentWidget().graph
+        g = self.graph
         chromatic_number = algorithm.coloring(g)
         self.textEdit.setText(f'Хроматическое число {chromatic_number}')
         g.update()
+
+    @property
+    def graph(self) -> Graph:
+        return self.tabWidget.currentWidget().graph
 
 
 if __name__ == '__main__':

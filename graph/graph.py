@@ -18,26 +18,19 @@ def edited(method):
     return warped
 
 
-def gen():
-    counter = 0
-    while True:
-        counter += 1
-        yield str(counter)
-
-
 class Graph:
     """Класс графа"""
 
-    ADD_VERTEX = auto()
-    ADD_EDGE = auto()
-    DEL_VERTEX = auto()
-    DEL_EDGE = auto()
-    MOVE_VERTEX = auto()
-    GRAPH_CLEAR = auto()
-    SET_EDGE = auto()
-    SET_ALL_EDGES = auto()
-    DEL_ALL_EDGES = auto()
-    CHANGE_ORIENT = auto()
+    ADD_VERTEX: int = auto()
+    ADD_EDGE: int = auto()
+    DEL_VERTEX: int = auto()
+    DEL_EDGE: int = auto()
+    MOVE_VERTEX: int = auto()
+    GRAPH_CLEAR: int = auto()
+    SET_EDGE: int = auto()
+    SET_ALL_EDGES: int = auto()
+    DEL_ALL_EDGES: int = auto()
+    CHANGE_ORIENT: int = auto()
 
     HISTORY_REC_NUM = 10
 
@@ -61,8 +54,6 @@ class Graph:
         self.path: List[str] = []  # ['2', '3', '5']
         self.edge_path: Dict[str, Vertex] = {}  # {'2_3': Vertex('node'), '3_5': Vertex('node')}
 
-        self.generator = gen()
-
     @edited
     def add_edge(self, v_from: str, v_to: str, weight: int = 1, node: Vertex = None, *, save: bool = True, shadowed: bool = False):
         if v_from in self.vertexes and v_to in self.vertexes:
@@ -78,13 +69,13 @@ class Graph:
             if v_to not in self.vertexes[v_from]:
                 self.vertexes[v_from][v_to] = []
             # добавляем ребро
-            self.vertexes[v_from][v_to].append([weight, node])
+            self.vertexes[v_from][v_to].append((weight, node))
             # сортируем, чтобы ребро с меньшим весом было первым
             self.vertexes[v_from][v_to].sort(key=lambda el: el[0])
             if not self.oriented:
                 if v_from not in self.vertexes[v_to]:
                     self.vertexes[v_to][v_from] = []
-                self.vertexes[v_to][v_from].append([weight, node])
+                self.vertexes[v_to][v_from].append((weight, node))
                 self.vertexes[v_to][v_from].sort(key=lambda el: el[0])
             if not shadowed:
                 self.signals.update.emit()
@@ -382,7 +373,7 @@ class Graph:
         self.__history_counter = len(self.__history)
 
     def get_new_vertex_name(self) -> str:
-        return self.generator.__next__()
+        return str(self.size() + 1)
 
     def update(self):
         self.signals.update.emit()

@@ -20,6 +20,8 @@ def coloring(graph: Graph) -> Optional[int]:
     if graph.size() == 0:
         return 0
     if not sum((sum(graph.to_matrix(with_weight=False), []))):
+        for v in graph.vertexes_coordinates.values():
+            v.color = generate_color(1)
         return 1
     colors: Dict[str, int] = {}
     degrees: List[Tuple[str, int]] = __get_degrees(graph)
