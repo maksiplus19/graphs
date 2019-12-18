@@ -36,7 +36,6 @@ def isConnected(matrix, oriented):
 def dfs(v, before, used, g, comp):
     if before == -1 or str(before+1) in g.vertexes[str(v+1)]:
         used[v] = True
-        # print(g.vertexes[str(before + 1)][str(v + 1)])
         comp.append(str(v+1))
     else:
         return
