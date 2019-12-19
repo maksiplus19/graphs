@@ -1,4 +1,3 @@
-import itertools as it
 from typing import List, Tuple, Optional, Dict
 
 import algorithm
@@ -8,6 +7,8 @@ Base = List[Tuple[str, str]]
 
 
 def translate_base(s: str) -> Optional[Base]:
+    if s[-1] == '\n':
+        s = s[:-1]
     s = s.split(sep='\n')
 
     # проеврека на существование пробелов
@@ -65,4 +66,30 @@ def extreme(base1: str, base2: str) -> Optional[Dict[str, Graph]]:
         'aminusb': Graph.from_matrix(algorithm.binary_operation_with_matrix(m1, m2, 'minus')),
         'bminusa': Graph.from_matrix(algorithm.binary_operation_with_matrix(m2, m1, 'minus')),
     }
+
+    for name, graph in res.items():
+        print(name)
+        print('Рёбра')
+        degree = {str(i): 0 for i in range(1, graph.size() + 1)}
+        for v_from, to_dict in graph.vertexes.items():
+            for v_to, to_list in graph.vertexes[v_from].items():
+                print(f'"{v_from}" -> "{v_to}" ({to_list[0][0]})')
+                degree[v_from] += 1
+        print('Вектор степеней')
+        print([d for d in degree.values()])
+
+        matrix = graph.to_matrix()
+        base = []
+        if algorithm.complex2_from_vector.check_extreme_2d(matrix):
+            for i in range(len(matrix) // 2):
+                for j in range(i + 1, len(matrix)):
+                    if i == j or not matrix[i][j]:
+                        continue
+                    if (j == len(matrix) - 1 and not matrix[i + 1][j]) \
+                            or (j < len(matrix) - 1 and matrix[i][j] and not matrix[i][j + 1] and not matrix[i + 1][j]):
+                        base.append((i + 1, j + 1))
+        print('База')
+        print(base)
+        print()
+
     return res
