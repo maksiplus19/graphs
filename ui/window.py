@@ -1,5 +1,6 @@
 import sys
 from copy import deepcopy
+from typing import cast
 
 from PyQt5 import QtWidgets
 from PyQt5.QtGui import QIcon
@@ -121,6 +122,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.action6.triggered.connect(self.is_connect)
         self.action11.triggered.connect(self.extreme)
         self.action14.triggered.connect(self.coloring)
+        self.action17.triggered.connect(self.complex_from_vector)
 
     def addTab(self, name: str = None, graph: Graph = None):
         self.tabWidget.addTab(QGraphView(self.tabWidget, Graph() if graph is None else graph),
@@ -414,13 +416,19 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def extreme(self):
         dialog = Ui_GetTextDialog('База', 'Введите базу')
-        dialog.exec_()
+        if not dialog.exec_():
+            return
         base1 = dialog.getText()
         dialog = Ui_GetTextDialog('База', 'Введите базу')
-        dialog.exec_()
+        if not dialog.exec_():
+            return
+
         base2 = dialog.getText()
 
         res = algorithm.extreme(base1, base2)
+        if res is None:
+            QMessageBox.information(self, 'Ошибка', 'Ошибка')
+            return
 
         for name, graph in res.items():
             self.addTab(name, graph)
@@ -434,6 +442,28 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     @property
     def graph(self) -> Graph:
         return self.tabWidget.currentWidget().graph
+
+    def complex_from_vector(self):
+        dialog = Ui_GetTextDialog('Вектор гиперграфа', 'Введите вектор гиперграфа')
+        if not dialog.exec_():
+            return
+        text: str = dialog.getText()
+        text: list = cast(list, text.split(' '))
+        d = None
+        try:
+            d = algorithm.get_complex_from_vector(list(map(int, text)))
+        except ValueError:
+            QMessageBox.critical(self, 'Ошибка', 'Не получилось преобразовать в вектор чисел')
+            return
+        if d is None:
+            QMessageBox.information(self, 'Ошибка', 'Не возможно реализовать вектор')
+            return
+        text = f'{d["triples"]}\nГипер граф{" не" if not d["complete"] else ""} совершенный\n' \
+            f'Граф{" не" if not d["extreme"] else ""} экстремальный\n'
+        if d['extreme']:
+            text += str(d['base'])
+        QMessageBox.information(self, 'Результат', text)
+
 
 
 if __name__ == '__main__':
