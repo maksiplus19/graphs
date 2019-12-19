@@ -14,3 +14,4 @@ from .connectedness import find_comps
 from .connectedness import find_bridges
 from .extreme_graph import extreme
 from .coloring import coloring
+from .ostov_tree import prima
