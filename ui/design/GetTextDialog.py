@@ -47,4 +47,4 @@ class Ui_GetTextDialog(QDialog):
         pass
 
     def getText(self) -> str:
-        return self.label.text()
+        return self.textEdit_2.toPlainText()
