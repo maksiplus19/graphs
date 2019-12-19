@@ -234,6 +234,14 @@
      <addaction name="action_3"/>
      <addaction name="action_4"/>
     </widget>
+    <widget class="QMenu" name="menu12">
+     <property name="title">
+      <string>12. Деревья и минимальное остовное дерево</string>
+     </property>
+     <addaction name="action_5"/>
+     <addaction name="action_6"/>
+     <addaction name="action_7"/>
+    </widget>
     <addaction name="menu2"/>
     <addaction name="menu3"/>
     <addaction name="action4"/>
@@ -244,7 +252,7 @@
     <addaction name="action9"/>
     <addaction name="action10"/>
     <addaction name="action11"/>
-    <addaction name="action12"/>
+    <addaction name="menu12"/>
     <addaction name="action13"/>
     <addaction name="action14"/>
     <addaction name="action15"/>
@@ -322,11 +330,6 @@
   <action name="action11">
    <property name="text">
     <string>11. Экстремальные графы</string>
-   </property>
-  </action>
-  <action name="action12">
-   <property name="text">
-    <string>12. Деревья и минимальное остовное дерево</string>
    </property>
   </action>
   <action name="action13">
@@ -412,6 +415,21 @@
   <action name="action_4">
    <property name="text">
     <string>Алгоритм Джонсона</string>
+   </property>
+  </action>
+  <action name="action_5">
+   <property name="text">
+    <string>Алгоритм Прима</string>
+   </property>
+  </action>
+  <action name="action_6">
+   <property name="text">
+    <string>Алгоритм Краскала</string>
+   </property>
+  </action>
+  <action name="action_7">
+   <property name="text">
+    <string>Алгоритм Борувки</string>
    </property>
   </action>
  </widget>

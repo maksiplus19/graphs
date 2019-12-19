@@ -122,9 +122,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.action6.triggered.connect(self.is_connect)
         self.action11.triggered.connect(self.extreme)
         self.action14.triggered.connect(self.coloring)
+        self.action_5.triggered.connect(self.prima)
         self.action17.triggered.connect(self.complex_from_vector)
 
     def addTab(self, name: str = None, graph: Graph = None):
+        self.textEdit.setText("")
         self.tabWidget.addTab(QGraphView(self.tabWidget, Graph() if graph is None else graph),
                               str(self.tabCounter) if name is None or name is False else name)
         self.tabWidget.setCurrentIndex(self.tabWidget.count() - 1)
@@ -370,7 +372,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         degrees[j] += 1
             if not self.graph.oriented:
                 for i in range(len(degrees)):
-                    degrees[i] = degrees[i]//2
+                    degrees[i] = degrees[i] // 2
             self.textEdit.append(f'Вектор степеней: {degrees}')
             f.write(f'Вектор степеней: {str(degrees)}\n')
 
@@ -439,6 +441,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.textEdit.setText(f'Хроматическое число {chromatic_number}')
         g.update()
 
+    def prima(self):
+        g = self.graph
+        res = algorithm.prima(g)
+        if res == "Граф ориентированный" or res == "Граф не связный":
+            self.textEdit.setText(res)
+        else:
+            self.addTab("ostov", res)
+
     @property
     def graph(self) -> Graph:
         return self.tabWidget.currentWidget().graph
@@ -459,11 +469,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             QMessageBox.information(self, 'Ошибка', 'Не возможно реализовать вектор')
             return
         text = f'{d["triples"]}\nГипер граф{" не" if not d["complete"] else ""} совершенный\n' \
-            f'Граф{" не" if not d["extreme"] else ""} экстремальный\n'
+               f'Граф{" не" if not d["extreme"] else ""} экстремальный\n'
         if d['extreme']:
             text += str(d['base'])
         QMessageBox.information(self, 'Результат', text)
-
 
 
 if __name__ == '__main__':
