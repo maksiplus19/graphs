@@ -16,3 +16,4 @@ from .extreme_graph import extreme
 from .coloring import coloring
 from .complex2_from_vector import aggregator as get_complex_from_vector
 from .ostov_tree import prima
+from .ostov_tree import kruscal

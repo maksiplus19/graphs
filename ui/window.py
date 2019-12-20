@@ -123,6 +123,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.action11.triggered.connect(self.extreme)
         self.action14.triggered.connect(self.coloring)
         self.action_5.triggered.connect(self.prima)
+        self.action_6.triggered.connect(self.kruscal)
         self.action17.triggered.connect(self.complex_from_vector)
 
     def addTab(self, name: str = None, graph: Graph = None):
@@ -443,11 +444,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def prima(self):
         g = self.graph
-        res = algorithm.prima(g)
+        res = algorithm.prima(g.to_matrix())
         if res == "Граф ориентированный" or res == "Граф не связный":
             self.textEdit.setText(res)
         else:
-            self.addTab("ostov", res)
+            print(res)
+            self.addTab("prima", res)
+
+    def kruscal(self):
+        res = algorithm.kruscal(self.graph)
+        self.addTab("kruscal", res)
 
     @property
     def graph(self) -> Graph:
