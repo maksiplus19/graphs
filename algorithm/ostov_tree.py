@@ -1,4 +1,5 @@
 from algorithm.connectedness import isConnected
+from graph.graph import Graph
 import numpy as np
 
 
