@@ -17,3 +17,6 @@ from .coloring import coloring
 from .complex2_from_vector import aggregator as get_complex_from_vector
 from .ostov_tree import prima
 from .ostov_tree import kruscal
+from .ostov_tree import boruvki
+from .cycles import isCycled
+from .cycles import find_center

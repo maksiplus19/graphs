@@ -124,6 +124,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.action14.triggered.connect(self.coloring)
         self.action_5.triggered.connect(self.prima)
         self.action_6.triggered.connect(self.kruscal)
+        self.action_7.triggered.connect(self.boruvki)
+        self.action13.triggered.connect(self.cycles)
         self.action17.triggered.connect(self.complex_from_vector)
 
     def addTab(self, name: str = None, graph: Graph = None):
@@ -444,16 +446,32 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def prima(self):
         g = self.graph
-        res = algorithm.prima(g.to_matrix())
+        res = algorithm.prima(g.to_matrix(), g.oriented)
         if res == "Граф ориентированный" or res == "Граф не связный":
             self.textEdit.setText(res)
         else:
-            print(res)
             self.addTab("prima", res)
 
     def kruscal(self):
         res = algorithm.kruscal(self.graph)
-        self.addTab("kruscal", res)
+        if res == "Граф ориентированный" or res == "Граф не связный":
+            self.textEdit.setText(res)
+        else:
+            self.addTab("kruscal", res)
+
+    def boruvki(self):
+        res = algorithm.boruvki(self.graph)
+        if res == "Граф ориентированный" or res == "Граф не связный":
+            self.textEdit.setText(res)
+        else:
+            self.addTab("boruvki", res)
+
+    def cycles(self):
+        if not algorithm.isCycled(self.graph):
+            centres, depth = algorithm.find_center(self.graph)
+            self.textEdit.setText("Центры:")
+            self.textEdit.append(str(centres))
+            self.textEdit.append("Глубина = " + str(depth))
 
     @property
     def graph(self) -> Graph:
