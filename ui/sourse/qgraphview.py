@@ -146,9 +146,10 @@ class QGraphView(QGraphicsView):
             self.moveVertex = None
             self.setCursor(Qt.ArrowCursor)
 
-    def drawGraph(self):
-        # self.simpleDrawGraph()
-        # return
+    def drawGraph(self, simple: bool = False):
+        if simple:
+            self.simpleDrawGraph()
+            return
 
         # очищаем сцену
         self.scene.clear()

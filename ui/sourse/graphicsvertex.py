@@ -1,8 +1,10 @@
-from PyQt5.QtCore import QPointF, Qt
-from PyQt5.QtWidgets import QGraphicsItemGroup, QGraphicsItem, QGraphicsEllipseItem, QGraphicsSimpleTextItem
+from PyQt5.QtCore import QPointF
 from PyQt5.QtGui import QFont, QBrush, QPen, QColor
+from PyQt5.QtWidgets import QGraphicsItemGroup, QGraphicsItem, QGraphicsEllipseItem, QGraphicsSimpleTextItem
 
 from graph.vertex import Vertex
+
+VERTEX_RADIUS = 30
 
 
 class GraphicsVertex(QGraphicsItemGroup):
@@ -10,7 +12,7 @@ class GraphicsVertex(QGraphicsItemGroup):
         super().__init__()
         dark = 20
 
-        self.vertex_radius = 30
+        self.vertex_radius = VERTEX_RADIUS
         self.pen = QPen(QBrush(QColor(68, 191, 46)), 3) if v.color is None \
             else QPen(QBrush(QColor(v.color.red() - dark, v.color.green() - dark, v.color.blue() - dark)), 3)
         self.brush = QBrush(QColor(91, 255, 62)) if v.color is None else QBrush(v.color)
@@ -68,4 +70,3 @@ class GraphicsVertex(QGraphicsItemGroup):
     #
     # def mouseReleaseEvent(self, event: QMouseEvent):
     #     self.setCursor(Qt.ArrowCursor)
-

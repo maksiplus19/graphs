@@ -1,23 +1,24 @@
 import sys
 from copy import deepcopy
+from datetime import datetime
 from typing import cast
 
+import numpy as np
 from PyQt5 import QtWidgets
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QFileDialog, QMessageBox, QAbstractItemView
 
+import algorithm
 from graph.graph import Graph
 from graph.graphmodel import GraphModel
 from graph.loadgraph import LoadGraph
 from graph.savegraph import SaveGraph
-from ui.design import BeginEndDialog
 from ui.design import BeginDialog
+from ui.design import BeginEndDialog
 from ui.design.GetTextDialog import Ui_GetTextDialog
+from ui.design.binaryDialog import Ui_BinaryDialog
 from ui.design.design import Ui_MainWindow
 from ui.sourse.qgraphview import QGraphView
-from ui.design.binaryDialog import Ui_BinaryDialog
-import algorithm
-import numpy as np
 
 
 def get_begin_end(method):
@@ -127,6 +128,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.action_7.triggered.connect(self.boruvki)
         self.action13.triggered.connect(self.cycles)
         self.action17.triggered.connect(self.complex_from_vector)
+        self.action21.triggered.connect(self.test_efficiency)
 
     def addTab(self, name: str = None, graph: Graph = None):
         self.textEdit.setText("")
@@ -497,6 +499,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if d['extreme']:
             text += str(d['base'])
         QMessageBox.information(self, 'Результат', text)
+
+    def test_efficiency(self):
+        start = datetime.now()
+        algorithm.compare_efficiency(self.tabWidget)
+        QMessageBox.information(self, 'Сообщение', 'Сравнение алгоритмов завершено\n'
+                                                   'Всего затрачено времени {:.2f}мсек'.format(datetime.now() - start))
 
 
 if __name__ == '__main__':
