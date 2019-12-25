@@ -20,5 +20,6 @@ from .ostov_tree import kruscal
 from .ostov_tree import boruvki
 from .cycles import isCycled
 from .cycles import find_center
+from .cycles import to_prufer
 from .algorithms_efficiency import compare_efficiency
 from .path_find import dijkstra
