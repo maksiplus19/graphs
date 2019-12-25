@@ -1,22 +1,24 @@
 from algorithm.additional import additional
 from algorithm.isomorphous_graphs import isomorphic
 from graph.graph import Graph
+import boost
+from ui.sourse.graphicsedge import GraphicsEdge
+
 
 def isPlanary(matrix, graph:Graph):
-    radius=1 #здесь должен быть радиус
-    diametr=1 #здесь должен быть диаметр
-    additional_matrix = additional(matrix)
-    graph_new = graph.from_matrix(matrix)
-    isFull = True
-    isPlanary = True
-    graph
-    for i in range(len(additional_matrix)):
-        for j in range(len(additional_matrix[i])):
-            if additional_matrix[i][j]!=0:
-                isFull= False
-                break
-    if matrix.size == 5 and isFull:
-        isPlanary=False
-    elif matrix.size == 6 and radius == 2 and diametr == 2:
-        isPlanary = False # еще какое - то условие?
+    for v1_from in graph.vertexes:
+        x1_from = graph.vertexes_coordinates[v1_from].x
+        y1_from = graph.vertexes_coordinates[v1_from].y
+        for v1_to in graph.vertexes[v1_from]:
+            x1_to = graph.vertexes_coordinates[v1_to].x
+            y1_to = graph.vertexes_coordinates[v1_to].y
+            for v2_from in graph.vertexes:
+                x2_from = graph.vertexes_coordinates[v2_from].x
+                y2_from = graph.vertexes_coordinates[v2_from].y
+                for v2_to in graph.vertexes[v2_from]:
+                    x2_to = graph.vertexes_coordinates[v2_to].x
+                    y2_to = graph.vertexes_coordinates[v2_to].y
+                    node = graph.
 
+
+    boost.boyer_myrvold_planarity_test()
