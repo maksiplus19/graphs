@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import sys
 from copy import deepcopy
 from datetime import datetime
@@ -503,8 +504,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def test_efficiency(self):
         start = datetime.now()
         algorithm.compare_efficiency(self.tabWidget)
-        QMessageBox.information(self, 'Сообщение', 'Сравнение алгоритмов завершено\n'
-                                                   'Всего затрачено времени {:.2f}мсек'.format(datetime.now() - start))
+        QMessageBox.information(self, 'Сообщение', f'Сравнение алгоритмов завершено\n'
+                                                   f'Всего затрачено времени {datetime.now() - start}')
 
 
 if __name__ == '__main__':

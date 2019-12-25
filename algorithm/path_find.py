@@ -181,6 +181,11 @@ def IDA_star(graph: Graph, begin: str, end: str) -> Union[None, int]:
     def IDA_search(p: List, g: int, b: int, finish: str) -> int:
         node = p[-1]
         graph.vertexes_coordinates[node].color = viewed_color
+
+        f = g + int(__cost(graph, node, finish))
+        if f > 1.25 * bound:
+            return f
+
         if node == finish:
             return Flags.FOUND
         less = np.inf

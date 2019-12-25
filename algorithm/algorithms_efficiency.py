@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-в серединах левой и правой сторон
-в противоположных углах
-ы центре квадрата и в середине нижней стороны
-произвольные вершины
-"""
 import random
 import time
 from datetime import datetime
@@ -31,7 +24,7 @@ neighbor_dict: Dict[int, Tuple[int, int]] = {
 neighbor_keys = list(neighbor_dict.keys())
 
 
-def generate(size: int = 10000) -> Graph:
+def generate(size: int = 10000, edge_count: int = 4) -> Graph:
     size = int(np.sqrt(size) ** 2)
     vertexes = np.arange(1, size + 1).reshape((int(np.sqrt(size)), int(np.sqrt(size)))).tolist()
 
@@ -47,7 +40,7 @@ def generate(size: int = 10000) -> Graph:
     for i in range(len(vertexes)):
         for j in range(len(vertexes)):
             neighbor = neighbor_keys.copy()
-            for k in range(4):
+            for k in range(edge_count):
                 move = None
                 while move is None:
                     choice = random.choice(neighbor)
