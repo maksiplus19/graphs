@@ -48,8 +48,19 @@ def get_max(base: Base) -> int:
     return max(l)
 
 
+def check(base: Base):
+    base.sort(key=lambda el: int(el[0] + el[1]))
+    less = lambda a, b: all(a[j] <= b[j] for j in range(len(a)))
+    for i in range(len(base) - 1):
+        if less(base[i], base[i - 1]):
+            return False
+    return True
+
+
 def extreme(base1: str, base2: str) -> Optional[Dict[str, Graph]]:
     base1, base2 = translate_base(base1), translate_base(base2)
+    if not check(base1) or not check(base2):
+        return None
     if base1 is None or base2 is None:
         return None
     size, size2 = get_max(base1), get_max(base2)
