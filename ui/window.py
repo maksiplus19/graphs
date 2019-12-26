@@ -130,6 +130,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.action13.triggered.connect(self.cycles)
         self.action17.triggered.connect(self.complex_from_vector)
         self.action21.triggered.connect(self.test_efficiency)
+        self.action9.triggered.connect(self.is_planary)
 
     def addTab(self, name: str = None, graph: Graph = None):
         self.textEdit.setText("")
@@ -471,10 +472,21 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def cycles(self):
         if not algorithm.isCycled(self.graph):
+            self.textEdit.setText("Циклов нет")
             centres, depth = algorithm.find_center(self.graph)
-            self.textEdit.setText("Центры:")
+            if depth is None:
+                self.textEdit.setText(str(centres))
+                return
+            self.textEdit.append("Центры:")
             self.textEdit.append(str(centres))
             self.textEdit.append("Глубина = " + str(depth))
+            prufer = algorithm.to_prufer(self.graph)
+            if prufer:
+                self.textEdit.append("Код Прюфера:")
+                self.textEdit.append(str(prufer))
+
+    def is_planary(self):
+        algorithm.isPlanary(self.graph)
 
     @property
     def graph(self) -> Graph:

@@ -1,5 +1,6 @@
 from graph.graph import Graph
 from algorithm import dijkstra
+from algorithm.connectedness import isConnected
 import numpy as np
 
 
@@ -23,6 +24,8 @@ def isCycled(graph):
 
 
 def find_center(graph):
+    if isConnected(graph.to_matrix(), graph.oriented) == "Граф не связный":
+        return "Граф не связный", None
     size = graph.size()
     ecscentr = []
     centres = []
@@ -36,10 +39,32 @@ def find_center(graph):
 
     return centres, r
 
+
 def to_prufer(graph):
+    if graph.oriented:
+        return False
     leaves = []
     size = graph.size()
-    prufer = ""
+    killed = [False] * size
+    degrees = []
     for i in range(size):
-        graph[str(i+1)]
+        degrees.append(len(graph.vertexes[str(i+1)]))
+        if degrees[i] == 1:
+            leaves.append(i)
+    leaves.sort()
+    result = []
+    for i in range(size-2):
+        leaf = leaves[0]
+        leaves.pop(0)
+        killed[leaf] = True
+        for j in graph.vertexes[str(leaf+1)]:
+            if not killed[int(j) - 1]:
+                v = int(j) - 1
+        result.append(v+1)
+        degrees[v] -= 1
+        if degrees[v] == 1:
+            leaves.append(v)
+            leaves.sort()
+    return result
+
 
