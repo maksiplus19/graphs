@@ -6,7 +6,7 @@ from typing import cast
 
 import numpy as np
 from PyQt5 import QtWidgets
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QColor
 from PyQt5.QtWidgets import QApplication, QFileDialog, QMessageBox, QAbstractItemView
 
 import algorithm
@@ -484,9 +484,19 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if prufer:
                 self.textEdit.append("Код Прюфера:")
                 self.textEdit.append(str(prufer))
+        else:
+            mincycle = algorithm.find_mincycle(self.graph)
+            for i in mincycle:
+                self.graph.vertexes_coordinates[str(i)].color = QColor(100, 191, 46)
+            self.tabWidget.currentWidget().graph.update()
+            self.textEdit.setText("Минимальный цикл:")
+            self.textEdit.append(str(mincycle))
 
     def is_planary(self):
-        algorithm.isPlanary(self.graph)
+        res = algorithm.isPlanary(self.graph)
+        self.textEdit.setText(res[0])
+        self.textEdit.append(res[1])
+
 
     @property
     def graph(self) -> Graph:

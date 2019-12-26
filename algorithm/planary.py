@@ -1,14 +1,17 @@
 from algorithm.additional import additional
 from algorithm.isomorphous_graphs import isomorphic
 from graph.graph import Graph
-import boost_py as boost
 
 from ui.sourse.graphicsedge import GraphicsEdge
 import networkx as nx
 
 
-def isPlanary(graph:Graph):
+def between(a, b, c):
+    return min(a, b) <= c <= max(a, b)
 
+
+def isPlanary(graph:Graph):
+    pl = "Граф плоский"
     for v1_from in graph.vertexes:
         x1_from = graph.vertexes_coordinates[v1_from].x
         y1_from = graph.vertexes_coordinates[v1_from].y
@@ -49,24 +52,28 @@ def isPlanary(graph:Graph):
                     det3 = a1_to * b2_from - a2_from * b1_to
                     det4 = a1_to * b2_to - a2_to * b1_to
 
-                    x1 = (b1_from * c2_from - b2_from * c1_from) / det1
-                    y1 = (a2_from * c1_from - a1_from * c2_from) / det1
+                    x1 = -(b1_from * c2_from - b2_from * c1_from) / det1
+                    y1 = -(a2_from * c1_from - a1_from * c2_from) / det1
+                    if between(x1_from, x1_node, x1) and between(y1_from, y1_node, y1) and between(x2_from, x2_node, x1) and between(y2_from, y2_node, y1):
+                        pl = "Граф не плоский"
 
-                    x2 = (b1_from * c2_to - b2_to * c1_from) / det2
-                    y2 = (a2_to * c1_from - a1_from * c2_to) / det2
+                    x2 = -(b1_from * c2_to - b2_to * c1_from) / det2
+                    y2 = -(a2_to * c1_from - a1_from * c2_to) / det2
+                    if between(x1_from, x1_node, x2) and between(y1_from, y1_node, y2) and between(x2_node, x2_to,x2) and between(y2_node, y2_to, y2):
+                        pl = "Граф не плоский"
 
-                    x3 = (b1_to * c2_from - b2_from * c1_to) / det3
-                    y3 = (a2_from * c1_to - a1_to * c2_from) / det3
+                    x3 = -(b1_to * c2_from - b2_from * c1_to) / det3
+                    y3 = -(a2_from * c1_to - a1_to * c2_from) / det3
+                    if between(x1_node, x1_to, x3) and between(y1_node, y1_to, y3) and between(x2_from, x2_node,x3) and between(y2_from, y2_node, y3):
+                        pl = "Граф не плоский"
 
-                    x4 = (b1_to * c2_to - b2_to * c1_to) / det4
-                    y4 = (a2_to * c1_to - a1_to * c2_to) / det4
-
-                    print(x1, y1)
-                    print(x2, y2)
-                    print(x3, y3)
-                    print(x4, y4)
+                    x4 = -(b1_to * c2_to - b2_to * c1_to) / det4
+                    y4 = -(a2_to * c1_to - a1_to * c2_to) / det4
+                    if between(x1_node, x1_to, x4) and between(y1_node, y1_to, y4) and between(x2_node, x2_to,x4) and between(y2_node, y2_to, y4):
+                        pl = "Граф не плоский"
 
     g = nx.Graph()
+    plan = "Граф не планарный"
     nx.Graph()
     size = graph.size()
     matr = graph.to_matrix()
@@ -76,5 +83,8 @@ def isPlanary(graph:Graph):
             if matr[i-1][j-1] is not 0:
                 g.add_edge(i, j)
 
-    print(nx.check_planarity(g))
+    if nx.check_planarity(g):
+        plan = "Граф планарный"
+
+    return pl, plan
 

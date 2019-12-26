@@ -36,7 +36,7 @@ def isConnected(matrix, oriented):
 
 def find_comps(graph):
     def dfs(v, used, g, comp, before: int = -1):
-        if before == -1 or str(before + 1) in g.vertexes[str(v + 1)]:
+        if before == -1:
             used[v] = True
             comp.append(str(v + 1))
         else:

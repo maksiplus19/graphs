@@ -2,6 +2,7 @@ from graph.graph import Graph
 from algorithm import dijkstra
 from algorithm.connectedness import isConnected
 import numpy as np
+import networkx as nx
 
 
 def dfs(v, used, g, p=-1):
@@ -67,4 +68,40 @@ def to_prufer(graph):
             leaves.sort()
     return result
 
+
+
+def find_mincycle(graph):
+    # size = graph.size()
+    # mincycle = []
+    # mincycle.append(np.inf)
+    # matr = graph.to_matrix()
+    # dist = graph.to_matrix()
+    # for i in range(size):
+    #     for j in range(size):
+    #         if matr[i][j] == 0:
+    #             matr[i][j] = dist[i][j] = np.inf
+    # for k in range(size):
+    #     for i in range(k):
+    #         for j in range(i):
+    #             mincycle[0] = min(mincycle[0], dist[i][j] + matr[j][k] + matr[k][i])
+    #
+    #     for i in range(size):
+    #         for j in range(i):
+    #             temp = dist[i][k] + dist[k][j]
+    #             if temp < dist[i][j]:
+    #                 dist[i][j] = dist[j][i] = temp
+
+    # if graph.oriented:
+    #     mincycle -= 1
+    g = nx.Graph()
+    nx.Graph()
+    size = graph.size()
+    matr = graph.to_matrix()
+    for i in range(1, size + 1):
+        g.add_node(i)
+        for j in range(1, size + 1):
+            if matr[i - 1][j - 1] is not 0:
+                g.add_edge(i, j)
+    return nx.minimum_cycle_basis(g)[0]
+    # return mincycle
 
