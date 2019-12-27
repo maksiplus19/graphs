@@ -96,6 +96,7 @@ def check_extreme_2complex(triples: Triples) -> Optional[bool]:
         cube[b][c][a] = 1
         cube[c][a][b] = 1
         cube[c][b][a] = 1
+    matr = deepcopy(cube)
     cube = cast(list, cube.tolist())
 
     for i in range(size):
@@ -108,7 +109,7 @@ def check_extreme_2complex(triples: Triples) -> Optional[bool]:
     for i in range(len(cube)):
         extreme &= check_extreme_2d(cube[i])
 
-    return extreme
+    return extreme, matr
 
 
 def get_2complex_base(triples: Triples) -> Triples:
@@ -155,7 +156,9 @@ def aggregator(vector: List[int]) -> Optional[Dict]:
     result = get_2complex_from_vector(vector)
     if result is None:
         return None
-    result['extreme'] = check_extreme_2complex(result['triples'])
+    extreme_and_cube = check_extreme_2complex(result['triples'])
+    result['extreme'] = extreme_and_cube[0]
+    result['cube'] = extreme_and_cube[1]
     if result['extreme']:
         result['base'] = get_2complex_base(result['triples'])
     return result

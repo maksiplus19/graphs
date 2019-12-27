@@ -97,10 +97,10 @@ def compare_efficiency(widget):
             print(f'Time: {int(t_end - t_start)}')
             print(f'Path({len(graph.path)}): {graph.path}')
             widget.drawGraph(True)
-            print(f'C:\\Users\\viktor\\PycharmProjects\\graphs\\{method.__name__}_'
+            print(f'C:\\Users\\Savelya\\Desktop\\graphs\\{method.__name__}_'
                   f'{int((t_end - t_start) * 1000)}ms_from{begin}to{end}_'
                   f'{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.png')
-            SaveGraph.save_as_image(f'C:\\Users\\viktor\\PycharmProjects\\graphs\\{method.__name__}_'
+            SaveGraph.save_as_image(f'C:\\Users\\Savelya\\Desktop\\graphs\\{method.__name__}_'
                                     f'{int((t_end - t_start) * 1000)}ms_from{begin}to{end}_'
                                     f'{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.png', widget.scene)
 

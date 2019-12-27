@@ -10,7 +10,7 @@ def between(a, b, c):
     return min(a, b) <= c <= max(a, b)
 
 
-def isPlanary(graph:Graph):
+def isPlanary(graph: Graph):
     pl = "Граф плоский"
     for v1_from in graph.vertexes:
         x1_from = graph.vertexes_coordinates[v1_from].x

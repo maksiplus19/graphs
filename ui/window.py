@@ -131,6 +131,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.action17.triggered.connect(self.complex_from_vector)
         self.action21.triggered.connect(self.test_efficiency)
         self.action9.triggered.connect(self.is_planary)
+        self.action16.triggered.connect(self.addition_complex2)
 
     def addTab(self, name: str = None, graph: Graph = None):
         self.textEdit.setText("")
@@ -496,6 +497,21 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         res = algorithm.isPlanary(self.graph)
         self.textEdit.setText(res[0])
         self.textEdit.append(res[1])
+
+    def addition_complex2(self):
+        dialog = Ui_GetTextDialog('2-комплекс', 'Введите вектор степеней 2-комплекса')
+        if not dialog.exec_():
+            return
+        text: str = dialog.getText()
+        text: list = cast(list, text.split(' '))
+        text: list = list(map(int, text))
+        res = algorithm.addition_complex2(text)
+        if not res["addition_triples"]:
+            text = f'Гипер граф полный\n{res["triples"]}\n'
+        else:
+            text = f'Гипер граф\n{res["triples"]}\n' \
+                   f'Дополнение\n{res["addition_triples"]}\n'
+        QMessageBox.information(self, 'Результат', text)
 
 
     @property
