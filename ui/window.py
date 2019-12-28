@@ -131,6 +131,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.action17.triggered.connect(self.complex_from_vector)
         self.action21.triggered.connect(self.test_efficiency)
         self.action9.triggered.connect(self.is_planary)
+        self.action19.triggered.connect(self.salesman)
         self.action16.triggered.connect(self.addition_complex2)
 
     def addTab(self, name: str = None, graph: Graph = None):
@@ -544,6 +545,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         algorithm.compare_efficiency(self.tabWidget)
         QMessageBox.information(self, 'Сообщение', f'Сравнение алгоритмов завершено\n'
                                                    f'Всего затрачено времени {datetime.now() - start}')
+
+    def salesman(self):
+        algorithm.salesman(self.graph)
+        self.graph.update()
 
 
 if __name__ == '__main__':
