@@ -1,5 +1,5 @@
 import random
-from copy import copy
+from copy import copy, deepcopy
 from typing import Dict, List, Tuple
 from enum import auto
 
@@ -395,7 +395,7 @@ class Graph:
         if len(self.vertexes) == 0:
             return 0
         else:
-            return int(sorted(self.vertexes, key=lambda el: int(el))[-1])
+            return int(sorted(self.vertexes_coordinates, key=lambda el: int(el))[-1])
 
     def to_matrix(self, with_weight: bool = True):
         size = self.size()
@@ -420,3 +420,14 @@ class Graph:
                 if matrix[i][j]:
                     graph.add_edge(str(i+1), str(j+1), matrix[i][j], None, save=False, shadowed=True)
         return graph
+
+    def __deepcopy__(self, memodict=None):
+        print('deepcopy')
+        if memodict is None:
+            memodict = {}
+        g = type(self)()
+        g.vertexes = deepcopy(self.vertexes, memodict)
+        g.vertexes_coordinates = deepcopy(self.vertexes_coordinates, memodict)
+        g.oriented = self.oriented
+        g.weighted = self.weighted
+        return g
